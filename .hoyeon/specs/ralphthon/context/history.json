@@ -1,0 +1,42 @@
+[
+  {
+    "ts": "2026-03-25T22:50:08.125Z",
+    "type": "spec_created"
+  },
+  {
+    "ts": "2026-03-25T22:50:43.964Z",
+    "type": "spec_updated",
+    "detail": "merged: context, meta"
+  },
+  {
+    "ts": "2026-03-25T22:55:17.843Z",
+    "type": "spec_updated",
+    "detail": "merged: context"
+  },
+  {
+    "ts": "2026-03-25T22:55:27.333Z",
+    "type": "spec_updated",
+    "detail": "merged: constraints"
+  },
+  {
+    "ts": "2026-03-25T22:57:17.146Z",
+    "type": "spec_updated",
+    "detail": "merged: context, constraints"
+  },
+  {
+    "ts": "2026-03-25T22:58:16.939Z",
+    "type": "spec_updated",
+    "detail": "merged: requirements"
+  },
+  {
+    "ts": "2026-03-25T22:58:55.831Z",
+    "type": "spec_updated",
+    "detail": "merged: tasks, external_dependencies"
+  },
+  {
+    "ts": "2026-03-25T23:14:30.166Z",
+    "type": "task_done",
+    "task": "T1",
+    "summary": "Next.js 16 App Router + pnpm + TS strict. Directory structure created. .env.example + .env.local configured."
+  }
+]

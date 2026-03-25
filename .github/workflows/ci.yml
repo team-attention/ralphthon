@@ -1,0 +1,30 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm tsc --noEmit
+      - name: Check use server violations
+        run: |
+          VIOLATIONS=$(grep -rn "use server" src/ --include="*.ts" --include="*.tsx" -l | grep -v "src/app/api/admin" || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "ERROR: 'use server' found outside /api/admin/:"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
