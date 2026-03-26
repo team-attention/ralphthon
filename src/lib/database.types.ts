@@ -60,22 +60,28 @@ export interface Database {
         Row: {
           id: string
           team_id: string
+          name: string | null
           email: string
           role: 'leader' | 'member'
+          user_id: string | null
           created_at: string
         }
         Insert: {
           id?: string
           team_id: string
+          name?: string | null
           email: string
           role?: 'leader' | 'member'
+          user_id?: string | null
           created_at?: string
         }
         Update: {
           id?: string
           team_id?: string
+          name?: string | null
           email?: string
           role?: 'leader' | 'member'
+          user_id?: string | null
           created_at?: string
         }
       }

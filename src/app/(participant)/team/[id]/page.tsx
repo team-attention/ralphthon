@@ -59,6 +59,7 @@ export default function TeamPage() {
   const [githubUrl, setGithubUrl] = useState('')
   const [demoVideoUrl, setDemoVideoUrl] = useState('')
   const [editingMembers, setEditingMembers] = useState(false)
+  const [newMemberName, setNewMemberName] = useState('')
   const [newMemberEmail, setNewMemberEmail] = useState('')
   const lastLobsterAtRef = useRef<string | null>(null)
   const [lobsterActivatedAt, setLobsterActivatedAt] = useState<string | null>(null)
@@ -241,15 +242,17 @@ export default function TeamPage() {
   async function handleAddMember() {
     const email = newMemberEmail.trim()
     if (!email) return
+    const name = newMemberName.trim() || null
 
     const { data, error } = await supabase
       .from('team_members')
-      .insert({ team_id: id, email, role: 'member' } as never)
+      .insert({ team_id: id, name, email, role: 'member' } as never)
       .select()
       .single()
 
     if (!error && data) {
       setMembers((prev) => [...prev, data as unknown as TeamMember])
+      setNewMemberName('')
       setNewMemberEmail('')
     }
   }
@@ -292,7 +295,7 @@ export default function TeamPage() {
     )
   }
 
-  const isLeader = userId === team.leader_user_id
+  const isTeamMember = userId === team.leader_user_id || members.some((m) => m.user_id === userId)
 
   return (
     <div className="relative flex min-h-screen flex-col items-center overflow-hidden p-4 pt-8">
@@ -425,7 +428,7 @@ export default function TeamPage() {
                     {team.project_desc || 'No description yet'}
                   </p>
                 </div>
-                {isLeader && (
+                {isTeamMember && (
                   <button
                     onClick={() => setEditingTeam(true)}
                     className="w-fit rounded-lg border px-4 py-2 text-sm transition-all duration-200 hover:border-yellow/40"
@@ -447,7 +450,7 @@ export default function TeamPage() {
               <h3 className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
                 {t('teamMembers')}
               </h3>
-              {isLeader && !editingMembers && (
+              {isTeamMember && !editingMembers && (
                 <button
                   onClick={() => setEditingMembers(true)}
                   className="text-xs transition-colors duration-200"
@@ -456,7 +459,7 @@ export default function TeamPage() {
                   {t('editMembers')}
                 </button>
               )}
-              {isLeader && editingMembers && (
+              {isTeamMember && editingMembers && (
                 <button
                   onClick={() => setEditingMembers(false)}
                   className="text-xs transition-colors duration-200"
@@ -476,7 +479,12 @@ export default function TeamPage() {
                     border: '1px solid rgba(255, 217, 15, 0.08)',
                   }}
                 >
-                  <span style={{ color: '#e2e8f0' }}>{member.email}</span>
+                  <div className="flex flex-col">
+                    {member.name && (
+                      <span className="text-sm font-medium" style={{ color: '#e2e8f0' }}>{member.name}</span>
+                    )}
+                    <span className={member.name ? 'text-xs' : 'text-sm'} style={{ color: member.name ? '#8892b0' : '#e2e8f0' }}>{member.email}</span>
+                  </div>
                   <div className="flex items-center gap-2">
                     <span
                       className="rounded-full px-2 py-0.5 text-xs"
@@ -503,23 +511,33 @@ export default function TeamPage() {
                 </div>
               ))}
               {editingMembers && (
-                <div className="flex gap-2 mt-1">
-                  <input
-                    type="email"
-                    value={newMemberEmail}
-                    onChange={(e) => setNewMemberEmail(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleAddMember() }}
-                    placeholder={t('newMemberEmail')}
-                    className="h-9 flex-1 rounded-lg border bg-transparent px-3 text-sm"
-                    style={{ borderColor: 'rgba(255, 217, 15, 0.2)', color: '#e2e8f0' }}
-                  />
-                  <button
-                    onClick={handleAddMember}
-                    className="rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
-                    style={{ background: '#FFD90F', color: '#0a0a1a' }}
-                  >
-                    {t('addMember')}
-                  </button>
+                <div className="flex flex-col gap-2 mt-1">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newMemberName}
+                      onChange={(e) => setNewMemberName(e.target.value)}
+                      placeholder={t('newMemberName')}
+                      className="h-9 w-1/3 rounded-lg border bg-transparent px-3 text-sm"
+                      style={{ borderColor: 'rgba(255, 217, 15, 0.2)', color: '#e2e8f0' }}
+                    />
+                    <input
+                      type="email"
+                      value={newMemberEmail}
+                      onChange={(e) => setNewMemberEmail(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleAddMember() }}
+                      placeholder={t('newMemberEmail')}
+                      className="h-9 flex-1 rounded-lg border bg-transparent px-3 text-sm"
+                      style={{ borderColor: 'rgba(255, 217, 15, 0.2)', color: '#e2e8f0' }}
+                    />
+                    <button
+                      onClick={handleAddMember}
+                      className="rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
+                      style={{ background: '#FFD90F', color: '#0a0a1a' }}
+                    >
+                      {t('addMember')}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -539,7 +557,7 @@ export default function TeamPage() {
                 <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
                   {t('submitGithub')}
                 </p>
-                {isLeader ? (
+                {isTeamMember ? (
                   <>
                     <input
                       value={githubUrl}
@@ -566,7 +584,7 @@ export default function TeamPage() {
                 <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
                   {t('demoVideo')}
                 </p>
-                {isLeader ? (
+                {isTeamMember ? (
                   <>
                     {demoVideoUrl ? (
                       <div className="flex flex-col gap-2">

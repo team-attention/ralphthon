@@ -59,6 +59,13 @@ export default function ParticipantLayout({
           >
             <span style={{ color: '#8892b0' }}>{'>'}_</span> RALPHTHON
           </Link>
+          <Link
+            href="/timeline"
+            className="text-sm transition-colors duration-200 hover:text-foreground"
+            style={{ color: '#8892b0' }}
+          >
+            Timeline
+          </Link>
           {checked && (
             teamId ? (
               <Link

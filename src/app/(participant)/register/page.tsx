@@ -20,7 +20,7 @@ export default function RegisterPage() {
   const [teamName, setTeamName] = useState('')
   const [region, setRegion] = useState<'KR' | 'US'>('KR')
   const [projectDesc, setProjectDesc] = useState('')
-  const [memberEmails, setMemberEmails] = useState<string[]>([''])
+  const [members, setMembersInput] = useState<{ name: string; email: string }[]>([{ name: '', email: '' }])
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user: currentUser } }) => {
@@ -29,7 +29,7 @@ export default function RegisterPage() {
         return
       }
 
-      // Guard: if user already has a team, redirect to team page
+      // Guard: if user is already a team leader, redirect to team page
       const { data: existingTeam } = await supabase
         .from('teams')
         .select('id')
@@ -39,6 +39,26 @@ export default function RegisterPage() {
       if (existingTeam) {
         const teamData = existingTeam as { id: string }
         router.replace(`/team/${teamData.id}`)
+        return
+      }
+
+      // Guard: if user is already a team member, link user_id and redirect
+      const { data: memberRow } = await supabase
+        .from('team_members')
+        .select('team_id')
+        .eq('email', currentUser.email!)
+        .limit(1)
+        .single()
+
+      if (memberRow) {
+        await supabase
+          .from('team_members')
+          .update({ user_id: currentUser.id } as never)
+          .eq('email', currentUser.email!)
+          .is('user_id', null)
+
+        const member = memberRow as { team_id: string }
+        router.replace(`/team/${member.team_id}`)
         return
       }
 
@@ -59,15 +79,15 @@ export default function RegisterPage() {
   }, [router, supabase])
 
   function addMember() {
-    setMemberEmails((prev) => [...prev, ''])
+    setMembersInput((prev) => [...prev, { name: '', email: '' }])
   }
 
   function removeMember(index: number) {
-    setMemberEmails((prev) => prev.filter((_, i) => i !== index))
+    setMembersInput((prev) => prev.filter((_, i) => i !== index))
   }
 
-  function updateMember(index: number, value: string) {
-    setMemberEmails((prev) => prev.map((email, i) => (i === index ? value : email)))
+  function updateMemberField(index: number, field: 'name' | 'email', value: string) {
+    setMembersInput((prev) => prev.map((m, i) => (i === index ? { ...m, [field]: value } : m)))
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -99,18 +119,19 @@ export default function RegisterPage() {
 
     const teamData = team as { id: string }
 
-    const members: MemberInsert[] = [
+    const memberRows: MemberInsert[] = [
       { team_id: teamData.id, email: user.email!, role: 'leader' },
-      ...memberEmails
-        .filter((email) => email.trim() !== '')
-        .map((email) => ({
+      ...members
+        .filter((m) => m.email.trim() !== '')
+        .map((m) => ({
           team_id: teamData.id,
-          email: email.trim(),
+          name: m.name.trim() || null,
+          email: m.email.trim(),
           role: 'member' as const,
         })),
     ]
 
-    await supabase.from('team_members').insert(members as never[])
+    await supabase.from('team_members').insert(memberRows as never[])
 
     router.push(`/team/${teamData.id}`)
   }
@@ -217,12 +238,23 @@ export default function RegisterPage() {
             <label className="text-sm font-medium" style={{ color: '#FFD90F' }}>
               <span style={{ color: '#8892b0' }}>{'>'}</span> {t('teamMembers')}
             </label>
-            {memberEmails.map((email, index) => (
+            {members.map((member, index) => (
               <div key={index} className="flex gap-2">
                 <input
+                  type="text"
+                  value={member.name}
+                  onChange={(e) => updateMemberField(index, 'name', e.target.value)}
+                  placeholder={t('memberName')}
+                  className="h-10 w-1/3 rounded-lg border bg-transparent px-3 text-sm transition-all"
+                  style={{
+                    borderColor: 'rgba(255, 217, 15, 0.2)',
+                    color: '#e2e8f0',
+                  }}
+                />
+                <input
                   type="email"
-                  value={email}
-                  onChange={(e) => updateMember(index, e.target.value)}
+                  value={member.email}
+                  onChange={(e) => updateMemberField(index, 'email', e.target.value)}
                   placeholder={t('memberEmail')}
                   className="h-10 flex-1 rounded-lg border bg-transparent px-3 text-sm transition-all"
                   style={{

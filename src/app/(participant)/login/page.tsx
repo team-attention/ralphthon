@@ -29,18 +29,43 @@ export default function LoginPage() {
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
-        const { data: team } = await supabase
+        // 1) Check if user is a team leader
+        const { data: leaderTeam } = await supabase
           .from('teams')
           .select('id')
           .eq('leader_user_id', user.id)
           .single()
 
-        if (team) {
-          const teamData = team as { id: string }
+        if (leaderTeam) {
+          const teamData = leaderTeam as { id: string }
           router.replace(`/team/${teamData.id}`)
-        } else {
-          router.replace('/register')
+          return
         }
+
+        // 2) Check if user is a team member (by email)
+        const { data: memberRow } = await supabase
+          .from('team_members')
+          .select('team_id')
+          .eq('email', user.email!)
+          .eq('role', 'member')
+          .limit(1)
+          .single()
+
+        if (memberRow) {
+          // Link user_id to team_members row for future lookups + RLS
+          await supabase
+            .from('team_members')
+            .update({ user_id: user.id } as never)
+            .eq('email', user.email!)
+            .is('user_id', null)
+
+          const member = memberRow as { team_id: string }
+          router.replace(`/team/${member.team_id}`)
+          return
+        }
+
+        // 3) Not in any team — go to register
+        router.replace('/register')
       }
     })
   }, [router, supabase])

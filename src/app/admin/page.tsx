@@ -14,20 +14,152 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 
 type Team = Database['public']['Tables']['teams']['Row']
+type TeamMember = Database['public']['Tables']['team_members']['Row']
 type RegionFilter = 'ALL' | 'KR' | 'US'
+
+function ProjectDetailDialog({
+  team,
+  members,
+  open,
+  onOpenChange,
+}: {
+  team: Team | null
+  members: TeamMember[]
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const t = useTranslations('admin')
+
+  if (!team) return null
+
+  const hasGithub = !!team.github_url
+  const hasVideo = !!team.demo_video_url
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            {team.name}
+            <Badge variant="outline">{team.region}</Badge>
+          </DialogTitle>
+          <DialogDescription>{team.leader_email}</DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-4">
+          {/* Submission Status */}
+          <div className="flex gap-2">
+            <Badge variant={hasGithub ? 'default' : 'outline'}>
+              GitHub: {hasGithub ? t('submitted') : t('missing')}
+            </Badge>
+            <Badge variant={hasVideo ? 'default' : 'outline'}>
+              Video: {hasVideo ? t('submitted') : t('missing')}
+            </Badge>
+            {team.lobster_count > 0 && (
+              <Badge variant="outline">
+                {'\u{1F99E}'} {team.lobster_count}
+              </Badge>
+            )}
+          </div>
+
+          {/* Project Description */}
+          <div>
+            <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
+              {t('projectDesc')}
+            </p>
+            <p className="text-sm">
+              {team.project_desc || t('noDescription')}
+            </p>
+          </div>
+
+          {/* GitHub URL */}
+          <div>
+            <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
+              {t('githubUrl')}
+            </p>
+            {team.github_url ? (
+              <a
+                href={team.github_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm underline underline-offset-2 hover:text-foreground"
+                style={{ color: '#64ffda' }}
+              >
+                {team.github_url}
+              </a>
+            ) : (
+              <p className="text-sm" style={{ color: '#8892b0' }}>{t('noGithub')}</p>
+            )}
+          </div>
+
+          {/* Demo Video */}
+          <div>
+            <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
+              {t('demoVideo')}
+            </p>
+            {team.demo_video_url ? (
+              <a
+                href={team.demo_video_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm underline underline-offset-2 hover:text-foreground"
+                style={{ color: '#64ffda' }}
+              >
+                {team.demo_video_url.length > 60
+                  ? `${team.demo_video_url.slice(0, 60)}...`
+                  : team.demo_video_url}
+              </a>
+            ) : (
+              <p className="text-sm" style={{ color: '#8892b0' }}>{t('noVideo')}</p>
+            )}
+          </div>
+
+          {/* Team Members */}
+          <div>
+            <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
+              {t('teamMembers')} ({members.length})
+            </p>
+            <div className="flex flex-col gap-1">
+              {members.map((m) => (
+                <div key={m.id} className="flex items-center gap-2 text-sm">
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                    {m.role === 'leader' ? t('leader') : t('member')}
+                  </Badge>
+                  <span>{m.email}</span>
+                </div>
+              ))}
+              {members.length === 0 && (
+                <p className="text-sm" style={{ color: '#8892b0' }}>No members</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 function AdminTeamCard({
   team,
   isBlinking,
   isActivating,
   onSendLobster,
+  onClick,
 }: {
   team: Team
   isBlinking: boolean
   isActivating: boolean
   onSendLobster: (id: string) => void
+  onClick: () => void
 }) {
   const t = useTranslations('admin')
   const countdown = useLobsterCountdown(team.lobster_activated_at)
@@ -37,7 +169,8 @@ function AdminTeamCard({
 
   return (
     <Card
-      className="relative overflow-hidden transition-shadow hover:shadow-md"
+      className="relative cursor-pointer overflow-hidden transition-shadow hover:shadow-md"
+      onClick={onClick}
       style={
         isBlinking && !isLobsterActive
           ? { animation: 'redBlink 2s ease-in-out infinite' }
@@ -103,7 +236,7 @@ function AdminTeamCard({
           {isPendingLobster && !isLobsterActive && (
             <button
               disabled={isActivating}
-              onClick={() => onSendLobster(team.id)}
+              onClick={(e) => { e.stopPropagation(); onSendLobster(team.id) }}
               className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
               style={{
                 background: 'linear-gradient(135deg, #E63946 0%, #c62828 100%)',
@@ -143,6 +276,9 @@ export default function DashboardPage() {
   const [authorized, setAuthorized] = useState(false)
   const [activatingId, setActivatingId] = useState<string | null>(null)
   const [blinkingTeams, setBlinkingTeams] = useState<Set<string>>(new Set())
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
+  const [selectedMembers, setSelectedMembers] = useState<TeamMember[]>([])
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   useEffect(() => {
     async function checkAdminAndFetch() {
@@ -264,6 +400,19 @@ export default function DashboardPage() {
     []
   )
 
+  const handleCardClick = useCallback(
+    async (team: Team) => {
+      setSelectedTeam(team)
+      setDialogOpen(true)
+      const res = await fetch(`/api/admin/team-members?teamId=${team.id}`)
+      if (res.ok) {
+        const { members } = await res.json()
+        setSelectedMembers(members as TeamMember[])
+      }
+    },
+    []
+  )
+
   const filteredTeams =
     filter === 'ALL' ? teams : teams.filter((tt) => tt.region === filter)
 
@@ -306,6 +455,7 @@ export default function DashboardPage() {
               isBlinking={blinkingTeams.has(team.id)}
               isActivating={activatingId === team.id}
               onSendLobster={handleSendLobster}
+              onClick={() => handleCardClick(team)}
             />
           ))}
         </div>
@@ -313,6 +463,19 @@ export default function DashboardPage() {
         {filteredTeams.length === 0 && (
           <p className="text-center text-muted-foreground">{t('noTeams')}</p>
         )}
+
+        <ProjectDetailDialog
+          team={selectedTeam}
+          members={selectedMembers}
+          open={dialogOpen}
+          onOpenChange={(open) => {
+            setDialogOpen(open)
+            if (!open) {
+              setSelectedTeam(null)
+              setSelectedMembers([])
+            }
+          }}
+        />
       </div>
     </div>
   )
