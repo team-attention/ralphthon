@@ -15,13 +15,14 @@ const RALPH_QUOTES = [
   "That's where I saw the leprechaun",
 ]
 
-function FloatingLobster({ delay, duration, left }: { delay: number; duration: number; left: number }) {
+function FloatingLobster({ offset, duration, left, startY }: { offset: number; duration: number; left: number; startY: number }) {
   return (
     <div
       className="fixed text-2xl pointer-events-none select-none z-10"
       style={{
         left: `${left}%`,
-        animation: `drift ${duration}s linear ${delay}s infinite`,
+        top: `${startY}vh`,
+        animation: `drift ${duration}s linear ${-offset}s infinite`,
       }}
     >
       {'\u{1F99E}'}
@@ -66,12 +67,18 @@ function RalphQuote() {
 }
 
 export function HackathonBg({ showQuotes = true }: { showQuotes?: boolean }) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
+  }, [])
+
   const lobsters = [
-    { delay: 0, duration: 18, left: 10 },
-    { delay: 6, duration: 22, left: 30 },
-    { delay: 12, duration: 20, left: 55 },
-    { delay: 4, duration: 25, left: 75 },
-    { delay: 9, duration: 19, left: 90 },
+    { offset: 0, duration: 17, left: 10, startY: 80 },
+    { offset: 7, duration: 23, left: 30, startY: 55 },
+    { offset: 13, duration: 19, left: 55, startY: 35 },
+    { offset: 4, duration: 26, left: 75, startY: 70 },
+    { offset: 10, duration: 21, left: 90, startY: 45 },
   ]
 
   return (
@@ -86,7 +93,7 @@ export function HackathonBg({ showQuotes = true }: { showQuotes?: boolean }) {
       <div className="scanline-overlay" />
 
       {/* Floating lobsters */}
-      {lobsters.map((props, i) => (
+      {mounted && lobsters.map((props, i) => (
         <FloatingLobster key={i} {...props} />
       ))}
 

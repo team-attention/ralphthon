@@ -18,6 +18,7 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false)
 
   const [teamName, setTeamName] = useState('')
+  const [leaderName, setLeaderName] = useState('')
   const [region, setRegion] = useState<'KR' | 'US'>('KR')
   const [projectDesc, setProjectDesc] = useState('')
   const [members, setMembersInput] = useState<{ name: string; email: string }[]>([{ name: '', email: '' }])
@@ -120,7 +121,7 @@ export default function RegisterPage() {
     const teamData = team as { id: string }
 
     const memberRows: MemberInsert[] = [
-      { team_id: teamData.id, email: user.email!, role: 'leader' },
+      { team_id: teamData.id, name: leaderName.trim() || null, email: user.email!, role: 'leader' },
       ...members
         .filter((m) => m.email.trim() !== '')
         .map((m) => ({
@@ -186,6 +187,26 @@ export default function RegisterPage() {
                 color: '#e2e8f0',
               }}
             />
+          </div>
+
+          {/* Leader Name */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="leaderName" className="text-sm font-medium" style={{ color: '#FFD90F' }}>
+              <span style={{ color: '#8892b0' }}>{'>'}</span> {t('leaderName')}
+            </label>
+            <input
+              id="leaderName"
+              value={leaderName}
+              onChange={(e) => setLeaderName(e.target.value)}
+              placeholder={t('leaderNamePlaceholder')}
+              required
+              className="h-10 w-full rounded-lg border bg-transparent px-3 text-sm transition-all"
+              style={{
+                borderColor: 'rgba(255, 217, 15, 0.2)',
+                color: '#e2e8f0',
+              }}
+            />
+            <p className="text-xs" style={{ color: '#8892b0' }}>{user?.email}</p>
           </div>
 
           {/* Region */}
@@ -255,6 +276,8 @@ export default function RegisterPage() {
                   type="email"
                   value={member.email}
                   onChange={(e) => updateMemberField(index, 'email', e.target.value)}
+                  pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                  title="Enter a valid email address"
                   placeholder={t('memberEmail')}
                   className="h-10 flex-1 rounded-lg border bg-transparent px-3 text-sm transition-all"
                   style={{

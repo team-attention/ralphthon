@@ -266,6 +266,35 @@ function AdminTeamCard({
   )
 }
 
+// SF event: 2026-03-28 3:30 PM PDT (UTC-7) = 2026-03-28T22:30:00Z
+const SF_DEADLINE = new Date('2026-03-28T22:30:00Z')
+
+function useSFCountdown() {
+  const [remaining, setRemaining] = useState<number | null>(null)
+
+  useEffect(() => {
+    function update() {
+      const diff = SF_DEADLINE.getTime() - Date.now()
+      setRemaining(diff > 0 ? diff : 0)
+    }
+    update()
+    const id = setInterval(update, 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  if (remaining === null) return null
+  if (remaining <= 0) return '00:00:00'
+
+  const h = Math.floor(remaining / 3_600_000)
+  const m = Math.floor((remaining % 3_600_000) / 60_000)
+  const s = Math.floor((remaining % 60_000) / 1_000)
+  const d = Math.floor(h / 24)
+  const hh = h % 24
+
+  if (d > 0) return `${d}d ${String(hh).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
 export default function DashboardPage() {
   const t = useTranslations('admin')
   const supabase = useMemo(() => createClient(), [])
@@ -278,6 +307,8 @@ export default function DashboardPage() {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
   const [selectedMembers, setSelectedMembers] = useState<TeamMember[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const sfCountdown = useSFCountdown()
 
   useEffect(() => {
     async function checkAdminAndFetch() {
@@ -421,6 +452,24 @@ export default function DashboardPage() {
     US: t('usa'),
   }
 
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+      setIsFullscreen(true)
+    } else {
+      document.exitFullscreen()
+      setIsFullscreen(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    function onFsChange() {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+    document.addEventListener('fullscreenchange', onFsChange)
+    return () => document.removeEventListener('fullscreenchange', onFsChange)
+  }, [])
+
   if (loading || !authorized) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -432,7 +481,46 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-6xl">
-        <h1 className="mb-6 text-3xl font-bold">{t('title')}</h1>
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
+          <div className="flex items-center gap-3">
+            {/* SF 3:30 PM countdown */}
+            {sfCountdown !== null && (
+              <div
+                className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                style={{
+                  background: sfCountdown === '00:00:00'
+                    ? 'rgba(230, 57, 70, 0.15)'
+                    : 'rgba(255, 217, 15, 0.1)',
+                  border: `1px solid ${sfCountdown === '00:00:00' ? 'rgba(230, 57, 70, 0.3)' : 'rgba(255, 217, 15, 0.2)'}`,
+                }}
+              >
+                <span className="text-xs" style={{ color: '#8892b0' }}>
+                  SF 3:30 PM
+                </span>
+                <span
+                  className="font-mono text-sm font-bold"
+                  style={{ color: sfCountdown === '00:00:00' ? '#E63946' : '#FFD90F' }}
+                >
+                  {sfCountdown}
+                </span>
+              </div>
+            )}
+            {/* Fullscreen toggle */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleFullscreen}
+              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+            >
+              {isFullscreen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              )}
+            </Button>
+          </div>
+        </div>
 
         <div className="mb-6 flex gap-2">
           {(['ALL', 'KR', 'US'] as const).map((r) => (
