@@ -242,6 +242,8 @@ export default function TeamPage() {
   async function handleAddMember() {
     const email = newMemberEmail.trim()
     if (!email) return
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    if (!emailRegex.test(email)) return
     const name = newMemberName.trim() || null
 
     const { data, error } = await supabase
