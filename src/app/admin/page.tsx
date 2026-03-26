@@ -91,7 +91,7 @@ function ProjectDetailDialog({
                 href={team.github_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm underline underline-offset-2 hover:text-foreground"
+                className="block break-all text-sm underline underline-offset-2 hover:text-foreground"
                 style={{ color: '#64ffda' }}
               >
                 {team.github_url}
@@ -111,12 +111,10 @@ function ProjectDetailDialog({
                 href={team.demo_video_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm underline underline-offset-2 hover:text-foreground"
+                className="block break-all text-sm underline underline-offset-2 hover:text-foreground"
                 style={{ color: '#64ffda' }}
               >
-                {team.demo_video_url.length > 60
-                  ? `${team.demo_video_url.slice(0, 60)}...`
-                  : team.demo_video_url}
+                {team.demo_video_url}
               </a>
             ) : (
               <p className="text-sm" style={{ color: '#8892b0' }}>{t('noVideo')}</p>
@@ -134,7 +132,8 @@ function ProjectDetailDialog({
                   <Badge variant="outline" className="text-[10px] px-1.5 py-0">
                     {m.role === 'leader' ? t('leader') : t('member')}
                   </Badge>
-                  <span>{m.email}</span>
+                  {m.name && <span className="font-medium">{m.name}</span>}
+                  <span style={{ color: '#8892b0' }}>{m.email}</span>
                 </div>
               ))}
               {members.length === 0 && (

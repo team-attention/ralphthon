@@ -18,13 +18,14 @@ type TimelineEntry = {
 }
 
 const TIMELINE_ENTRIES: TimelineEntry[] = [
-  { sfTime: '09:00 AM', activityKey: 't0900' },
-  { sfTime: '10:00 AM', activityKey: 't1000' },
-  { sfTime: '10:30 AM', activityKey: 't1030' },
-  { sfTime: '01:00 PM', activityKey: 't1300', lobster: true },
-  { sfTime: '01:00–04:00 PM', activityKey: 't1300_1600' },
-  { sfTime: '04:00 PM', activityKey: 't1600' },
-  { sfTime: '05:00 PM', activityKey: 't1700' },
+  { sfTime: '08:30 AM', activityKey: 't0900' },
+  { sfTime: '09:30 AM', activityKey: 't1000' },
+  { sfTime: '10:00 AM', activityKey: 't1030' },
+  { sfTime: '12:30 PM', activityKey: 't1300', lobster: true },
+  { sfTime: '12:30–03:30 PM', activityKey: 't1300_1600' },
+  { sfTime: '03:30 PM', activityKey: 't1600' },
+  { sfTime: '04:30 PM', activityKey: 't1700' },
+  { sfTime: '04:30–05:30 PM', activityKey: 't_judging' },
   { sfTime: '05:30 PM', seoulTime: '09:30 AM', activityKey: 't1730', highlight: true },
   { sfTime: '06:30 PM', activityKey: 't1830' },
   { sfTime: '07:30 PM', activityKey: 't1930' },
