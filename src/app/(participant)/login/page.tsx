@@ -6,16 +6,6 @@ import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase'
 import { HackathonBg } from '@/components/hackathon-bg'
 
-const ASCII_LOBSTER = `      ,     ,
-     (\\____/)
-      (_oo_)
-        (O)
-      __||__    \\)
-   []/______\\[] /
-   / \\______/ \\/
-  /    /__\\
- (\\   /____\\`
-
 export default function LoginPage() {
   const t = useTranslations('login')
   const router = useRouter()
@@ -84,19 +74,16 @@ export default function LoginPage() {
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-4">
       <HackathonBg />
 
-      <div className="relative z-20 flex flex-col items-center gap-6 text-center">
-        {/* ASCII Lobster */}
-        <pre
-          className="text-xs leading-tight sm:text-sm"
+      <div className="relative z-20 flex flex-col items-center gap-3 text-center">
+        {/* Ralph + Lobster */}
+        <img
+          src="/ralphthon.png"
+          alt="Ralphthon"
+          className="-mb-4 h-56 w-56 sm:-mb-6 sm:h-72 sm:w-72"
           style={{
-            color: '#E63946',
-            opacity: 0.5,
-            animation: mounted ? 'fadeInUp 0.5s ease-out' : undefined,
-            fontFamily: 'var(--font-jetbrains), monospace',
+            animation: mounted ? 'float 4s ease-in-out infinite, fadeInUp 0.5s ease-out' : undefined,
           }}
-        >
-          {ASCII_LOBSTER}
-        </pre>
+        />
 
         {/* Title */}
         <h1
@@ -119,19 +106,8 @@ export default function LoginPage() {
           }}
         >
           <span style={{ color: '#FFD90F' }}>{'>'}</span> Register your team.{' '}
-          <span style={{ color: '#FFD90F' }}>{'>'}</span> Collaborate.{' '}
-          <span style={{ color: '#FFD90F' }}>{'>'}</span> Request lobsters.
-        </p>
-
-        {/* Ralph Quote */}
-        <p
-          className="font-display text-xl tracking-wide sm:text-2xl"
-          style={{
-            color: '#E63946',
-            animation: mounted ? 'glitch 4s ease-in-out infinite, fadeInUp 1.1s ease-out' : undefined,
-          }}
-        >
-          &quot;I&apos;m helping!&quot; — Ralph Wiggum
+          <span style={{ color: '#FFD90F' }}>{'>'}</span> Build with AI.{' '}
+          <span style={{ color: '#FFD90F' }}>{'>'}</span> Happy Ralphing!
         </p>
 
         {/* Login Card */}
