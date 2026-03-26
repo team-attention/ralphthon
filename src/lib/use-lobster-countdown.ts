@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const LOBSTER_DURATION_MS = 10 * 1000 // 10 seconds (testing)
+const LOBSTER_DURATION_MS = 10 * 60 * 1000 // 10 minutes
 
 /**
  * Returns remaining seconds for a lobster activation.
