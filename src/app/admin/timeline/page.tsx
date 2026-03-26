@@ -8,9 +8,9 @@ export default function AdminTimelinePage() {
 
   return (
     <div className="min-h-screen p-6">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-5xl">
         <h1 className="mb-2 text-3xl font-bold">
-          {t('title')}
+          Ralphthon
         </h1>
         <p className="mb-8 text-lg text-muted-foreground">
           {t('subtitle')}
