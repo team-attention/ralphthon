@@ -14,7 +14,7 @@
   "login": {
     "title": "Ralphthon",
     "subtitle": "Sign in to register your team and participate in the hackathon.",
-    "signInWithGoogle": "Google Login",
+    "signInWithGoogle": "Sign in with Google",
     "redirecting": "Redirecting..."
   },
   "register": {
@@ -25,8 +25,8 @@
     "projectDescription": "Project Description",
     "projectDescPlaceholder": "Describe your project idea",
     "teamMembers": "Team Members",
-    "memberName": "이름",
-    "memberEmail": "이메일",
+    "memberName": "Name",
+    "memberEmail": "Email",
     "addMember": "Add Member",
     "removeMember": "Remove",
     "submitting": "Registering...",
