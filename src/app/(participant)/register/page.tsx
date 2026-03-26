@@ -11,6 +11,7 @@ import { HackathonBg } from '@/components/hackathon-bg'
 export default function RegisterPage() {
   const t = useTranslations('register')
   const tc = useTranslations('common')
+  const tTeam = useTranslations('team')
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
   const [user, setUser] = useState<User | null>(null)
@@ -274,7 +275,7 @@ export default function RegisterPage() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                Leader
+                {tTeam('leader')}
               </span>
             </div>
 
