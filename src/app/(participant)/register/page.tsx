@@ -189,26 +189,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Leader Name */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="leaderName" className="text-sm font-medium" style={{ color: '#FFD90F' }}>
-              <span style={{ color: '#8892b0' }}>{'>'}</span> {t('leaderName')}
-            </label>
-            <input
-              id="leaderName"
-              value={leaderName}
-              onChange={(e) => setLeaderName(e.target.value)}
-              placeholder={t('leaderNamePlaceholder')}
-              required
-              className="h-10 w-full rounded-lg border bg-transparent px-3 text-sm transition-all"
-              style={{
-                borderColor: 'rgba(255, 217, 15, 0.2)',
-                color: '#e2e8f0',
-              }}
-            />
-            <p className="text-xs" style={{ color: '#8892b0' }}>{user?.email}</p>
-          </div>
-
           {/* Region */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium" style={{ color: '#FFD90F' }}>
@@ -259,6 +239,46 @@ export default function RegisterPage() {
             <label className="text-sm font-medium" style={{ color: '#FFD90F' }}>
               <span style={{ color: '#8892b0' }}>{'>'}</span> {t('teamMembers')}
             </label>
+
+            {/* Leader row */}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={leaderName}
+                onChange={(e) => setLeaderName(e.target.value)}
+                placeholder={t('memberName')}
+                required
+                className="h-10 w-1/3 rounded-lg border bg-transparent px-3 text-sm transition-all"
+                style={{
+                  borderColor: 'rgba(255, 217, 15, 0.2)',
+                  color: '#e2e8f0',
+                }}
+              />
+              <input
+                type="email"
+                value={user?.email ?? ''}
+                disabled
+                className="h-10 flex-1 rounded-lg border bg-transparent px-3 text-sm transition-all"
+                style={{
+                  borderColor: 'rgba(255, 217, 15, 0.2)',
+                  color: '#8892b0',
+                  opacity: 0.7,
+                }}
+              />
+              <span
+                className="flex h-10 items-center justify-center rounded-lg border px-2 text-xs font-medium"
+                style={{
+                  borderColor: 'rgba(255, 217, 15, 0.4)',
+                  background: 'rgba(255, 217, 15, 0.1)',
+                  color: '#FFD90F',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Leader
+              </span>
+            </div>
+
+            {/* Other members */}
             {members.map((member, index) => (
               <div key={index} className="flex gap-2">
                 <input
