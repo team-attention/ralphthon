@@ -1,0 +1,40 @@
+[
+  {
+    "ts": "2026-03-26T02:40:40.767Z",
+    "type": "spec_created"
+  },
+  {
+    "ts": "2026-03-26T02:40:58.172Z",
+    "type": "spec_updated",
+    "detail": "merged: requirements"
+  },
+  {
+    "ts": "2026-03-26T02:41:12.799Z",
+    "type": "spec_updated",
+    "detail": "merged: tasks"
+  },
+  {
+    "ts": "2026-03-26T02:50:36.598Z",
+    "type": "task_done",
+    "task": "T1",
+    "summary": "next-intl installed, ko/en translations, cookie-based locale, / redirects to /login, /admin = dashboard, all pages i18n'd, locale switcher added."
+  },
+  {
+    "ts": "2026-03-26T02:52:51.081Z",
+    "type": "task_done",
+    "task": "T2",
+    "summary": "Layout conditional nav (My Team/Register), register guards duplicate submission, region auto-set from locale."
+  },
+  {
+    "ts": "2026-03-26T02:52:59.818Z",
+    "type": "task_done",
+    "task": "T3",
+    "summary": "Realtime subscription for lobster_requested, red blink animation 10x, confirm button replaces card click."
+  },
+  {
+    "ts": "2026-03-26T02:54:40.552Z",
+    "type": "task_done",
+    "task": "TF",
+    "summary": "Build pass, lint pass (0 errors), routing verified (/ /login /register /team/[id] /admin)."
+  }
+]

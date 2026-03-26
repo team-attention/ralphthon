@@ -1,0 +1,90 @@
+{
+  "common": {
+    "ralphthon": "Ralphthon",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "myTeam": "My Team"
+  },
+  "login": {
+    "title": "Ralphthon",
+    "subtitle": "Sign in to register your team and participate in the hackathon.",
+    "signInWithGoogle": "Google Login",
+    "redirecting": "Redirecting..."
+  },
+  "register": {
+    "title": "Register Your Team",
+    "teamName": "Team Name",
+    "teamNamePlaceholder": "Enter your team name",
+    "region": "Region",
+    "projectDescription": "Project Description",
+    "projectDescPlaceholder": "Describe your project idea",
+    "teamMembers": "Team Members",
+    "memberEmail": "Member email",
+    "addMember": "Add Member",
+    "removeMember": "Remove",
+    "submitting": "Registering...",
+    "submitTeam": "Register Team"
+  },
+  "team": {
+    "teamInfo": "팀 정보",
+    "submitSection": "결과물 제출",
+    "teamName": "팀 이름",
+    "region": "지역",
+    "projectDescription": "프로젝트 소개",
+    "submitGithub": "GitHub 링크 제출",
+    "submitGithubPlaceholder": "https://github.com/your-team/project",
+    "submitGithubNote": "레포지토리를 반드시 public으로 설정해주세요.",
+    "demoVideoUrl": "데모 영상 URL",
+    "demoVideoPlaceholder": "https://youtube.com/... 또는 https://loom.com/...",
+    "demoVideoUpload": "데모 영상 업로드",
+    "demoVideo": "데모 영상",
+    "videoUploaded": "영상이 업로드되었습니다",
+    "removeVideo": "삭제",
+    "uploading": "업로드 중...",
+    "dragOrClick": "클릭하여 영상을 업로드하세요",
+    "videoMaxLength": "영상은 1분 이내로 제작해주세요.",
+    "teamMembers": "Team Members",
+    "leader": "Leader",
+    "member": "Member",
+    "edit": "Edit",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "requestLobster": "Request Lobster",
+    "lobsterRequested": "Lobster Requested!",
+    "saving": "Saving...",
+    "addMember": "팀원 추가",
+    "removeMember": "삭제",
+    "newMemberEmail": "새 팀원 이메일",
+    "editMembers": "팀원 수정"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "allRegions": "All",
+    "korea": "Korea",
+    "usa": "USA",
+    "noTeams": "No teams found.",
+    "lobsterRequested": "Lobster Requested",
+    "confirmLobster": "확인 완료",
+    "pendingConfirm": "확인 대기중",
+    "sendLobster": "가재 보내기!",
+    "lobsterActivated": "전송 완료",
+    "noLobsterYet": "요청 없음",
+    "readyForNext": "대기 중"
+  },
+  "adminLogin": {
+    "title": "Admin Login",
+    "subtitle": "관리자 계정으로 로그인하세요.",
+    "signInWithGoogle": "Google 로그인",
+    "checking": "권한 확인 중...",
+    "notAdmin": "관리자 권한이 없는 계정입니다. 관리자 이메일로 다시 시도해주세요."
+  },
+  "lobster": {
+    "activated": "LOBSTER ACTIVATED!"
+  }
+}

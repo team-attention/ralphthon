@@ -116,14 +116,12 @@
       "id": "TF",
       "action": "Scaffold verification: 빌드 통과, lint/typecheck 통과, Playwright 테스트 통과, CLAUDE.md 완성도 확인, exemplar 흐름 완전성 검증, 에이전트 확장성 체크",
       "type": "verification",
-      "status": "done",
+      "status": "pending",
       "depends_on": [
         "T2",
         "T6",
         "T7"
-      ],
-      "completed_at": "2026-03-25T23:29:32.426Z",
-      "summary": "All 11 verification checks pass. Build, lint, use-server, CLAUDE.md, dirs, vertical slice, types, data layer, tests, CI, agent extensibility — all PASS."
+      ]
     }
   ],
   "context": {

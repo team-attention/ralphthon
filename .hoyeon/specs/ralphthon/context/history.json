@@ -38,5 +38,47 @@
     "type": "task_done",
     "task": "T1",
     "summary": "Next.js 16 App Router + pnpm + TS strict. Directory structure created. .env.example + .env.local configured."
+  },
+  {
+    "ts": "2026-03-25T23:16:13.673Z",
+    "type": "task_done",
+    "task": "T2",
+    "summary": "CLAUDE.md with arch rules, .prettierrc, .github/workflows/ci.yml, ESLint no-restricted-syntax rule for use server ban."
+  },
+  {
+    "ts": "2026-03-25T23:16:21.385Z",
+    "type": "task_done",
+    "task": "T3",
+    "summary": "shadcn/ui initialized with 7 components (button, card, input, dialog, label, textarea, badge). Tailwind CSS v4. Build passes."
+  },
+  {
+    "ts": "2026-03-25T23:17:53.101Z",
+    "type": "task_done",
+    "task": "T4",
+    "summary": "Supabase CLI installed, supabase init done. Migration with teams/team_members tables + RLS + Realtime. seed.sql created."
+  },
+  {
+    "ts": "2026-03-25T23:19:49.254Z",
+    "type": "task_done",
+    "task": "T5",
+    "summary": "database.types.ts, supabase.ts (browser), supabase-server.ts (admin). db:types script added. Build passes."
+  },
+  {
+    "ts": "2026-03-25T23:24:43.795Z",
+    "type": "task_done",
+    "task": "T6",
+    "summary": "Full vertical slice: login, register, team/[id] with lobster+realtime, admin dashboard, /api/admin/lobster. Build+lint pass. No use server violations."
+  },
+  {
+    "ts": "2026-03-25T23:26:35.780Z",
+    "type": "task_done",
+    "task": "T7",
+    "summary": "Playwright installed, config with webServer, 3 smoke tests (home/login/dashboard), CI updated. Build passes."
+  },
+  {
+    "ts": "2026-03-25T23:29:32.426Z",
+    "type": "task_done",
+    "task": "TF",
+    "summary": "All 11 verification checks pass. Build, lint, use-server, CLAUDE.md, dirs, vertical slice, types, data layer, tests, CI, agent extensibility — all PASS."
   }
 ]

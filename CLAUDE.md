@@ -37,3 +37,36 @@ src/components/          — shared UI components
 
 - `'use server'` is **banned** outside `src/app/api/admin/`. CI will reject PRs that violate this.
 - ESLint `no-restricted-syntax` rule also flags `'use server'` usage.
+
+## How to Add a New Page
+
+1. **Participant page**: Create `src/app/(participant)/<route>/page.tsx` with `'use client'` directive.
+   - Import Supabase client from `@/lib/supabase` (`createClient()`).
+   - Import UI components from `@/components/ui/*` (shadcn) or `@/components/*`.
+   - Use types from `@/lib/database.types` (`Database['public']['Tables']['<table>']['Row']`).
+   - Auth guard: call `supabase.auth.getUser()` in `useEffect` and redirect to `/login` if unauthenticated.
+2. **Admin page**: Create `src/app/(admin)/<route>/page.tsx` with `'use client'` directive.
+   - Same imports as participant pages. Admin-only mutations go through `/api/admin/*` Route Handlers.
+3. **Admin API route**: Create `src/app/api/admin/<name>/route.ts`.
+   - Import `createAdminClient` from `@/lib/supabase-server` (uses `service_role` key).
+4. **New DB table**: Add migration in `supabase/migrations/`, update `src/lib/database.types.ts`.
+
+### Exemplar Reference
+
+The team registration flow is a complete end-to-end exemplar:
+- Login: `src/app/(participant)/login/page.tsx`
+- Register: `src/app/(participant)/register/page.tsx`
+- Team detail + Realtime: `src/app/(participant)/team/[id]/page.tsx`
+- Admin dashboard: `src/app/(admin)/dashboard/page.tsx`
+- Admin API (lobster): `src/app/api/admin/lobster/route.ts`
+- Shared component: `src/components/lobster-effect.tsx`
+
+### Shared Utilities
+
+| Import | Purpose |
+|--------|---------|
+| `@/lib/supabase` | Browser Supabase client (typed with `Database`) |
+| `@/lib/supabase-server` | Admin Supabase client (`service_role` key) |
+| `@/lib/database.types` | TypeScript types for all DB tables |
+| `@/lib/auth` | Auth helpers (`getCurrentUser`, `getCurrentSession`) |
+| `@/lib/utils` | General utilities (`cn` classname merge) |

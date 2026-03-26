@@ -14,8 +14,110 @@
   "tasks": [
     {
       "id": "T1",
-      "action": "TODO",
-      "type": "work"
+      "action": "Project initialization — create-next-app + pnpm + TypeScript strict + base configs (tsconfig, .gitignore, .env.example)",
+      "type": "work",
+      "status": "done",
+      "depends_on": [],
+      "fulfills": [
+        "R1",
+        "R3"
+      ],
+      "completed_at": "2026-03-25T23:14:30.166Z",
+      "summary": "Next.js 16 App Router + pnpm + TS strict. Directory structure created. .env.example + .env.local configured."
+    },
+    {
+      "id": "T2",
+      "action": "Guard Rails setup — CLAUDE.md (아키텍처 규칙, 컨벤션), ESLint + Prettier 설정 ('use server' 금지 룰 포함), GitHub Actions CI 워크플로우",
+      "type": "work",
+      "status": "done",
+      "depends_on": [
+        "T1"
+      ],
+      "fulfills": [
+        "R3"
+      ],
+      "completed_at": "2026-03-25T23:16:13.673Z",
+      "summary": "CLAUDE.md with arch rules, .prettierrc, .github/workflows/ci.yml, ESLint no-restricted-syntax rule for use server ban."
+    },
+    {
+      "id": "T3",
+      "action": "shadcn/ui + Tailwind CSS 초기화 — shadcn init + 기본 컴포넌트 (Button, Card, Input, Dialog) 설치",
+      "type": "work",
+      "status": "done",
+      "depends_on": [
+        "T1"
+      ],
+      "fulfills": [
+        "R1"
+      ],
+      "completed_at": "2026-03-25T23:16:21.385Z",
+      "summary": "shadcn/ui initialized with 7 components (button, card, input, dialog, label, textarea, badge). Tailwind CSS v4. Build passes."
+    },
+    {
+      "id": "T4",
+      "action": "Supabase 초기화 — supabase init + 초기 migration (teams, team_members 테이블 + RLS 정책) + seed.sql",
+      "type": "work",
+      "status": "done",
+      "depends_on": [
+        "T1"
+      ],
+      "fulfills": [
+        "R4"
+      ],
+      "completed_at": "2026-03-25T23:17:53.101Z",
+      "summary": "Supabase CLI installed, supabase init done. Migration with teams/team_members tables + RLS + Realtime. seed.sql created."
+    },
+    {
+      "id": "T5",
+      "action": "Type Contracts — supabase gen types 스크립트 설정 + lib/database.types.ts 생성 + typed Supabase client (lib/supabase.ts)",
+      "type": "work",
+      "status": "done",
+      "depends_on": [
+        "T4"
+      ],
+      "fulfills": [
+        "R1",
+        "R5"
+      ],
+      "completed_at": "2026-03-25T23:19:49.254Z",
+      "summary": "database.types.ts, supabase.ts (browser), supabase-server.ts (admin). db:types script added. Build passes."
+    },
+    {
+      "id": "T6",
+      "action": "Vertical slice exemplar — 팀 등록 전체 흐름 구현: Google OAuth 로그인 → 팀 정보 입력 폼 → Supabase insert → 팀 페이지 → 가재 버튼(lobster_requested) → Realtime subscription으로 불빛 효과 수신. Admin Route Handler(/api/admin/lobster) 포함.",
+      "type": "work",
+      "status": "pending",
+      "depends_on": [
+        "T2",
+        "T3",
+        "T5"
+      ],
+      "fulfills": [
+        "R1"
+      ]
+    },
+    {
+      "id": "T7",
+      "action": "Playwright E2E 테스트 — Playwright 설정 + exemplar 흐름 테스트 (팀 등록 → 팀 페이지 확인)",
+      "type": "work",
+      "status": "pending",
+      "depends_on": [
+        "T6"
+      ],
+      "fulfills": [
+        "R2"
+      ]
+    },
+    {
+      "id": "TF",
+      "action": "Scaffold verification: 빌드 통과, lint/typecheck 통과, Playwright 테스트 통과, CLAUDE.md 완성도 확인, exemplar 흐름 완전성 검증, 에이전트 확장성 체크",
+      "type": "verification",
+      "status": "pending",
+      "depends_on": [
+        "T2",
+        "T6",
+        "T7"
+      ]
     }
   ],
   "context": {
@@ -216,5 +318,26 @@
         }
       ]
     }
-  ]
+  ],
+  "external_dependencies": {
+    "pre_work": [
+      {
+        "action": "Supabase 프로젝트 생성 및 SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY 확보"
+      },
+      {
+        "action": "Google OAuth 클라이언트 ID 생성 (Google Cloud Console) 및 Supabase Auth Provider에 등록"
+      },
+      {
+        "action": "Vercel 프로젝트 연결 (vercel link)"
+      }
+    ],
+    "post_work": [
+      {
+        "action": "프로덕션 환경변수 Vercel에 설정"
+      },
+      {
+        "action": "커스텀 도메인 연결"
+      }
+    ]
+  }
 }

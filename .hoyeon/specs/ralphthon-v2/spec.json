@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "name": "ralphthon-v2",
+    "goal": "i18n + 라우팅 개선 + 참여자/관리자 UX 개선",
+    "type": "dev",
+    "schema_version": "v7"
+  },
+  "tasks": [
+    {
+      "id": "T1",
+      "action": "i18n 인프라 + 라우팅 구조 변경: next-intl 설치, middleware.ts (locale 감지 ko/en default en), messages/ko.json + messages/en.json, 모든 페이지를 [locale] route group으로 이동, / = 로그인 페이지, /admin = 대시보드, 기존 랜딩 페이지 제거",
+      "type": "work",
+      "status": "done",
+      "depends_on": [],
+      "fulfills": [
+        "R1"
+      ],
+      "completed_at": "2026-03-26T02:50:36.598Z",
+      "summary": "next-intl installed, ko/en translations, cookie-based locale, / redirects to /login, /admin = dashboard, all pages i18n'd, locale switcher added."
+    },
+    {
+      "id": "T2",
+      "action": "참여자 UX 개선: Register 링크 조건부 숨김(팀 있으면), 로그인 화면 Logout 제거, 로그인+팀존재 시 자동 /team/[id] 리디렉트, Region을 locale 기반 자동 설정(ko→KR en→US 수동변경 가능)",
+      "type": "work",
+      "status": "done",
+      "depends_on": [
+        "T1"
+      ],
+      "fulfills": [
+        "R2"
+      ],
+      "completed_at": "2026-03-26T02:52:51.081Z",
+      "summary": "Layout conditional nav (My Team/Register), register guards duplicate submission, region auto-set from locale."
+    },
+    {
+      "id": "T3",
+      "action": "관리자 대시보드 실시간 개선: lobster_requested Realtime subscription 추가, 요청 시 해당 카드 빨간색 깜빡임 10회, 확인 완료 버튼으로 lobster 활성화 (기존 카드 클릭 대신)",
+      "type": "work",
+      "status": "done",
+      "depends_on": [
+        "T1"
+      ],
+      "fulfills": [
+        "R3"
+      ],
+      "completed_at": "2026-03-26T02:52:59.818Z",
+      "summary": "Realtime subscription for lobster_requested, red blink animation 10x, confirm button replaces card click."
+    },
+    {
+      "id": "TF",
+      "action": "검증: pnpm build 통과, pnpm lint 통과, 모든 페이지 ko/en 렌더링 확인, 라우팅 확인 (/ = login, /admin = dashboard)",
+      "type": "verification",
+      "status": "done",
+      "depends_on": [
+        "T2",
+        "T3"
+      ],
+      "completed_at": "2026-03-26T02:54:40.552Z",
+      "summary": "Build pass, lint pass (0 errors), routing verified (/ /login /register /team/[id] /admin)."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R1",
+      "behavior": "i18n 적용 + 라우팅 구조 변경 (/ = 로그인, /admin = 대시보드)",
+      "sub": [
+        {
+          "id": "R1.1",
+          "behavior": "next-intl 설치 및 ko/en 번역 파일 구성, 브라우저 locale 기반 자동 감지, default en"
+        },
+        {
+          "id": "R1.2",
+          "behavior": "/ 접속 시 바로 로그인 페이지 표시 (기존 랜딩 페이지 제거)"
+        },
+        {
+          "id": "R1.3",
+          "behavior": "/admin 접속 시 관리자 대시보드 표시"
+        },
+        {
+          "id": "R1.4",
+          "behavior": "모든 UI 텍스트가 현재 locale에 맞게 표시됨"
+        }
+      ]
+    },
+    {
+      "id": "R2",
+      "behavior": "참여자 UX 개선 — 중복 제출 방지, 네비게이션 정리, 자동 리디렉트, 리전 자동 설정",
+      "sub": [
+        {
+          "id": "R2.1",
+          "behavior": "팀 등록 후 네비게이션에서 Register 링크 숨김"
+        },
+        {
+          "id": "R2.2",
+          "behavior": "로그인 화면에서 Logout 버튼 제거"
+        },
+        {
+          "id": "R2.3",
+          "behavior": "로그인 상태 + 팀 존재 시 자동으로 /team/[id] 리디렉트"
+        },
+        {
+          "id": "R2.4",
+          "behavior": "Region은 i18n locale 기반 자동 설정 (ko→KR, en→US), 수동 변경 가능"
+        }
+      ]
+    },
+    {
+      "id": "R3",
+      "behavior": "관리자 대시보드 — lobster_requested 실시간 빨간 깜빡임 + 확인 완료 버튼",
+      "sub": [
+        {
+          "id": "R3.1",
+          "behavior": "팀이 lobster 요청 시 해당 카드에 빨간색 깜빡임 애니메이션 10회 표시"
+        },
+        {
+          "id": "R3.2",
+          "behavior": "깜빡이는 카드에 확인 완료 버튼 표시, 클릭 시 lobster 활성화"
+        },
+        {
+          "id": "R3.3",
+          "behavior": "Realtime subscription으로 lobster_requested 변경 감지"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+-- Development seed data
+-- Note: Requires existing auth users. Use after setting up test users.
+-- Example data structure for reference:
+
+-- INSERT INTO public.teams (name, region, leader_email, project_desc) VALUES
+--   ('Team Alpha', 'KR', 'alpha@example.com', 'AI 기반 코드 리뷰 도구'),
+--   ('Team Beta', 'KR', 'beta@example.com', '실시간 협업 에디터'),
+--   ('Team Gamma', 'KR', 'gamma@example.com', '자동 테스트 생성기'),
+--   ('Team Delta', 'US', 'delta@example.com', 'AI-powered design system'),
+--   ('Team Epsilon', 'US', 'epsilon@example.com', 'Real-time code pairing'),
+--   ('Team Zeta', 'US', 'zeta@example.com', 'Automated deployment pipeline');

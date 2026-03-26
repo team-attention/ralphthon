@@ -16,67 +16,77 @@
       "id": "T1",
       "action": "Project initialization — create-next-app + pnpm + TypeScript strict + base configs (tsconfig, .gitignore, .env.example)",
       "type": "work",
-      "status": "pending",
+      "status": "done",
       "depends_on": [],
       "fulfills": [
         "R1",
         "R3"
-      ]
+      ],
+      "completed_at": "2026-03-25T23:14:30.166Z",
+      "summary": "Next.js 16 App Router + pnpm + TS strict. Directory structure created. .env.example + .env.local configured."
     },
     {
       "id": "T2",
       "action": "Guard Rails setup — CLAUDE.md (아키텍처 규칙, 컨벤션), ESLint + Prettier 설정 ('use server' 금지 룰 포함), GitHub Actions CI 워크플로우",
       "type": "work",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         "T1"
       ],
       "fulfills": [
         "R3"
-      ]
+      ],
+      "completed_at": "2026-03-25T23:16:13.673Z",
+      "summary": "CLAUDE.md with arch rules, .prettierrc, .github/workflows/ci.yml, ESLint no-restricted-syntax rule for use server ban."
     },
     {
       "id": "T3",
       "action": "shadcn/ui + Tailwind CSS 초기화 — shadcn init + 기본 컴포넌트 (Button, Card, Input, Dialog) 설치",
       "type": "work",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         "T1"
       ],
       "fulfills": [
         "R1"
-      ]
+      ],
+      "completed_at": "2026-03-25T23:16:21.385Z",
+      "summary": "shadcn/ui initialized with 7 components (button, card, input, dialog, label, textarea, badge). Tailwind CSS v4. Build passes."
     },
     {
       "id": "T4",
       "action": "Supabase 초기화 — supabase init + 초기 migration (teams, team_members 테이블 + RLS 정책) + seed.sql",
       "type": "work",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         "T1"
       ],
       "fulfills": [
         "R4"
-      ]
+      ],
+      "completed_at": "2026-03-25T23:17:53.101Z",
+      "summary": "Supabase CLI installed, supabase init done. Migration with teams/team_members tables + RLS + Realtime. seed.sql created."
     },
     {
       "id": "T5",
       "action": "Type Contracts — supabase gen types 스크립트 설정 + lib/database.types.ts 생성 + typed Supabase client (lib/supabase.ts)",
       "type": "work",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         "T4"
       ],
       "fulfills": [
         "R1",
         "R5"
-      ]
+      ],
+      "completed_at": "2026-03-25T23:19:49.254Z",
+      "summary": "database.types.ts, supabase.ts (browser), supabase-server.ts (admin). db:types script added. Build passes."
     },
     {
       "id": "T6",
       "action": "Vertical slice exemplar — 팀 등록 전체 흐름 구현: Google OAuth 로그인 → 팀 정보 입력 폼 → Supabase insert → 팀 페이지 → 가재 버튼(lobster_requested) → Realtime subscription으로 불빛 효과 수신. Admin Route Handler(/api/admin/lobster) 포함.",
       "type": "work",
-      "status": "pending",
+      "status": "done",
       "depends_on": [
         "T2",
         "T3",
@@ -84,7 +94,9 @@
       ],
       "fulfills": [
         "R1"
-      ]
+      ],
+      "completed_at": "2026-03-25T23:24:43.795Z",
+      "summary": "Full vertical slice: login, register, team/[id] with lobster+realtime, admin dashboard, /api/admin/lobster. Build+lint pass. No use server violations."
     },
     {
       "id": "T7",

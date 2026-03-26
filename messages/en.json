@@ -1,0 +1,90 @@
+{
+  "common": {
+    "ralphthon": "Ralphthon",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "myTeam": "My Team"
+  },
+  "login": {
+    "title": "Welcome to Ralphthon",
+    "subtitle": "Sign in to register your team and participate in the hackathon.",
+    "signInWithGoogle": "Sign in with Google",
+    "redirecting": "Redirecting..."
+  },
+  "register": {
+    "title": "Register Your Team",
+    "teamName": "Team Name",
+    "teamNamePlaceholder": "Enter your team name",
+    "region": "Region",
+    "projectDescription": "Project Description",
+    "projectDescPlaceholder": "Describe your project idea",
+    "teamMembers": "Team Members",
+    "memberEmail": "Member email",
+    "addMember": "Add Member",
+    "removeMember": "Remove",
+    "submitting": "Registering...",
+    "submitTeam": "Register Team"
+  },
+  "team": {
+    "teamInfo": "Team Info",
+    "submitSection": "Submit",
+    "teamName": "Team Name",
+    "region": "Region",
+    "projectDescription": "Project Description",
+    "submitGithub": "Submit GitHub Link",
+    "submitGithubPlaceholder": "https://github.com/your-team/project",
+    "submitGithubNote": "Please make sure your repository is set to public.",
+    "demoVideoUrl": "Demo Video URL",
+    "demoVideoPlaceholder": "https://youtube.com/... or https://loom.com/...",
+    "demoVideoUpload": "Upload Demo Video",
+    "demoVideo": "Demo Video",
+    "videoUploaded": "Video uploaded successfully",
+    "removeVideo": "Remove",
+    "uploading": "Uploading...",
+    "dragOrClick": "Click to upload your demo video",
+    "videoMaxLength": "Please keep your video under 1 minute.",
+    "teamMembers": "Team Members",
+    "leader": "Leader",
+    "member": "Member",
+    "edit": "Edit",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "requestLobster": "Request Lobster",
+    "lobsterRequested": "Lobster Requested!",
+    "saving": "Saving...",
+    "addMember": "Add Member",
+    "removeMember": "Remove",
+    "newMemberEmail": "New member email",
+    "editMembers": "Edit Members"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "allRegions": "All",
+    "korea": "Korea",
+    "usa": "USA",
+    "noTeams": "No teams found.",
+    "lobsterRequested": "Lobster Requested",
+    "confirmLobster": "Confirm",
+    "pendingConfirm": "Pending Confirmation",
+    "sendLobster": "Send Lobster!",
+    "lobsterActivated": "Sent",
+    "noLobsterYet": "No request",
+    "readyForNext": "Idle"
+  },
+  "adminLogin": {
+    "title": "Admin Login",
+    "subtitle": "Sign in with an admin account to continue.",
+    "signInWithGoogle": "Sign in with Google",
+    "checking": "Checking access...",
+    "notAdmin": "This account does not have admin access. Please try again with an admin email."
+  },
+  "lobster": {
+    "activated": "LOBSTER ACTIVATED!"
+  }
+}
