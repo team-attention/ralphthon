@@ -13,7 +13,7 @@ export default function AdminLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <nav className="flex items-center justify-between border-b px-6 py-3">
+      <nav id="admin-nav" className="flex items-center justify-between border-b px-6 py-3">
         <div className="flex items-center gap-4">
           <Link href="/" className="text-lg font-semibold">
             {t('ralphthon')} Admin

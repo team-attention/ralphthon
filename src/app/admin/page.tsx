@@ -24,7 +24,7 @@ import {
 
 type Team = Database['public']['Tables']['teams']['Row']
 type TeamMember = Database['public']['Tables']['team_members']['Row']
-type RegionFilter = 'ALL' | 'KR' | 'US'
+type RegionFilter = 'KR' | 'US'
 
 function ProjectDetailDialog({
   team,
@@ -179,40 +179,11 @@ function AdminTeamCard({
       }
     >
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            {team.name}
-            {isPendingLobster && (
-              <span
-                className="text-lg"
-                style={{ animation: 'lobsterPulse 1.5s ease-in-out infinite' }}
-              >
-                {'\u{1F99E}'}
-              </span>
-            )}
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            {team.lobster_count > 0 && (
-              <span className="text-sm" title={`${team.lobster_count} lobsters sent`}>
-                {Array.from({ length: Math.min(team.lobster_count, 5) }, (_, i) => (
-                  <span key={i}>{'\u{1F99E}'}</span>
-                ))}
-                {team.lobster_count > 5 && (
-                  <span className="ml-0.5 text-xs" style={{ color: '#8892b0' }}>
-                    +{team.lobster_count - 5}
-                  </span>
-                )}
-              </span>
-            )}
-            <Badge variant="outline">{team.region}</Badge>
-          </div>
-        </div>
-        <CardDescription>
-          {team.project_desc
-            ? team.project_desc.length > 100
-              ? `${team.project_desc.slice(0, 100)}...`
-              : team.project_desc
-            : 'No description'}
+        <CardTitle className="break-words">
+          {team.name}
+        </CardTitle>
+        <CardDescription className="line-clamp-2">
+          {team.project_desc || 'No description'}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -232,11 +203,11 @@ function AdminTeamCard({
               <span className="font-mono text-lg">{formatCountdown(countdown)}</span>
             </div>
           )}
-          {isPendingLobster && !isLobsterActive && (
+          {isPendingLobster && !isLobsterActive ? (
             <button
               disabled={isActivating}
               onClick={(e) => { e.stopPropagation(); onSendLobster(team.id) }}
-              className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-2 text-xs font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
               style={{
                 background: 'linear-gradient(135deg, #E63946 0%, #c62828 100%)',
                 color: '#ffffff',
@@ -254,11 +225,24 @@ function AdminTeamCard({
                 </>
               )}
             </button>
-          )}
-          {!isPendingLobster && !isLobsterActive && (
-            <span className="text-xs" style={{ color: '#8892b0' }}>
-              {team.lobster_count > 0 ? t('readyForNext') : t('noLobsterYet')}
-            </span>
+          ) : !isLobsterActive && (
+            <div className="flex items-center gap-2">
+              <Badge variant={team.github_url ? 'default' : 'outline'} className="text-xs">
+                {team.github_url ? 'Submitted' : 'Ralphing'}
+              </Badge>
+              {team.lobster_count > 0 && (
+                <span className="text-sm" title={`${team.lobster_count} lobsters sent`}>
+                  {Array.from({ length: Math.min(team.lobster_count, 5) }, (_, i) => (
+                    <span key={i}>{'\u{1F99E}'}</span>
+                  ))}
+                  {team.lobster_count > 5 && (
+                    <span className="ml-0.5 text-xs" style={{ color: '#8892b0' }}>
+                      +{team.lobster_count - 5}
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </CardContent>
@@ -266,40 +250,50 @@ function AdminTeamCard({
   )
 }
 
-// SF event: 2026-03-28 3:30 PM PDT (UTC-7) = 2026-03-28T22:30:00Z
+// SF ralphing ends: 2026-03-28 3:30 PM PDT (UTC-7) = 2026-03-28T22:30:00Z
 const SF_DEADLINE = new Date('2026-03-28T22:30:00Z')
+// Seoul ralphing ends: 2026-03-29 5:00 PM KST (UTC+9) = 2026-03-29T08:00:00Z
+const SEOUL_DEADLINE = new Date('2026-03-29T08:00:00Z')
 
-function useSFCountdown() {
-  const [remaining, setRemaining] = useState<number | null>(null)
+function useRegionCountdown(filter: RegionFilter) {
+  const [remaining, setRemaining] = useState<{ sf: number | null; seoul: number | null }>({ sf: null, seoul: null })
 
   useEffect(() => {
     function update() {
-      const diff = SF_DEADLINE.getTime() - Date.now()
-      setRemaining(diff > 0 ? diff : 0)
+      const sfDiff = SF_DEADLINE.getTime() - Date.now()
+      const seoulDiff = SEOUL_DEADLINE.getTime() - Date.now()
+      setRemaining({
+        sf: sfDiff > 0 ? sfDiff : 0,
+        seoul: seoulDiff > 0 ? seoulDiff : 0,
+      })
     }
     update()
     const id = setInterval(update, 1000)
     return () => clearInterval(id)
   }, [])
 
-  if (remaining === null) return null
-  if (remaining <= 0) return '00:00:00'
+  function fmt(ms: number | null): string | null {
+    if (ms === null) return null
+    if (ms <= 0) return '00:00:00'
+    const h = Math.floor(ms / 3_600_000)
+    const m = Math.floor((ms % 3_600_000) / 60_000)
+    const s = Math.floor((ms % 60_000) / 1_000)
+    const d = Math.floor(h / 24)
+    const hh = h % 24
+    if (d > 0) return `${d}d ${String(hh).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  }
 
-  const h = Math.floor(remaining / 3_600_000)
-  const m = Math.floor((remaining % 3_600_000) / 60_000)
-  const s = Math.floor((remaining % 60_000) / 1_000)
-  const d = Math.floor(h / 24)
-  const hh = h % 24
-
-  if (d > 0) return `${d}d ${String(hh).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return filter === 'US'
+    ? { label: 'SF 3:30 PM', value: fmt(remaining.sf) }
+    : { label: 'Seoul 5:00 PM', value: fmt(remaining.seoul) }
 }
 
 export default function DashboardPage() {
   const t = useTranslations('admin')
   const supabase = useMemo(() => createClient(), [])
   const [teams, setTeams] = useState<Team[]>([])
-  const [filter, setFilter] = useState<RegionFilter>('ALL')
+  const [filter, setFilter] = useState<RegionFilter>('US')
   const [loading, setLoading] = useState(true)
   const [authorized, setAuthorized] = useState(false)
   const [activatingId, setActivatingId] = useState<string | null>(null)
@@ -308,7 +302,7 @@ export default function DashboardPage() {
   const [selectedMembers, setSelectedMembers] = useState<TeamMember[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const sfCountdown = useSFCountdown()
+  const countdownEntry = useRegionCountdown(filter)
 
   useEffect(() => {
     async function checkAdminAndFetch() {
@@ -443,13 +437,11 @@ export default function DashboardPage() {
     []
   )
 
-  const filteredTeams =
-    filter === 'ALL' ? teams : teams.filter((tt) => tt.region === filter)
+  const filteredTeams = teams.filter((tt) => tt.region === filter)
 
   const regionLabels: Record<RegionFilter, string> = {
-    ALL: t('allRegions'),
-    KR: t('korea'),
-    US: t('usa'),
+    US: 'SF',
+    KR: 'Seoul',
   }
 
   const toggleFullscreen = useCallback(() => {
@@ -480,50 +472,50 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background p-6">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <div className="flex items-center gap-3">
-            {/* SF 3:30 PM countdown */}
-            {sfCountdown !== null && (
-              <div
-                className="flex items-center gap-2 rounded-lg px-3 py-1.5"
-                style={{
-                  background: sfCountdown === '00:00:00'
-                    ? 'rgba(230, 57, 70, 0.15)'
-                    : 'rgba(255, 217, 15, 0.1)',
-                  border: `1px solid ${sfCountdown === '00:00:00' ? 'rgba(230, 57, 70, 0.3)' : 'rgba(255, 217, 15, 0.2)'}`,
-                }}
-              >
-                <span className="text-xs" style={{ color: '#8892b0' }}>
-                  SF 3:30 PM
-                </span>
-                <span
-                  className="font-mono text-sm font-bold"
-                  style={{ color: sfCountdown === '00:00:00' ? '#E63946' : '#FFD90F' }}
+      <div className={isFullscreen ? '' : 'mx-auto max-w-[1800px]'}>
+        {/* Header - hidden in fullscreen */}
+        {!isFullscreen && (
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-3xl font-bold">Ralphers</h1>
+            <div className="flex items-center gap-3">
+              {/* Region countdown */}
+              {countdownEntry.value !== null && (
+                <div
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  style={{
+                    background: countdownEntry.value === '00:00:00'
+                      ? 'rgba(230, 57, 70, 0.15)'
+                      : 'rgba(255, 217, 15, 0.1)',
+                    border: `1px solid ${countdownEntry.value === '00:00:00' ? 'rgba(230, 57, 70, 0.3)' : 'rgba(255, 217, 15, 0.2)'}`,
+                  }}
                 >
-                  {sfCountdown}
-                </span>
-              </div>
-            )}
-            {/* Fullscreen toggle */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleFullscreen}
-              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-            >
-              {isFullscreen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                  <span className="text-xs" style={{ color: '#8892b0' }}>
+                    {countdownEntry.label}
+                  </span>
+                  <span
+                    className="font-mono text-sm font-bold"
+                    style={{ color: countdownEntry.value === '00:00:00' ? '#E63946' : '#FFD90F' }}
+                  >
+                    {countdownEntry.value}
+                  </span>
+                </div>
               )}
-            </Button>
+              {/* Fullscreen toggle */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleFullscreen}
+                title="Fullscreen"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="mb-6 flex gap-2">
-          {(['ALL', 'KR', 'US'] as const).map((r) => (
+        {/* Region tabs - always visible */}
+        <div className={`flex items-center gap-2 ${isFullscreen ? 'mb-4' : 'mb-6'}`}>
+          {(['US', 'KR'] as const).map((r) => (
             <Button
               key={r}
               variant={filter === r ? 'default' : 'outline'}
@@ -532,9 +524,43 @@ export default function DashboardPage() {
               {regionLabels[r]}
             </Button>
           ))}
+          {/* Countdown + fullscreen exit in fullscreen mode */}
+          {isFullscreen && (
+            <div className="ml-auto flex items-center gap-3">
+              {countdownEntry.value !== null && (
+                <div
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+                  style={{
+                    background: countdownEntry.value === '00:00:00'
+                      ? 'rgba(230, 57, 70, 0.15)'
+                      : 'rgba(255, 217, 15, 0.1)',
+                    border: `1px solid ${countdownEntry.value === '00:00:00' ? 'rgba(230, 57, 70, 0.3)' : 'rgba(255, 217, 15, 0.2)'}`,
+                  }}
+                >
+                  <span className="text-xs" style={{ color: '#8892b0' }}>
+                    {countdownEntry.label}
+                  </span>
+                  <span
+                    className="font-mono text-sm font-bold"
+                    style={{ color: countdownEntry.value === '00:00:00' ? '#E63946' : '#FFD90F' }}
+                  >
+                    {countdownEntry.value}
+                  </span>
+                </div>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleFullscreen}
+                title="Exit fullscreen"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              </Button>
+            </div>
+          )}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {filteredTeams.map((team) => (
             <AdminTeamCard
               key={team.id}
