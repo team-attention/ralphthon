@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
 import type { Database } from '@/lib/database.types'
 import { HackathonBg } from '@/components/hackathon-bg'
+import { FallingSponsorRails } from '@/components/falling-sponsor-rails'
 
 export default function RegisterPage() {
   const t = useTranslations('register')
@@ -141,7 +142,7 @@ export default function RegisterPage() {
   if (loading) {
     return (
       <div className="relative flex min-h-screen items-center justify-center">
-        <HackathonBg showQuotes={false} />
+        <HackathonBg showQuotes={false} showLobsters={false} />
         <div className="relative z-20 flex items-center gap-3">
           <span className="text-2xl" style={{ animation: 'lobsterPulse 1.5s ease-in-out infinite' }}>
             {'\u{1F99E}'}
@@ -154,7 +155,8 @@ export default function RegisterPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-4">
-      <HackathonBg showQuotes={false} />
+      <HackathonBg showQuotes={false} showLobsters={false} />
+      <FallingSponsorRails />
 
       <div
         className="relative z-20 w-full max-w-lg glass-card rounded-xl p-8"

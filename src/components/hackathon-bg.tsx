@@ -66,7 +66,13 @@ function RalphQuote() {
   )
 }
 
-export function HackathonBg({ showQuotes = false }: { showQuotes?: boolean }) {
+export function HackathonBg({
+  showQuotes = false,
+  showLobsters = true,
+}: {
+  showQuotes?: boolean
+  showLobsters?: boolean
+}) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -75,10 +81,15 @@ export function HackathonBg({ showQuotes = false }: { showQuotes?: boolean }) {
 
   const lobsters = [
     { offset: 0, duration: 17, left: 10, startY: 80 },
+    { offset: 3, duration: 20, left: 20, startY: 18 },
     { offset: 7, duration: 23, left: 30, startY: 55 },
+    { offset: 11, duration: 24, left: 42, startY: 72 },
     { offset: 13, duration: 19, left: 55, startY: 35 },
+    { offset: 5, duration: 22, left: 63, startY: 12 },
     { offset: 4, duration: 26, left: 75, startY: 70 },
+    { offset: 15, duration: 18, left: 84, startY: 28 },
     { offset: 10, duration: 21, left: 90, startY: 45 },
+    { offset: 8, duration: 25, left: 94, startY: 82 },
   ]
 
   return (
@@ -93,7 +104,7 @@ export function HackathonBg({ showQuotes = false }: { showQuotes?: boolean }) {
       <div className="scanline-overlay" />
 
       {/* Floating lobsters */}
-      {mounted && lobsters.map((props, i) => (
+      {showLobsters && mounted && lobsters.map((props, i) => (
         <FloatingLobster key={i} {...props} />
       ))}
 
