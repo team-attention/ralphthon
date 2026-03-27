@@ -37,7 +37,6 @@ export default function LoginPage() {
           .from('team_members')
           .select('team_id')
           .eq('email', user.email!)
-          .eq('role', 'member')
           .limit(1)
           .single()
 

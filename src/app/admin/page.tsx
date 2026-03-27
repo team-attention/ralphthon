@@ -440,6 +440,40 @@ export default function DashboardPage() {
 
   const filteredTeams = teams.filter((tt) => tt.region === filter)
 
+  const handleExportCsv = useCallback(async () => {
+    // Fetch member counts
+    const { data: members } = await supabase.from('team_members').select('team_id')
+    const countMap: Record<string, number> = {}
+    for (const m of members || []) {
+      countMap[m.team_id] = (countMap[m.team_id] || 0) + 1
+    }
+
+    const columns = ['id', 'name', 'region', 'leader_email', 'member_count', 'project_desc', 'github_url', 'demo_video_url', 'lobster_count'] as const
+    const escape = (v: unknown) => {
+      if (v === null || v === undefined) return ''
+      const s = String(v)
+      return (s.includes(',') || s.includes('"') || s.includes('\n')) ? `"${s.replace(/"/g, '""')}"` : s
+    }
+
+    const header = columns.join(',')
+    const rows = filteredTeams.map((team) =>
+      columns.map((col) => {
+        if (col === 'member_count') return escape(countMap[team.id] || 0)
+        return escape((team as Record<string, unknown>)[col])
+      }).join(',')
+    )
+
+    const bom = '\uFEFF'
+    const csv = bom + [header, ...rows].join('\n') + '\n'
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${filter.toLowerCase()}_teams.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [supabase, filteredTeams, filter])
+
   const regionLabels: Record<RegionFilter, string> = {
     US: 'SF',
     KR: 'Seoul',
@@ -478,7 +512,12 @@ export default function DashboardPage() {
         {/* Header - hidden in fullscreen */}
         {!isFullscreen && (
           <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-3xl font-bold">Ralphers</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold">Ralphers</h1>
+              <Button variant="outline" size="sm" onClick={handleExportCsv}>
+                Export CSV
+              </Button>
+            </div>
             <div className="flex items-center gap-3">
               {/* Region countdown */}
               {countdownEntry.value !== null && (
