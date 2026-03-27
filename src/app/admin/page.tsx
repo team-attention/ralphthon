@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase'
 import type { Database } from '@/lib/database.types'
 import { useLobsterCountdown, formatCountdown } from '@/lib/use-lobster-countdown'
+import { ActivityFeed } from '@/components/activity-feed'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -168,7 +169,7 @@ function AdminTeamCard({
 
   return (
     <Card
-      className="relative cursor-pointer overflow-hidden transition-shadow hover:shadow-md"
+      className="relative flex h-full cursor-pointer flex-col overflow-hidden transition-shadow hover:shadow-md"
       onClick={onClick}
       style={
         isBlinking && !isLobsterActive
@@ -186,7 +187,7 @@ function AdminTeamCard({
           {team.project_desc || 'No description'}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="mt-auto">
         <div className="flex flex-col gap-2">
           {isLobsterActive && (
             <div
@@ -226,10 +227,7 @@ function AdminTeamCard({
               )}
             </button>
           ) : !isLobsterActive && (
-            <div className="flex items-center gap-2">
-              <Badge variant={team.github_url ? 'default' : 'outline'} className="text-xs">
-                {team.github_url ? 'Submitted' : 'Ralphing'}
-              </Badge>
+            <div className="flex flex-col gap-1.5">
               {team.lobster_count > 0 && (
                 <span className="text-sm" title={`${team.lobster_count} lobsters sent`}>
                   {Array.from({ length: Math.min(team.lobster_count, 5) }, (_, i) => (
@@ -242,6 +240,9 @@ function AdminTeamCard({
                   )}
                 </span>
               )}
+              <Badge variant={team.github_url ? 'default' : 'outline'} className="w-fit text-xs">
+                {team.github_url ? 'Submitted' : 'Ralphing'}
+              </Badge>
             </div>
           )}
         </div>
@@ -471,8 +472,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className={isFullscreen ? '' : 'mx-auto max-w-[1800px]'}>
+    <div className="flex min-h-screen bg-background">
+      {/* Main content */}
+      <div className={`flex-1 min-w-0 p-6 ${isFullscreen ? '' : 'mx-auto max-w-[1600px]'}`}>
         {/* Header - hidden in fullscreen */}
         {!isFullscreen && (
           <div className="mb-6 flex items-center justify-between">
@@ -589,6 +591,17 @@ export default function DashboardPage() {
             }
           }}
         />
+      </div>
+
+      {/* Timeline - right edge, sticky full viewport height */}
+      <div
+        className="hidden w-60 shrink-0 lg:flex sticky top-0 h-screen flex-col border-l p-4 overflow-hidden"
+        style={{
+          borderColor: 'rgba(136, 146, 176, 0.1)',
+          background: 'rgba(136, 146, 176, 0.03)',
+        }}
+      >
+        <ActivityFeed supabase={supabase} regionFilter={filter} />
       </div>
     </div>
   )

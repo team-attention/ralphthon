@@ -65,8 +65,7 @@ export default function TeamPage() {
   const [lobsterActivatedAt, setLobsterActivatedAt] = useState<string | null>(null)
   const lobsterCountdown = useLobsterCountdown(lobsterActivatedAt)
   const isLobsterActive = lobsterCountdown > 0
-  const [uploading, setUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
+  const [videoUrlError, setVideoUrlError] = useState<string | null>(null)
 
   const fetchTeam = useCallback(async () => {
     const { data } = await supabase
@@ -152,64 +151,7 @@ export default function TeamPage() {
     setTeam((prev) => (prev ? { ...prev, lobster_requested: true } : prev))
   }
 
-  async function handleVideoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const maxSize = 100 * 1024 * 1024 // 100MB
-    if (file.size > maxSize) {
-      setUrlError('File size must be under 100MB')
-      return
-    }
-
-    const allowedTypes = ['video/mp4', 'video/webm', 'video/quicktime']
-    if (!allowedTypes.includes(file.type)) {
-      setUrlError('Only MP4, WebM, or MOV files are allowed')
-      return
-    }
-
-    setUploading(true)
-    setUploadProgress(0)
-    setUrlError(null)
-
-    const ext = file.name.split('.').pop()
-    const filePath = `${id}/${Date.now()}.${ext}`
-
-    // Simulate progress since supabase-js doesn't expose upload progress
-    const progressInterval = setInterval(() => {
-      setUploadProgress((prev) => Math.min(prev + 10, 90))
-    }, 300)
-
-    const { error } = await supabase.storage
-      .from('demo-videos')
-      .upload(filePath, file, { upsert: true })
-
-    clearInterval(progressInterval)
-
-    if (error) {
-      setUrlError(`Upload failed: ${error.message}`)
-      setUploading(false)
-      setUploadProgress(0)
-      return
-    }
-
-    const { data: urlData } = supabase.storage
-      .from('demo-videos')
-      .getPublicUrl(filePath)
-
-    setUploadProgress(100)
-    setDemoVideoUrl(urlData.publicUrl)
-
-    // Save to DB immediately
-    await supabase
-      .from('teams')
-      .update({ demo_video_url: urlData.publicUrl } as never)
-      .eq('id', id)
-
-    await fetchTeam()
-    setUploading(false)
-    setUploadProgress(0)
-  }
+  const [submitting, setSubmitting] = useState(false)
 
   async function handleSaveTeam() {
     await supabase
@@ -222,11 +164,17 @@ export default function TeamPage() {
   }
 
   async function handleSaveSubmission() {
-    if (githubUrl && !isValidHttpsUrl(githubUrl)) {
-      setUrlError('GitHub URL must start with https://')
-      return
-    }
-    setUrlError(null)
+    const githubMissing = !githubUrl
+    const videoMissing = !demoVideoUrl
+    const githubInvalid = githubUrl && !isValidHttpsUrl(githubUrl)
+    const videoInvalid = demoVideoUrl && !isValidHttpsUrl(demoVideoUrl)
+
+    setUrlError(githubMissing ? t('submitGithubRequired') : githubInvalid ? t('submitGithubNote') : null)
+    setVideoUrlError(videoMissing ? t('videoUrlRequired') : videoInvalid ? t('videoUrlInvalid') : null)
+
+    if (githubMissing || videoMissing || githubInvalid || videoInvalid) return
+
+    setSubmitting(true)
 
     await supabase
       .from('teams')
@@ -237,6 +185,7 @@ export default function TeamPage() {
       .eq('id', id)
 
     await fetchTeam()
+    setSubmitting(false)
   }
 
   async function handleAddMember() {
@@ -386,6 +335,7 @@ export default function TeamPage() {
                     id="editTeamName"
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
+                    maxLength={20}
                     className="h-10 w-full rounded-lg border bg-transparent px-3 font-display text-xl tracking-wider"
                     style={{ borderColor: 'rgba(255, 217, 15, 0.2)', color: '#FFD90F' }}
                   />
@@ -563,15 +513,18 @@ export default function TeamPage() {
                   <>
                     <input
                       value={githubUrl}
-                      onChange={(e) => setGithubUrl(e.target.value)}
-                      onBlur={handleSaveSubmission}
+                      onChange={(e) => { setGithubUrl(e.target.value); setUrlError(null) }}
                       placeholder={t('submitGithubPlaceholder')}
                       className="h-10 w-full rounded-lg border bg-transparent px-3 text-sm"
-                      style={{ borderColor: 'rgba(255, 217, 15, 0.2)', color: '#e2e8f0' }}
+                      style={{ borderColor: urlError ? 'rgba(230, 57, 70, 0.5)' : 'rgba(255, 217, 15, 0.2)', color: '#e2e8f0' }}
                     />
-                    <p className="text-xs" style={{ color: '#E63946' }}>
-                      {'\u26A0\uFE0F'} {t('submitGithubNote')}
-                    </p>
+                    {urlError ? (
+                      <p className="text-xs" style={{ color: '#E63946' }}>{urlError}</p>
+                    ) : (
+                      <p className="text-xs" style={{ color: '#E63946' }}>
+                        {'\u26A0\uFE0F'} {t('submitGithubNote')}
+                      </p>
+                    )}
                   </>
                 ) : (
                   team.github_url ? (
@@ -588,96 +541,37 @@ export default function TeamPage() {
                 </p>
                 {isTeamMember ? (
                   <>
-                    {demoVideoUrl ? (
-                      <div className="flex flex-col gap-2">
-                        {demoVideoUrl.includes('supabase') ? (
-                          <video
-                            src={demoVideoUrl}
-                            controls
-                            className="w-full rounded-lg"
-                            style={{ border: '1px solid rgba(255, 217, 15, 0.15)', maxHeight: '300px' }}
-                          />
-                        ) : (
-                          <SafeLink href={demoVideoUrl}>{demoVideoUrl}</SafeLink>
-                        )}
-                        <button
-                          type="button"
-                          onClick={async () => {
-                            setDemoVideoUrl('')
-                            await supabase
-                              .from('teams')
-                              .update({ demo_video_url: null } as never)
-                              .eq('id', id)
-                            await fetchTeam()
-                          }}
-                          className="w-fit text-xs"
-                          style={{ color: '#E63946' }}
-                        >
-                          {t('removeVideo')}
-                        </button>
-                      </div>
-                    ) : (
-                      <label
-                        htmlFor="demoVideoUpload"
-                        className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-dashed px-4 py-6 text-center transition-all duration-200 hover:border-yellow/40"
-                        style={{
-                          borderColor: uploading ? 'rgba(255, 217, 15, 0.4)' : 'rgba(255, 217, 15, 0.2)',
-                          background: uploading ? 'rgba(255, 217, 15, 0.05)' : 'transparent',
-                        }}
-                      >
-                        {uploading ? (
-                          <>
-                            <span className="text-2xl" style={{ animation: 'lobsterPulse 1s ease-in-out infinite' }}>
-                              {'\u{1F4F9}'}
-                            </span>
-                            <span className="text-sm" style={{ color: '#FFD90F' }}>
-                              {t('uploading')} {uploadProgress}%
-                            </span>
-                            <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full" style={{ background: 'rgba(255, 217, 15, 0.15)' }}>
-                              <div
-                                className="h-full rounded-full transition-all duration-300"
-                                style={{ width: `${uploadProgress}%`, background: '#FFD90F' }}
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <span className="text-2xl">{'\u{1F4F9}'}</span>
-                            <span className="text-sm" style={{ color: '#8892b0' }}>{t('dragOrClick')}</span>
-                            <span className="text-xs" style={{ color: '#8892b0' }}>MP4, WebM, MOV (max 100MB)</span>
-                            <span className="text-xs" style={{ color: '#E63946' }}>{'\u23F1\uFE0F'} {t('videoMaxLength')}</span>
-                          </>
-                        )}
-                      </label>
-                    )}
                     <input
-                      id="demoVideoUpload"
-                      type="file"
-                      accept="video/mp4,video/webm,video/quicktime"
-                      onChange={handleVideoUpload}
-                      disabled={uploading}
-                      className="hidden"
+                      value={demoVideoUrl}
+                      onChange={(e) => { setDemoVideoUrl(e.target.value); setVideoUrlError(null) }}
+                      placeholder={t('demoVideoPlaceholder')}
+                      className="h-10 w-full rounded-lg border bg-transparent px-3 text-sm"
+                      style={{ borderColor: videoUrlError ? 'rgba(230, 57, 70, 0.5)' : 'rgba(255, 217, 15, 0.2)', color: '#e2e8f0' }}
                     />
+                    {videoUrlError && (
+                      <p className="text-xs" style={{ color: '#E63946' }}>{videoUrlError}</p>
+                    )}
+                    <p className="text-xs" style={{ color: '#8892b0' }}>
+                      {t('demoVideoHint')}
+                    </p>
                   </>
                 ) : (
                   team.demo_video_url ? (
-                    team.demo_video_url.includes('supabase') ? (
-                      <video
-                        src={team.demo_video_url}
-                        controls
-                        className="w-full rounded-lg"
-                        style={{ border: '1px solid rgba(255, 217, 15, 0.15)', maxHeight: '300px' }}
-                      />
-                    ) : (
-                      <SafeLink href={team.demo_video_url}>{team.demo_video_url}</SafeLink>
-                    )
+                    <SafeLink href={team.demo_video_url}>{team.demo_video_url}</SafeLink>
                   ) : (
                     <p className="text-sm" style={{ color: '#8892b0' }}>—</p>
                   )
                 )}
               </div>
-              {urlError && (
-                <p className="text-sm" style={{ color: '#E63946' }}>{urlError}</p>
+              {isTeamMember && (
+                <button
+                  onClick={handleSaveSubmission}
+                  disabled={submitting}
+                  className="w-full rounded-lg px-5 py-3 font-display text-lg tracking-wider transition-all duration-200 hover:scale-[1.02] disabled:opacity-50"
+                  style={{ background: '#E63946', color: '#ffffff' }}
+                >
+                  {submitting ? tc('loading') : t('submitButton')}
+                </button>
               )}
             </div>
           </div>

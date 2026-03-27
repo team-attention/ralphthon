@@ -56,6 +56,29 @@ export interface Database {
           created_at?: string
         }
       }
+      lobster_events: {
+        Row: {
+          id: string
+          team_id: string
+          team_name: string
+          region: 'KR' | 'US'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          team_id: string
+          team_name: string
+          region: 'KR' | 'US'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          team_id?: string
+          team_name?: string
+          region?: 'KR' | 'US'
+          created_at?: string
+        }
+      }
       team_members: {
         Row: {
           id: string

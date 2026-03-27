@@ -180,6 +180,7 @@ export default function RegisterPage() {
               id="teamName"
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
+              maxLength={20}
               placeholder={t('teamNamePlaceholder')}
               required
               className="h-10 w-full rounded-lg border bg-transparent px-3 text-sm transition-all"

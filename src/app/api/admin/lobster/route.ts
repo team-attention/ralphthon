@@ -63,5 +63,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  // Log the event for the timeline
+  const { data: team } = await admin.from('teams').select('name, region').eq('id', teamId).single()
+  if (team) {
+    const { error: eventError } = await admin.from('lobster_events').insert({
+      team_id: teamId,
+      team_name: team.name,
+      region: team.region,
+    })
+    if (eventError) {
+      console.error('[lobster] Failed to log timeline event:', eventError.message)
+    }
+  }
+
   return NextResponse.json({ success: true })
 }

@@ -66,7 +66,7 @@ function RalphQuote() {
   )
 }
 
-export function HackathonBg({ showQuotes = true }: { showQuotes?: boolean }) {
+export function HackathonBg({ showQuotes = false }: { showQuotes?: boolean }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
