@@ -70,19 +70,75 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-4">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-0">
       <HackathonBg />
 
       <div className="relative z-20 flex flex-col items-center gap-3 text-center">
-        {/* Ralph + Lobster */}
-        <img
-          src="/ralphthon.png"
-          alt="Ralphthon"
-          className="-mb-4 h-56 w-56 sm:-mb-6 sm:h-72 sm:w-72"
-          style={{
-            animation: mounted ? 'float 4s ease-in-out infinite, fadeInUp 0.5s ease-out' : undefined,
-          }}
-        />
+        {/* Ralph + Sponsors */}
+        <div className="relative flex items-center justify-center gap-4 sm:gap-8">
+          {/* Left sponsors */}
+          <div className="hidden sm:flex flex-col items-center gap-8">
+            {[
+              { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', h: 'h-12' },
+              { src: '/d2sf-2.png', alt: 'D2SF', delay: '-1.5s', duration: '4.5s', h: 'h-40' },
+              { src: '/hp-3.png', alt: 'HP', delay: '-3s', duration: '5.5s', h: 'h-24' },
+            ].map((s) => (
+              <img
+                key={s.src}
+                src={s.src}
+                alt={s.alt}
+                className={`${s.h} w-auto opacity-70 hover:opacity-100 transition-opacity duration-300`}
+                style={{
+                  animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
+                  filter: 'brightness(0.8)',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Ralph */}
+          <img
+            src="/ralphthon.png"
+            alt="Ralphthon"
+            className="-mb-4 h-56 w-56 sm:-mb-6 sm:h-72 sm:w-72"
+            style={{
+              animation: mounted ? 'float 4s ease-in-out infinite, fadeInUp 0.5s ease-out' : undefined,
+            }}
+          />
+
+          {/* Right sponsors */}
+          <div className="hidden -translate-y-10 sm:flex flex-col items-center gap-8">
+            {[
+              { src: '/kv-4.png', alt: 'KV', delay: '-2s', duration: '4.8s', h: 'h-32' },
+              { src: '/bass-5.png', alt: 'Bass', delay: '-0.5s', duration: '5.2s', h: 'h-32' },
+              { src: '/wb-6.svg', alt: 'WB', delay: '-3.5s', duration: '4.3s', h: 'h-[2.625rem]' },
+            ].map((s) => (
+              <img
+                key={s.src}
+                src={s.src}
+                alt={s.alt}
+                className={`${s.h} w-auto opacity-70 hover:opacity-100 transition-opacity duration-300`}
+                style={{
+                  animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
+                  filter: 'brightness(0.8)',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile sponsors (horizontal scroll) */}
+        <div className="flex sm:hidden flex-wrap items-center justify-center gap-4 -mt-2">
+          {['/openai-1.png', '/d2sf-2.png', '/hp-3.png', '/kv-4.png', '/bass-5.png', '/wb-6.svg'].map((src) => (
+            <img
+              key={src}
+              src={src}
+              alt="Sponsor"
+              className="h-7 w-auto opacity-60"
+              style={{ filter: 'brightness(0.8)' }}
+            />
+          ))}
+        </div>
 
         {/* Title */}
         <h1
@@ -169,6 +225,7 @@ export default function LoginPage() {
             }}
           />
         </div>
+
       </div>
     </div>
   )
