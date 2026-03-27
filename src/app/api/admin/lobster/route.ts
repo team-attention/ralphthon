@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       team_id: teamId,
       team_name: team.name,
       region: team.region,
-    })
+    } as never)
     if (eventError) {
       console.error('[lobster] Failed to log timeline event:', eventError.message)
     }
