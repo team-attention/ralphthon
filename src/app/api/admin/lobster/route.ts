@@ -64,9 +64,9 @@ export async function POST(request: NextRequest) {
   }
 
   // Log the event for the timeline
-  const { data: team } = await admin.from('teams').select('name, region').eq('id', teamId).single()
+  const { data: team } = await admin.from('teams').select('name, region').eq('id', teamId).single() as { data: { name: string; region: string } | null }
   if (team) {
-    const { error: eventError } = await admin.from('lobster_events').insert({
+    const { error: eventError } = await admin.from('lobster_events' as never).insert({
       team_id: teamId,
       team_name: team.name,
       region: team.region,
