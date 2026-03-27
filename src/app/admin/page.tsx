@@ -444,7 +444,7 @@ export default function DashboardPage() {
     // Fetch member counts
     const { data: members } = await supabase.from('team_members').select('team_id')
     const countMap: Record<string, number> = {}
-    for (const m of members || []) {
+    for (const m of (members ?? []) as { team_id: string }[]) {
       countMap[m.team_id] = (countMap[m.team_id] || 0) + 1
     }
 
