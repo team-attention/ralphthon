@@ -10,6 +10,7 @@ export function useLobsterCountdown(lobsterActivatedAt: string | null): number {
   const [remaining, setRemaining] = useState(() => calcRemaining(lobsterActivatedAt))
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRemaining(calcRemaining(lobsterActivatedAt))
 
     if (!lobsterActivatedAt) return

@@ -54,7 +54,6 @@ export function Guide() {
   const prizeItems = ['prize1', 'prize2', 'prize3'] as const
   const speakerItems = ['speaker1', 'speaker2', 'speaker3', 'speaker4'] as const
   const judgeItems = ['judge1', 'judge2', 'judge3', 'judge4', 'judge5', 'judge6', 'judge7', 'judge8'] as const
-  const resItems = ['res1', 'res2', 'res3'] as const
 
   return (
     <div className="flex flex-col gap-6">
