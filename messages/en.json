@@ -50,6 +50,7 @@
     "videoUrlRequired": "Please enter a demo video link.",
     "submitGithubRequired": "Please enter a GitHub link.",
     "submitButton": "Submit",
+    "submitSuccess": "Submitted successfully!",
     "teamMembers": "Team Members",
     "leader": "Leader",
     "member": "Member",

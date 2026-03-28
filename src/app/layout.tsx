@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bangers, JetBrains_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
+import { Toaster } from 'sonner'
 import "./globals.css";
 
 const bangers = Bangers({
@@ -36,6 +37,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
           {children}
+          <Toaster theme="dark" position="top-center" />
         </NextIntlClientProvider>
       </body>
     </html>

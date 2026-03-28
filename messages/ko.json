@@ -48,6 +48,7 @@
     "videoUrlRequired": "데모 영상 링크를 입력해주세요.",
     "submitGithubRequired": "GitHub 링크를 입력해주세요.",
     "submitButton": "제출하기",
+    "submitSuccess": "제출이 완료되었습니다!",
     "teamMembers": "팀원",
     "leader": "리더",
     "member": "멤버",

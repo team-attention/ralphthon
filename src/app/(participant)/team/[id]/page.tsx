@@ -9,6 +9,7 @@ import { LobsterEffect } from '@/components/lobster-effect'
 import { HackathonBg } from '@/components/hackathon-bg'
 import { FallingSponsorRails } from '@/components/falling-sponsor-rails'
 import { useLobsterCountdown, formatCountdown } from '@/lib/use-lobster-countdown'
+import { toast } from 'sonner'
 
 type Team = Database['public']['Tables']['teams']['Row']
 type TeamMember = Database['public']['Tables']['team_members']['Row']
@@ -166,14 +167,13 @@ export default function TeamPage() {
 
   async function handleSaveSubmission() {
     const githubMissing = !githubUrl
-    const videoMissing = !demoVideoUrl
     const githubInvalid = githubUrl && !isValidHttpsUrl(githubUrl)
     const videoInvalid = demoVideoUrl && !isValidHttpsUrl(demoVideoUrl)
 
     setUrlError(githubMissing ? t('submitGithubRequired') : githubInvalid ? t('submitGithubNote') : null)
-    setVideoUrlError(videoMissing ? t('videoUrlRequired') : videoInvalid ? t('videoUrlInvalid') : null)
+    setVideoUrlError(videoInvalid ? t('videoUrlInvalid') : null)
 
-    if (githubMissing || videoMissing || githubInvalid || videoInvalid) return
+    if (githubMissing || githubInvalid || videoInvalid) return
 
     setSubmitting(true)
 
@@ -187,6 +187,7 @@ export default function TeamPage() {
 
     await fetchTeam()
     setSubmitting(false)
+    toast.success(t('submitSuccess'))
   }
 
   async function handleAddMember() {
