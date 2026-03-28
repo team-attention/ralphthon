@@ -26,6 +26,16 @@ import {
 type Team = Database['public']['Tables']['teams']['Row']
 type TeamMember = Database['public']['Tables']['team_members']['Row']
 type RegionFilter = 'KR' | 'US'
+type TeamFilter = 'all' | 'lobster' | 'unsubmitted'
+
+const LOBSTER_DURATION_MS = 10 * 60 * 1000 // 10 minutes
+
+function getLobsterRemaining(lobsterActivatedAt: string | null): number {
+  if (!lobsterActivatedAt) return 0
+  const elapsed = Date.now() - new Date(lobsterActivatedAt).getTime()
+  const remaining = LOBSTER_DURATION_MS - elapsed
+  return remaining > 0 ? remaining : 0
+}
 
 function ProjectDetailDialog({
   team,
@@ -295,6 +305,7 @@ export default function DashboardPage() {
   const supabase = useMemo(() => createClient(), [])
   const [teams, setTeams] = useState<Team[]>([])
   const [filter, setFilter] = useState<RegionFilter>('US')
+  const [teamFilter, setTeamFilter] = useState<TeamFilter>('all')
   const [loading, setLoading] = useState(true)
   const [authorized, setAuthorized] = useState(false)
   const [activatingId, setActivatingId] = useState<string | null>(null)
@@ -438,7 +449,49 @@ export default function DashboardPage() {
     []
   )
 
-  const filteredTeams = teams.filter((tt) => tt.region === filter)
+  const filteredTeams = useMemo(() => {
+    // Step 1: Filter by region
+    let result = teams.filter((tt) => tt.region === filter)
+
+    // Step 2: Filter by team filter
+    if (teamFilter === 'lobster') {
+      result = result.filter((tt) => {
+        const remaining = getLobsterRemaining(tt.lobster_activated_at)
+        return tt.lobster_requested || remaining > 0
+      })
+    } else if (teamFilter === 'unsubmitted') {
+      result = result.filter((tt) => !tt.github_url && !tt.demo_video_url)
+    }
+
+    // Step 3: Sort — lobster_requested first, then lobster_active (countdown ASC), then rest (created_at DESC)
+    result.sort((a, b) => {
+      const aRemaining = getLobsterRemaining(a.lobster_activated_at)
+      const bRemaining = getLobsterRemaining(b.lobster_activated_at)
+      const aRequested = a.lobster_requested && aRemaining === 0
+      const bRequested = b.lobster_requested && bRemaining === 0
+      const aActive = aRemaining > 0
+      const bActive = bRemaining > 0
+
+      // Priority 1: lobster_requested (pending, not active)
+      if (aRequested && !bRequested) return -1
+      if (!aRequested && bRequested) return 1
+      if (aRequested && bRequested) {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      }
+
+      // Priority 2: lobster_active (countdown > 0), sorted by countdown ASC
+      if (aActive && !bActive) return -1
+      if (!aActive && bActive) return 1
+      if (aActive && bActive) {
+        return aRemaining - bRemaining
+      }
+
+      // Priority 3: rest by created_at DESC
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
+
+    return result
+  }, [teams, filter, teamFilter])
 
   const handleExportCsv = useCallback(async () => {
     // Fetch member counts
@@ -563,6 +616,17 @@ export default function DashboardPage() {
               onClick={() => setFilter(r)}
             >
               {regionLabels[r]}
+            </Button>
+          ))}
+          <div className="mx-1 h-6 w-px bg-border" />
+          {(['all', 'lobster', 'unsubmitted'] as const).map((f) => (
+            <Button
+              key={f}
+              variant={teamFilter === f ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTeamFilter(f)}
+            >
+              {f === 'all' ? 'All' : f === 'lobster' ? '\u{1F99E} Lobster' : 'Unsubmitted'}
             </Button>
           ))}
           {/* Countdown + fullscreen exit in fullscreen mode */}
