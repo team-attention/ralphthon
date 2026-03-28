@@ -98,7 +98,10 @@ function SuccessBanner() {
 
 function ScrollHint() {
   return (
-    <div className="mt-12 flex flex-col items-center gap-2 opacity-50 transition-opacity hover:opacity-80">
+    <button
+      onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+      className="mt-12 flex cursor-pointer flex-col items-center gap-2 opacity-50 transition-opacity hover:opacity-80"
+    >
       <p className="text-xs tracking-widest uppercase" style={{ color: '#8892b0' }}>
         Learn more about us
       </p>
@@ -117,7 +120,7 @@ function ScrollHint() {
           strokeLinejoin="round"
         />
       </svg>
-    </div>
+    </button>
   )
 }
 
@@ -162,7 +165,7 @@ export default function SupportPage() {
       {/* ── Detail sections ── */}
       <div className="mx-auto max-w-3xl px-6 pb-24">
         {/* Who we are */}
-        <section className="mb-20">
+        <section id="about" className="mb-20 scroll-mt-20">
           <h2
             className="mb-4 font-display text-2xl tracking-wider"
             style={{ color: '#FFD90F' }}
@@ -170,7 +173,15 @@ export default function SupportPage() {
             Who we are
           </h2>
           <p className="leading-relaxed" style={{ color: '#ccd6f6' }}>
-            OR is a Seoul-based network building bridges between AI builders
+            <a
+              href="https://team-attention.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#64ffda', textDecoration: 'underline', textUnderlineOffset: '3px' }}
+            >
+              Team Attention
+            </a>{' '}
+            is a Seoul-based network building bridges between AI builders
             across the globe. We bring people together to push what&apos;s possible
             with AI, share what they&apos;re working on, and learn from each other.
           </p>
