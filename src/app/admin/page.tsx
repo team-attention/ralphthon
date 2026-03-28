@@ -385,11 +385,19 @@ export default function DashboardPage() {
             prev.map((tt) => (tt.id === newRow.id ? newRow : tt))
           )
 
-          // If lobster_requested just became true, add to blinking set
-          if (newRow.lobster_requested && !oldRow.lobster_requested) {
+          // Sync blinking set with lobster_requested state
+          if (newRow.lobster_requested) {
             setBlinkingTeams((prev) => {
+              if (prev.has(newRow.id)) return prev
               const next = new Set(prev)
               next.add(newRow.id)
+              return next
+            })
+          } else {
+            setBlinkingTeams((prev) => {
+              if (!prev.has(newRow.id)) return prev
+              const next = new Set(prev)
+              next.delete(newRow.id)
               return next
             })
           }
