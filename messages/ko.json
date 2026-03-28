@@ -276,6 +276,13 @@
     "creditFormUrl": "https://forms.gle/PooSdcf9kTSuzS3d6",
     "creditFormNote": "$100 API 크레딧을 받으려면 9:50 AM까지 폼을 제출하세요:",
 
+    "eventInfoTitle": "행사 안내",
+    "eiDate": "2026-03-28 (토)",
+    "eiVenue": "W&B Office — 400 Alabama St, San Francisco, CA 94110, 2F",
+    "eiLuma": "luma.com/kxoq82yq",
+    "eiCrossCity": "Ralphthon Seoul #2 (3/29, 서울) — 크로스시티 스피커 세션",
+    "eiDiscord": "Discord 참여",
+
     "speakers": "스피커 (5:30 PM)",
     "speakersNote": "SF와 서울 Google Meet으로 동시 연결. 10분 토크, 주제 자유.",
     "speaker1": "Geoffrey Huntley|Ralph Loop 창시자",

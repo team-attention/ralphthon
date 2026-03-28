@@ -13,6 +13,43 @@ import { EventInfo, TimelineSchedule } from '@/components/timeline'
 
 type City = 'SF' | 'Seoul'
 
+function GuideEventInfo() {
+  const t = useTranslations('guide')
+  const rows = [
+    { label: 'Date', value: t('eiDate') },
+    { label: 'Venue', value: t('eiVenue') },
+    { label: 'Luma', value: t('eiLuma'), isLink: true, href: 'https://luma.com/kxoq82yq' },
+    { label: 'Cross-city', value: t('eiCrossCity') },
+    { label: 'Discord', value: t('eiDiscord'), isLink: true, href: t('discordLink') },
+    { label: 'Credits', value: t('creditFormNote'), isLink: true, href: t('creditFormUrl') },
+  ]
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle>{t('eventInfoTitle')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col gap-3">
+          {rows.map((row) => (
+            <div key={row.label} className="flex flex-col gap-0.5 sm:flex-row sm:gap-4">
+              <span className="min-w-[90px] shrink-0 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
+                {row.label}
+              </span>
+              {row.isLink ? (
+                <a href={row.href} target="_blank" rel="noopener noreferrer" className="text-sm underline underline-offset-2" style={{ color: '#64ffda' }}>
+                  {row.value}
+                </a>
+              ) : (
+                <span className="text-sm font-medium">{row.value}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Card>
@@ -62,7 +99,7 @@ export function Guide() {
         <Button variant={city === 'SF' ? 'default' : 'outline'} onClick={() => setCity('SF')} size="sm">SF</Button>
         <Button variant={city === 'Seoul' ? 'default' : 'outline'} onClick={() => setCity('Seoul')} size="sm">Seoul</Button>
       </div>
-      <EventInfo city={city} />
+      {city === 'SF' ? <GuideEventInfo /> : <EventInfo city={city} />}
       <TimelineSchedule city={city} />
 
       {city === 'SF' && <>

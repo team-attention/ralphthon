@@ -278,6 +278,13 @@
     "creditFormUrl": "https://forms.gle/PooSdcf9kTSuzS3d6",
     "creditFormNote": "To claim your $100 API credits, submit the form by 9:50 AM:",
 
+    "eventInfoTitle": "Event Info",
+    "eiDate": "2026-03-28 (Sat)",
+    "eiVenue": "W&B Office — 400 Alabama St, San Francisco, CA 94110, 2F",
+    "eiLuma": "luma.com/kxoq82yq",
+    "eiCrossCity": "Ralphthon Seoul #2 (3/29, Seoul) — Cross-city speaker session",
+    "eiDiscord": "Join Discord",
+
     "speakers": "Speakers (5:30 PM)",
     "speakersNote": "SF and Seoul connected simultaneously via Google Meet. 10-minute talks, topic free.",
     "speaker1": "Geoffrey Huntley|Creator of Ralph Loop",
