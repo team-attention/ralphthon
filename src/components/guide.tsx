@@ -157,7 +157,8 @@ export function Guide() {
           </div>
           <div>
             <p className="text-sm font-bold">{t('wifiLabel')}</p>
-            <p className="text-sm" style={{ color: '#8892b0' }}>{t('wifiNote')}</p>
+            <p className="text-sm" style={{ color: '#8892b0' }}>Network: <code style={{ color: 'var(--accent, #FFD90F)', background: '#1a1a2e', padding: '0.1rem 0.4rem', borderRadius: '3px' }}>{t('wifiNetwork')}</code></p>
+            <p className="text-sm" style={{ color: '#8892b0' }}>Password: <code style={{ color: 'var(--accent, #FFD90F)', background: '#1a1a2e', padding: '0.1rem 0.4rem', borderRadius: '3px' }}>{t('wifiPassword')}</code></p>
           </div>
         </div>
       </Section>

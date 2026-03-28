@@ -215,7 +215,8 @@
     "venueNote1": "엘리베이터로 2층에 올라오세요",
     "venueNote2": "주차 공간이 매우 제한적입니다 — 라이드셰어 또는 대중교통 이용 권장",
     "wifiLabel": "Wi-Fi",
-    "wifiNote": "Wi-Fi 정보는 현장에서 안내됩니다",
+    "wifiNetwork": "W&B Guest",
+    "wifiPassword": "Gumption",
 
     "discord": "커뮤니티 연결",
     "discordIntro": "Ralphthon Discord에서 팀 구성, 공지, Q&A를 확인하세요:",
