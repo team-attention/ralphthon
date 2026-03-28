@@ -153,6 +153,15 @@ export default function TeamPage() {
     setTeam((prev) => (prev ? { ...prev, lobster_requested: true } : prev))
   }
 
+  async function handleCancelLobsterRequest() {
+    await supabase
+      .from('teams')
+      .update({ lobster_requested: false } as never)
+      .eq('id', id)
+
+    setTeam((prev) => (prev ? { ...prev, lobster_requested: false } : prev))
+  }
+
   const [submitting, setSubmitting] = useState(false)
 
   async function handleSaveTeam() {
@@ -288,10 +297,11 @@ export default function TeamPage() {
                 {formatCountdown(lobsterCountdown)}
               </span>
             )}
-            {/* Requested badge */}
+            {/* Requested — click to cancel */}
             {!isLobsterActive && team.lobster_requested && (
-              <span
-                className="rounded-full px-3 py-1 text-xs font-medium"
+              <button
+                onClick={handleCancelLobsterRequest}
+                className="group flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
                 style={{
                   background: 'rgba(255, 217, 15, 0.15)',
                   color: '#FFD90F',
@@ -299,7 +309,13 @@ export default function TeamPage() {
                 }}
               >
                 {'\u{1F99E}'} {t('lobsterRequested')}
-              </span>
+                <span
+                  className="ml-1 text-[10px] opacity-0 transition-opacity group-hover:opacity-100"
+                  style={{ color: '#8892b0' }}
+                >
+                  {tc('cancel')}
+                </span>
+              </button>
             )}
             {/* Request Button */}
             {!team.lobster_requested && !isLobsterActive && (
