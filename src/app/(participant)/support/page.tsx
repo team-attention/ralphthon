@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const TIERS = [
-  { label: '$10', tier: 's1' },
-  { label: '$20', tier: 's2' },
   { label: '$30', tier: 's3' },
   { label: 'Pay what you want', tier: 's4' },
 ] as const
