@@ -189,19 +189,19 @@ function AdminTeamCard({
             : undefined
       }
     >
-      <CardHeader className="pb-3">
-        <CardTitle className="break-words">
+      <CardHeader className="p-3 pb-1.5">
+        <CardTitle className="break-words text-sm leading-tight">
           {team.name}
         </CardTitle>
-        <CardDescription className="line-clamp-2">
+        <CardDescription className="line-clamp-1 text-xs">
           {team.project_desc || 'No description'}
         </CardDescription>
       </CardHeader>
-      <CardContent className="mt-auto">
-        <div className="flex flex-col gap-2">
+      <CardContent className="mt-auto p-3 pt-0">
+        <div className="flex flex-col gap-1.5">
           {isLobsterActive && (
             <div
-              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-bold"
+              className="flex items-center justify-center gap-1.5 rounded px-2 py-1.5 text-xs font-bold"
               style={{
                 background: 'rgba(230, 57, 70, 0.15)',
                 border: '1px solid rgba(230, 57, 70, 0.3)',
@@ -211,14 +211,14 @@ function AdminTeamCard({
               <span style={{ animation: 'lobsterPulse 1.5s ease-in-out infinite' }}>
                 {'\u{1F99E}'}
               </span>
-              <span className="font-mono text-lg">{formatCountdown(countdown)}</span>
+              <span className="font-mono text-sm">{formatCountdown(countdown)}</span>
             </div>
           )}
           {isPendingLobster && !isLobsterActive ? (
             <button
               disabled={isActivating}
               onClick={(e) => { e.stopPropagation(); onSendLobster(team.id) }}
-              className="flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-2 text-xs font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-1 whitespace-nowrap rounded px-2 py-1.5 text-[11px] font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
               style={{
                 background: 'linear-gradient(135deg, #E63946 0%, #c62828 100%)',
                 color: '#ffffff',
@@ -231,26 +231,26 @@ function AdminTeamCard({
                 </span>
               ) : (
                 <>
-                  <span className="text-lg">{'\u{1F99E}'}</span>
+                  <span>{'\u{1F99E}'}</span>
                   {t('sendLobster')}
                 </>
               )}
             </button>
           ) : !isLobsterActive && (
-            <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-1.5">
               {team.lobster_count > 0 && (
-                <span className="text-sm" title={`${team.lobster_count} lobsters sent`}>
-                  {Array.from({ length: Math.min(team.lobster_count, 5) }, (_, i) => (
+                <span className="text-xs" title={`${team.lobster_count} lobsters sent`}>
+                  {Array.from({ length: Math.min(team.lobster_count, 3) }, (_, i) => (
                     <span key={i}>{'\u{1F99E}'}</span>
                   ))}
-                  {team.lobster_count > 5 && (
-                    <span className="ml-0.5 text-xs" style={{ color: '#8892b0' }}>
-                      +{team.lobster_count - 5}
+                  {team.lobster_count > 3 && (
+                    <span className="ml-0.5 text-[10px]" style={{ color: '#8892b0' }}>
+                      +{team.lobster_count - 3}
                     </span>
                   )}
                 </span>
               )}
-              <Badge variant={team.github_url ? 'default' : 'outline'} className="w-fit text-xs">
+              <Badge variant={team.github_url ? 'default' : 'outline'} className="w-fit text-[10px] px-1.5 py-0">
                 {team.github_url ? 'Submitted' : 'Ralphing'}
               </Badge>
             </div>
@@ -665,7 +665,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 min-[1920px]:grid-cols-10">
           {filteredTeams.map((team) => (
             <AdminTeamCard
               key={team.id}
