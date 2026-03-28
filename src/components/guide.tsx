@@ -186,6 +186,12 @@ export function Guide() {
         </ul>
       </Section>
 
+      {/* Media Notice */}
+      <div className="rounded-lg px-5 py-4" style={{ background: 'rgba(100, 255, 218, 0.06)', border: '1px solid rgba(100, 255, 218, 0.2)' }}>
+        <p className="mb-1 text-sm font-bold" style={{ color: '#64ffda' }}>{t('mediaNotice')}</p>
+        <p className="text-sm" style={{ color: '#8892b0' }}>{t('mediaNoticeText')}</p>
+      </div>
+
       {/* Submission */}
       <Section title={t('submission')}>
         <p className="mb-3 text-sm" style={{ color: '#8892b0' }}>{t('submissionIntro')}</p>
