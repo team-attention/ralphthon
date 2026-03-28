@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bangers, JetBrains_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
+import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
           {children}
+          <Analytics />
           <Toaster theme="dark" position="top-center" />
         </NextIntlClientProvider>
       </body>
