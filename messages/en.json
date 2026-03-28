@@ -217,7 +217,8 @@
     "venueNote1": "Take the elevator to the 2nd floor",
     "venueNote2": "Parking is extremely limited — consider rideshare or public transit",
     "wifiLabel": "Wi-Fi",
-    "wifiNote": "Wi-Fi details will be announced on-site",
+    "wifiNetwork": "W&B Guest",
+    "wifiPassword": "Gumption",
 
     "discord": "Connect with the Community",
     "discordIntro": "Join the Ralphthon Discord for team formation, announcements, and Q&A:",
