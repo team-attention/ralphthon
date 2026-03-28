@@ -51,9 +51,9 @@ export function Guide() {
   const ruleItems = ['rule1', 'rule2', 'rule3', 'rule4', 'rule5', 'rule6'] as const
   const subItems = ['sub1', 'sub2', 'sub3', 'sub4'] as const
   const judgingCriteria = ['judgingC1', 'judgingC2', 'judgingC3', 'judgingC4'] as const
-  const prizeItems = ['prize1', 'prize2', 'prize3'] as const
+  const prizeItems = ['prize1', 'prize2', 'prize3', 'prize4'] as const
   const speakerItems = ['speaker1', 'speaker2', 'speaker3', 'speaker4'] as const
-  const judgeItems = ['judge1', 'judge2', 'judge3', 'judge4', 'judge5', 'judge6', 'judge7', 'judge8'] as const
+  const judgeItems = ['judge1', 'judge2', 'judge3', 'judge4', 'judge5', 'judge6', 'judge7', 'judge8', 'judge9', 'judge10', 'judge11', 'judge12'] as const
 
   return (
     <div className="flex flex-col gap-6">
