@@ -250,6 +250,9 @@
     "rule5": "The Lobster Rule: At 12:30 PM, agents run autonomously. If you want to touch your laptop during the autonomous phase, you must put on the lobster costume first. The real competition is how well you delegate, not how much you code.",
     "rule6": "Banned Projects: Projects will be disqualified if they violate legal, ethical, or platform policies, or use code/data/assets you don't have rights to.",
 
+    "mediaNotice": "📹 Media Notice",
+    "mediaNoticeText": "This hackathon is being filmed by a professional video crew. If you prefer not to appear on camera, please let us know at check-in — we'll provide a sticker for your name badge so the crew knows to keep you out of frame.",
+
     "submission": "Submission",
     "submissionIntro": "Teams should submit when they have completed hacking. You will need to provide:",
     "sub1": "Public GitHub repository URL",
