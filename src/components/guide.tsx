@@ -193,6 +193,26 @@ export function Guide() {
         <p className="text-sm" style={{ color: '#8892b0' }}>{t('mediaNoticeText')}</p>
       </div>
 
+      {/* What to Prepare */}
+      <Section title={t('prepTitle')}>
+        <p className="mb-4 text-sm font-medium" style={{ color: '#64ffda' }}>{t('prepIntro')}</p>
+        <div className="mb-4">
+          <p className="mb-2 text-sm font-bold">{t('prepCanTitle')}</p>
+          <ul className="flex flex-col gap-1.5">
+            <li className="text-sm" style={{ color: '#8892b0' }}>• {t('prepCan1')}</li>
+            <li className="text-sm" style={{ color: '#8892b0' }}>• {t('prepCan2')}</li>
+            <li className="text-sm" style={{ color: '#8892b0' }}>• {t('prepCan3')}</li>
+          </ul>
+        </div>
+        <div>
+          <p className="mb-2 text-sm font-bold" style={{ color: '#ff6b6b' }}>{t('prepCantTitle')}</p>
+          <ul className="flex flex-col gap-1.5">
+            <li className="text-sm" style={{ color: '#8892b0' }}>• {t('prepCant1')}</li>
+            <li className="text-sm" style={{ color: '#8892b0' }}>• {t('prepCant2')}</li>
+          </ul>
+        </div>
+      </Section>
+
       {/* Submission */}
       <Section title={t('submission')}>
         <p className="mb-3 text-sm" style={{ color: '#8892b0' }}>{t('submissionIntro')}</p>

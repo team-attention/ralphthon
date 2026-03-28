@@ -316,6 +316,16 @@
     "res4Label": "Codex MCP Server",
     "res4Value": "codex mcp-server (codex(), codex-reply() 도구 노출)",
 
+    "prepTitle": "랄핑 전에 준비할 수 있는 것",
+    "prepIntro": "도구를 가져오세요. 제품 코드는 안 됩니다.",
+    "prepCanTitle": "가져올 수 있는 것:",
+    "prepCan1": "이미지, 영상, 오디오, 데이터셋, 디자인 파일 등 에셋",
+    "prepCan2": "공개 API, SDK, 오픈소스 라이브러리, 프레임워크",
+    "prepCan3": "개발 도구, 환경 설정, 범용 보일러플레이트",
+    "prepCantTitle": "제출물을 위해 미리 작성한 커스텀 코드는 가져올 수 없습니다.",
+    "prepCant1": "제품 전용 로직 불가",
+    "prepCant2": "미리 만든 기능 불가",
+
     "contact": "문의: 정구봉 — bong@team-attention.com"
   }
 }

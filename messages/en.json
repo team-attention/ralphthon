@@ -318,6 +318,16 @@
     "res4Label": "Codex MCP Server",
     "res4Value": "codex mcp-server (exposes codex() and codex-reply() tools)",
 
+    "prepTitle": "What can you prepare before Ralphing",
+    "prepIntro": "Bring your tools, not your product code.",
+    "prepCanTitle": "You're welcome to bring:",
+    "prepCan1": "Assets like images, video, audio, datasets, and design files",
+    "prepCan2": "Public APIs, SDKs, open-source libraries, and frameworks",
+    "prepCan3": "Your dev tools, environment setup, and generic boilerplate",
+    "prepCantTitle": "What you can't bring is pre-written custom code for your submission.",
+    "prepCant1": "No product-specific logic",
+    "prepCant2": "No pre-built features",
+
     "contact": "Questions? Reach out to GB Jeong — bong@team-attention.com"
   }
 }
