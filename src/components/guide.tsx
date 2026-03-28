@@ -177,10 +177,16 @@ export function Guide() {
       {/* Prizes */}
       <Section title={t('prizes')}>
         <p className="mb-3 text-sm" style={{ color: '#8892b0' }}>{t('prizeSponsor')}</p>
-        <div className="flex flex-col rounded-lg border">
+        <div className="mb-4 flex flex-col rounded-lg border">
           {prizeItems.map((key) => (
             <TableRow key={key} data={t(key)} cols={2} />
           ))}
+        </div>
+        <div className="rounded-lg px-4 py-3" style={{ background: 'rgba(255, 217, 15, 0.06)', border: '1px solid rgba(255, 217, 15, 0.2)' }}>
+          <p className="mb-1 text-sm font-bold" style={{ color: '#FFD90F' }}>{t('creditFormNote')}</p>
+          <a href={t('creditFormUrl')} target="_blank" rel="noopener noreferrer" className="text-sm underline" style={{ color: '#64ffda' }}>
+            {t('creditFormUrl')}
+          </a>
         </div>
       </Section>
 

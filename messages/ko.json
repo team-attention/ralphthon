@@ -273,6 +273,8 @@
     "prize2": "2등|$5,000 API 크레딧 + 6개월 ChatGPT Pro",
     "prize3": "3등|$3,000 API 크레딧 + 6개월 ChatGPT Pro",
     "prize4": "전원|$100 API 크레딧",
+    "creditFormUrl": "https://forms.gle/PooSdcf9kTSuzS3d6",
+    "creditFormNote": "$100 API 크레딧을 받으려면 9:50 AM까지 폼을 제출하세요:",
 
     "speakers": "스피커 (5:30 PM)",
     "speakersNote": "SF와 서울 Google Meet으로 동시 연결. 10분 토크, 주제 자유.",
