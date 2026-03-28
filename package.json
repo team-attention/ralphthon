@@ -40,5 +40,6 @@
     "supabase": "^2.84.4",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "pnpm@10.30.3"
 }

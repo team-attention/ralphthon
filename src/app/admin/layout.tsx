@@ -25,10 +25,10 @@ export default function AdminLayout({
             {t('dashboard')}
           </Link>
           <Link
-            href="/admin/timeline"
+            href="/admin/guide"
             className="text-sm text-muted-foreground hover:text-foreground"
           >
-            Timeline
+            Guide
           </Link>
         </div>
         <LocaleSwitcher />

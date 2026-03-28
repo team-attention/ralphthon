@@ -63,14 +63,14 @@ export default function ParticipantLayout({
             <span style={{ color: '#8892b0' }}>{'>'}_</span> RALPHTHON
           </Link>
           <Link
-            href="/timeline"
+            href="/guide"
             className="rounded-md px-2.5 py-1 text-sm transition-all duration-200 hover:bg-[rgba(255,217,15,0.1)]"
             style={{
-              color: pathname === '/timeline' ? '#FFD90F' : '#8892b0',
-              background: pathname === '/timeline' ? 'rgba(255, 217, 15, 0.1)' : undefined,
+              color: pathname === '/guide' ? '#FFD90F' : '#8892b0',
+              background: pathname === '/guide' ? 'rgba(255, 217, 15, 0.1)' : undefined,
             }}
           >
-            Timeline
+            Guide
           </Link>
           {checked && (
             teamId ? (
