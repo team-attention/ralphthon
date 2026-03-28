@@ -1,12 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { EventInfo, TimelineSchedule } from '@/components/timeline'
+
+type City = 'SF' | 'Seoul'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -40,19 +45,28 @@ function TableRow({ data, cols }: { data: string; cols: number }) {
 
 export function Guide() {
   const t = useTranslations('guide')
+  const [city, setCity] = useState<City>('SF')
 
   const notToDoItems = ['notToDo1', 'notToDo2', 'notToDo3', 'notToDo4', 'notToDo5', 'notToDo6', 'notToDo7'] as const
-  const scheduleItems = ['sch1', 'sch2', 'sch3', 'sch4', 'sch5', 'sch6', 'sch7', 'sch8', 'sch9', 'sch10', 'sch11'] as const
   const ruleItems = ['rule1', 'rule2', 'rule3', 'rule4', 'rule5', 'rule6'] as const
   const subItems = ['sub1', 'sub2', 'sub3', 'sub4'] as const
   const judgingCriteria = ['judgingC1', 'judgingC2', 'judgingC3', 'judgingC4'] as const
   const prizeItems = ['prize1', 'prize2', 'prize3'] as const
-  const speakerItems = ['speaker1', 'speaker2'] as const
+  const speakerItems = ['speaker1', 'speaker2', 'speaker3', 'speaker4'] as const
   const judgeItems = ['judge1', 'judge2', 'judge3', 'judge4', 'judge5', 'judge6', 'judge7', 'judge8'] as const
   const resItems = ['res1', 'res2', 'res3'] as const
 
   return (
     <div className="flex flex-col gap-6">
+      {/* SF / Seoul tabs */}
+      <div className="flex gap-2">
+        <Button variant={city === 'SF' ? 'default' : 'outline'} onClick={() => setCity('SF')} size="sm">SF</Button>
+        <Button variant={city === 'Seoul' ? 'default' : 'outline'} onClick={() => setCity('Seoul')} size="sm">Seoul</Button>
+      </div>
+      <EventInfo city={city} />
+      <TimelineSchedule city={city} />
+
+      {city === 'SF' && <>
       {/* Welcome */}
       <p className="text-sm" style={{ color: '#8892b0' }}>
         {t('welcome')}
@@ -126,29 +140,6 @@ export function Guide() {
         </ul>
       </Section>
 
-      {/* Schedule */}
-      <Section title={t('schedule')}>
-        <div className="flex flex-col">
-          <div className="grid grid-cols-[140px_1fr] gap-2 border-b px-4 pb-2 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
-            <span>{t('scheduleTime')}</span>
-            <span>{t('scheduleActivity')}</span>
-          </div>
-          {scheduleItems.map((key) => {
-            const [time, activity] = t(key).split('|')
-            const isLobster = key === 'sch4'
-            return (
-              <div
-                key={key}
-                className="grid grid-cols-[140px_1fr] items-center gap-2 border-b px-4 py-3 text-sm last:border-b-0"
-                style={isLobster ? { background: 'rgba(255, 217, 15, 0.06)', borderLeft: '3px solid #FFD90F' } : undefined}
-              >
-                <span className="font-mono text-xs font-bold" style={isLobster ? { color: '#FFD90F' } : undefined}>{time}</span>
-                <span>{isLobster && '🦞 '}{activity}</span>
-              </div>
-            )
-          })}
-        </div>
-      </Section>
 
       {/* Rules */}
       <Section title={t('rules')}>
@@ -213,31 +204,11 @@ export function Guide() {
         </div>
       </Section>
 
-      {/* Resources */}
-      <Section title={t('resources')}>
-        <h3 className="mb-2 text-sm font-bold">{t('resourcesCodex')}</h3>
-        <ul className="flex flex-col gap-1.5">
-          {resItems.map((key) => {
-            const [label, url] = t(key).split('|')
-            return (
-              <li key={key}>
-                <a href={url} target="_blank" rel="noopener noreferrer" className="text-sm underline" style={{ color: '#64ffda' }}>
-                  {label}
-                </a>
-              </li>
-            )
-          })}
-          <li className="text-sm" style={{ color: '#8892b0' }}>
-            <span className="font-bold">{t('res4Label')}: </span>
-            <code className="rounded bg-[#1a1a2e] px-1.5 py-0.5 text-xs" style={{ color: '#64ffda' }}>{t('res4Value')}</code>
-          </li>
-        </ul>
-      </Section>
-
       {/* Contact */}
       <p className="text-center text-sm" style={{ color: '#8892b0' }}>
         {t('contact')}
       </p>
+      </>}
     </div>
   )
 }
