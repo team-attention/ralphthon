@@ -30,6 +30,13 @@ export default function AdminLayout({
           >
             Guide
           </Link>
+          <Link
+            href="/support"
+            className="text-sm text-muted-foreground hover:text-foreground"
+            target="_blank"
+          >
+            Sponsor
+          </Link>
         </div>
         <LocaleSwitcher />
       </nav>

@@ -72,6 +72,16 @@ export default function ParticipantLayout({
           >
             Guide
           </Link>
+          <Link
+            href="/support"
+            className="rounded-md px-2.5 py-1 text-sm transition-all duration-200 hover:bg-[rgba(100,255,218,0.1)]"
+            style={{
+              color: pathname === '/support' ? '#64ffda' : '#8892b0',
+              background: pathname === '/support' ? 'rgba(100, 255, 218, 0.1)' : undefined,
+            }}
+          >
+            Sponsor
+          </Link>
           {checked && (
             teamId ? (
               <Link
