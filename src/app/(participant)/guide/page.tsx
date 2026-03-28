@@ -1,0 +1,25 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
+import { Guide } from '@/components/guide'
+
+export default function GuidePage() {
+  const t = useTranslations('guide')
+
+  return (
+    <div className="min-h-screen p-6">
+      <div className="mx-auto max-w-5xl">
+        <h1
+          className="mb-2 font-display text-4xl tracking-wider"
+          style={{ color: '#FFD90F' }}
+        >
+          Ralphthon
+        </h1>
+        <p className="mb-8 text-lg" style={{ color: '#8892b0' }}>
+          {t('subtitle')}
+        </p>
+        <Guide />
+      </div>
+    </div>
+  )
+}
