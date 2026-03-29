@@ -76,6 +76,7 @@
     "confirmLobster": "Confirm",
     "pendingConfirm": "Pending Confirmation",
     "sendLobster": "Send Lobster!",
+    "cancelLobster": "Cancel",
     "lobsterActivated": "Sent",
     "noLobsterYet": "No request",
     "readyForNext": "Idle",

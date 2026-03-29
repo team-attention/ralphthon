@@ -163,12 +163,14 @@ function AdminTeamCard({
   isBlinking,
   isActivating,
   onSendLobster,
+  onCancelLobster,
   onClick,
 }: {
   team: Team
   isBlinking: boolean
   isActivating: boolean
   onSendLobster: (id: string) => void
+  onCancelLobster: (id: string) => void
   onClick: () => void
 }) {
   const t = useTranslations('admin')
@@ -215,27 +217,40 @@ function AdminTeamCard({
             </div>
           )}
           {isPendingLobster && !isLobsterActive ? (
-            <button
-              disabled={isActivating}
-              onClick={(e) => { e.stopPropagation(); onSendLobster(team.id) }}
-              className="flex w-full items-center justify-center gap-1 whitespace-nowrap rounded px-2 py-1.5 text-[11px] font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-              style={{
-                background: 'linear-gradient(135deg, #E63946 0%, #c62828 100%)',
-                color: '#ffffff',
-                boxShadow: '0 0 20px rgba(230, 57, 70, 0.3)',
-              }}
-            >
-              {isActivating ? (
-                <span style={{ animation: 'lobsterPulse 0.5s ease-in-out infinite' }}>
-                  {'\u{1F99E}'}
-                </span>
-              ) : (
-                <>
-                  <span>{'\u{1F99E}'}</span>
-                  {t('sendLobster')}
-                </>
-              )}
-            </button>
+            <div className="flex gap-1">
+              <button
+                disabled={isActivating}
+                onClick={(e) => { e.stopPropagation(); onSendLobster(team.id) }}
+                className="flex flex-1 items-center justify-center gap-1 whitespace-nowrap rounded px-2 py-1.5 text-[11px] font-bold tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                style={{
+                  background: 'linear-gradient(135deg, #E63946 0%, #c62828 100%)',
+                  color: '#ffffff',
+                  boxShadow: '0 0 20px rgba(230, 57, 70, 0.3)',
+                }}
+              >
+                {isActivating ? (
+                  <span style={{ animation: 'lobsterPulse 0.5s ease-in-out infinite' }}>
+                    {'\u{1F99E}'}
+                  </span>
+                ) : (
+                  <>
+                    <span>{'\u{1F99E}'}</span>
+                    {t('sendLobster')}
+                  </>
+                )}
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onCancelLobster(team.id) }}
+                className="shrink-0 rounded px-1.5 py-1.5 text-[10px] font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'rgba(136, 146, 176, 0.15)',
+                  color: '#8892b0',
+                  border: '1px solid rgba(136, 146, 176, 0.2)',
+                }}
+              >
+                {t('cancelLobster')}
+              </button>
+            </div>
           ) : !isLobsterActive && (
             <div className="flex items-center gap-1.5">
               {team.lobster_count > 0 && (
@@ -420,6 +435,7 @@ export default function DashboardPage() {
       })
 
       if (res.ok) {
+        // Only update flags here; lobster_count is handled by Realtime
         setTeams((prev) =>
           prev.map((tt) =>
             tt.id === teamId
@@ -428,7 +444,6 @@ export default function DashboardPage() {
                   lobster_activated: true,
                   lobster_activated_at: new Date().toISOString(),
                   lobster_requested: false,
-                  lobster_count: tt.lobster_count + 1,
                 }
               : tt
           )
@@ -440,6 +455,32 @@ export default function DashboardPage() {
         })
       }
       setActivatingId(null)
+    },
+    []
+  )
+
+  const handleCancelLobster = useCallback(
+    async (teamId: string) => {
+      const res = await fetch('/api/admin/lobster', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamId }),
+      })
+
+      if (res.ok) {
+        setTeams((prev) =>
+          prev.map((tt) =>
+            tt.id === teamId
+              ? { ...tt, lobster_requested: false }
+              : tt
+          )
+        )
+        setBlinkingTeams((prev) => {
+          const next = new Set(prev)
+          next.delete(teamId)
+          return next
+        })
+      }
     },
     []
   )
@@ -681,6 +722,7 @@ export default function DashboardPage() {
               isBlinking={blinkingTeams.has(team.id)}
               isActivating={activatingId === team.id}
               onSendLobster={handleSendLobster}
+              onCancelLobster={handleCancelLobster}
               onClick={() => handleCardClick(team)}
             />
           ))}
