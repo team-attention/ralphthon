@@ -188,7 +188,9 @@ function AdminTeamCard({
           ? { animation: 'redBlink 2s ease-in-out infinite' }
           : isPendingLobster
             ? { borderColor: 'rgba(230, 57, 70, 0.4)' }
-            : undefined
+            : !team.github_url
+              ? { borderColor: 'rgba(255, 217, 15, 0.4)', background: 'rgba(255, 217, 15, 0.03)' }
+              : undefined
       }
     >
       <CardHeader className="p-3 pb-1.5">
@@ -265,8 +267,8 @@ function AdminTeamCard({
                   )}
                 </span>
               )}
-              <Badge variant={team.github_url ? 'default' : 'outline'} className="w-fit text-[10px] px-1.5 py-0">
-                {team.github_url ? 'Submitted' : 'Ralphing'}
+              <Badge variant="outline" className="w-fit text-[10px] px-1.5 py-0">
+                {team.github_url ? 'Ralphing' : t('noGithub')}
               </Badge>
             </div>
           )}
