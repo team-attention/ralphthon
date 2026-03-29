@@ -79,6 +79,44 @@ export interface Database {
           created_at?: string
         }
       }
+      judging_scores: {
+        Row: {
+          id: string
+          team_id: string
+          judge_name: string
+          score_creativity: number | null
+          score_technical: number | null
+          score_impact: number | null
+          score_presentation: number | null
+          comment: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          team_id: string
+          judge_name: string
+          score_creativity?: number | null
+          score_technical?: number | null
+          score_impact?: number | null
+          score_presentation?: number | null
+          comment?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          team_id?: string
+          judge_name?: string
+          score_creativity?: number | null
+          score_technical?: number | null
+          score_impact?: number | null
+          score_presentation?: number | null
+          comment?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
       team_members: {
         Row: {
           id: string
