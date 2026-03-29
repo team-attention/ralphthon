@@ -4,9 +4,9 @@ import { useState, useCallback, useEffect } from 'react'
 
 // ─── Fill in team names when ready ───
 const AWARDS = [
-  { rank: '🥉', label: '3rd Place', team: null as string | null },
-  { rank: '🥈', label: '2nd Place', team: null as string | null },
-  { rank: '🥇', label: '1st Place', team: null as string | null },
+  { rank: '🥉', label: '3rd Place', team: 'AER' },
+  { rank: '🥈', label: '2nd Place', team: 'Ha-fam' },
+  { rank: '🥇', label: '1st Place', team: 'polysona' },
 ]
 
 function Confetti({ active }: { active: boolean }) {
