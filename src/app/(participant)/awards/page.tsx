@@ -16,10 +16,12 @@ function Confetti({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (!active) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setParticles([])
       return
     }
     const colors = ['#FFD90F', '#E63946', '#45B649', '#ffffff', '#FFD90F', '#E63946']
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParticles(
       Array.from({ length: 60 }, (_, i) => ({
         id: i,

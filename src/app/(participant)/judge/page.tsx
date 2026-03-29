@@ -179,6 +179,7 @@ export default function JudgePage() {
     const params = new URLSearchParams(window.location.search)
     const judge = params.get('judge')
     if (judge && JUDGE_GROUPS.some((g) => g.judge === judge)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedJudge(judge)
     }
   }, [])

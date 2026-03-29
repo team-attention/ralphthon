@@ -20,7 +20,6 @@ export function LocaleSwitcher() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentLocale(cookie.split('=')[1])
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentLocale(document.documentElement.lang || 'ko')
     }
   }, [])
