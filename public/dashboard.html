@@ -141,64 +141,62 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 // Chart instances (for update)
 let commitChart, lobsterChart, rankingChart;
 // Cached data
-let cachedTeams = [], cachedMembers = [], cachedEvents = [], cachedCommits = {};
+let cachedTeams = [], cachedEvents = [], cachedCommits = {};
 
-// --- REPOS ---
-const REPOS = [
-  'ralphton-seoul-2026/ralphthon-team-kaos','ralphteamgp/sigmulhae','jays0606/DigestAnything',
-  'mindful-labs-ai/crayfish-farm','acne0226/beavernzookeeper','alslrl/SwarmOps',
-  'aristoapp/DDalkkak','ProudBiz/supermango','NomaDamas/Cat-In-Lattice',
-  'iqhubco/self-improving-rag','psh10066/ralphthon','shaun0927/ghostview-ralphthon',
-  'vogueyale/032926','gmuffiness/ralphton-dormammu','cosmos-makers/generative-kiosk',
-  'Shaun-Kim-maker/ralphthon_real','reborn-everyday/woowoomo','PJH6029/agent-ludens',
-  'ralphthon-autohunt/omp-best-product','LilMGenius/polysona','WOULDU-pres/nudge',
-  'sunLeee/dRagon-sTone','Me1e/ralphthon'
-];
+// --- REPOS (built dynamically from team data) ---
+let repoNameMap = {}; // repo slug -> team name
 
-function repoToName(repo) {
-  const map = {
-    'ralphton-seoul-2026/ralphthon-team-kaos':'Team Kaos','ralphteamgp/sigmulhae':'Team GP',
-    'jays0606/DigestAnything':'DigestAnything','mindful-labs-ai/crayfish-farm':'Mindful Labs',
-    'acne0226/beavernzookeeper':'비버와 사육사','alslrl/SwarmOps':'SwarmOps',
-    'aristoapp/DDalkkak':'Aristo','ProudBiz/supermango':'Supermango',
-    'NomaDamas/Cat-In-Lattice':'Nomadams','iqhubco/self-improving-rag':'SELF_RALPH',
-    'psh10066/ralphthon':'gowider','shaun0927/ghostview-ralphthon':'GhostView',
-    'vogueyale/032926':'032926Today','gmuffiness/ralphton-dormammu':'Dormammu',
-    'cosmos-makers/generative-kiosk':'cosmos-makers','Shaun-Kim-maker/ralphthon_real':'Sunhoo Kim',
-    'reborn-everyday/woowoomo':'WooWooMo','PJH6029/agent-ludens':'Agent Ludens',
-    'ralphthon-autohunt/omp-best-product':'auto-hunt','LilMGenius/polysona':'polysona',
-    'WOULDU-pres/nudge':'Nudge','sunLeee/dRagon-sTone':'dragon stone','Me1e/ralphthon':'One For All'
-  };
-  return map[repo] || repo;
-}
-
-// --- FETCH SUPABASE ---
+// --- FETCH DATA ---
 async function fetchSupabase() {
-  const [teamsRes, membersRes, eventsRes] = await Promise.all([
-    sb.from('teams').select('id,name,github_url,demo_video_url,lobster_count,lobster_requested').eq('region','KR').neq('name','test-inkeun'),
-    sb.from('team_members').select('team_id'),
+  const [dashRes, eventsRes] = await Promise.all([
+    fetch('/api/dashboard').then(r => r.json()),
     sb.from('lobster_events').select('team_name,created_at').eq('region','KR').order('created_at',{ascending:true})
   ]);
-  cachedTeams = teamsRes.data || [];
-  cachedMembers = membersRes.data || [];
-  cachedEvents = (eventsRes.data || []).filter(e => e.team_name !== 'test-inkeun');
+
+  // dashRes has member_count baked in (bypasses RLS)
+  cachedTeams = dashRes.map(t => ({
+    ...t,
+    _memberCount: t.member_count
+  }));
+
+  // Build repo map dynamically from team github_urls
+  repoNameMap = {};
+  cachedTeams.forEach(t => {
+    if (t.github_url) {
+      try {
+        const u = new URL(t.github_url.replace(/\.git$/, ''));
+        const slug = u.pathname.replace(/^\//, '');
+        if (slug) repoNameMap[slug] = t.name.trim();
+      } catch(e) {}
+    }
+  });
+
+  cachedEvents = ((eventsRes.data) || []).filter(e => e.team_name !== 'test-inkeun');
 }
 
-// --- FETCH GITHUB (batched, rate-limit friendly) ---
+// --- FETCH GITHUB (dynamic repos from team data) ---
 async function fetchGithubCommits() {
-  const since = '2026-03-29T00:00:00Z';
+  const since = '2026-03-28T15:00:00Z'; // midnight KST
+  const repos = Object.keys(repoNameMap);
+  if (repos.length === 0) return;
+
   const results = {};
-  // Fetch in parallel but catch errors
-  await Promise.all(REPOS.map(async repo => {
-    try {
-      const res = await fetch(`https://api.github.com/repos/${repo}/commits?per_page=100&since=${since}`);
-      if (res.ok) {
-        const data = await res.json();
-        const name = repoToName(repo);
-        results[name] = data.map(c => c.commit.committer.date);
-      }
-    } catch(e) {}
-  }));
+  // Fetch in batches of 8 to avoid rate limit
+  for (let i = 0; i < repos.length; i += 8) {
+    const batch = repos.slice(i, i + 8);
+    await Promise.all(batch.map(async repo => {
+      try {
+        const res = await fetch(`https://api.github.com/repos/${repo}/commits?per_page=100&since=${since}`);
+        if (res.ok) {
+          const data = await res.json();
+          const name = repoNameMap[repo];
+          results[name] = data.map(c => c.commit.committer.date);
+        }
+      } catch(e) {}
+    }));
+    // Small delay between batches
+    if (i + 8 < repos.length) await new Promise(r => setTimeout(r, 500));
+  }
   cachedCommits = results;
 }
 
@@ -208,13 +206,9 @@ function render() {
   document.getElementById('lastUpdate').textContent =
     `Last update: ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
 
-  // Member count map
-  const memberCnt = {};
-  cachedMembers.forEach(m => { memberCnt[m.team_id] = (memberCnt[m.team_id]||0) + 1; });
-
   // Stats
   const totalTeams = cachedTeams.length;
-  const totalPeople = cachedTeams.reduce((s,t) => s + (memberCnt[t.id]||0), 0);
+  const totalPeople = cachedTeams.reduce((s,t) => s + (t._memberCount||0), 0);
   const withGithub = cachedTeams.filter(t => t.github_url).length;
   const totalLobster = cachedTeams.reduce((s,t) => s + t.lobster_count, 0);
 
@@ -312,7 +306,7 @@ function render() {
 
   const merged = cachedTeams.map(t => ({
     name: t.name.trim(),
-    members: memberCnt[t.id] || 0,
+    members: t._memberCount || 0,
     github: !!t.github_url,
     lobster: t.lobster_count,
     commits: commitMap[t.name.trim()] || 0,
