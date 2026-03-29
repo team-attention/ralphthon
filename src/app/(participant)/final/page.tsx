@@ -16,8 +16,8 @@ const TEAMS = [
   { name: 'Ha-fam', confirmed: true },
   { name: 'Supermango', confirmed: true },
   { name: 'polysona', confirmed: true },
-  { name: 'TBD', confirmed: false },
-  { name: 'TBD', confirmed: false },
+  { name: 'AER', confirmed: true },
+  { name: 'dragon stone', confirmed: true },
 ]
 
 function getTimeSlot(index: number): string {
