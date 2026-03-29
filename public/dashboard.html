@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ralphthon Seoul #2 — Live Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0f1c;
+    color: #ccd6f6;
+    font-family: -apple-system, 'Pretendard', 'SF Pro Display', sans-serif;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(100, 255, 218, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100, 255, 218, 0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+  }
+  .page { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 2rem; }
+  .header { text-align: center; margin-bottom: 2rem; }
+  .header h1 {
+    font-size: 2.5rem; font-weight: 900;
+    background: linear-gradient(135deg, #E63946, #FFD90F);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .header .sub { color: #8892b0; font-size: 1rem; margin-top: 0.3rem; }
+  .header .live {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-top: 0.5rem; font-size: 0.8rem; color: #64ffda;
+  }
+  .header .live .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #64ffda;
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .stat-card {
+    background: rgba(136, 146, 176, 0.06); border: 1px solid rgba(136, 146, 176, 0.12);
+    border-radius: 12px; padding: 1.2rem; text-align: center;
+  }
+  .stat-card .num { font-size: 2.5rem; font-weight: 900; line-height: 1; }
+  .stat-card .label { font-size: 0.75rem; color: #8892b0; margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .num.green { color: #64ffda; } .num.yellow { color: #FFD90F; } .num.red { color: #E63946; } .num.white { color: #ccd6f6; }
+
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .chart-card {
+    background: rgba(136, 146, 176, 0.06); border: 1px solid rgba(136, 146, 176, 0.12);
+    border-radius: 12px; padding: 1.5rem;
+  }
+  .chart-card h3 { font-size: 0.9rem; color: #8892b0; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .chart-card.full { grid-column: 1 / -1; }
+
+  .team-table { width: 100%; border-collapse: collapse; }
+  .team-table th {
+    text-align: left; font-size: 0.7rem; color: #8892b0; text-transform: uppercase;
+    letter-spacing: 0.1em; padding: 0.5rem 0.8rem; border-bottom: 1px solid rgba(136, 146, 176, 0.15);
+  }
+  .team-table td { padding: 0.5rem 0.8rem; font-size: 0.85rem; border-bottom: 1px solid rgba(136, 146, 176, 0.06); }
+  .team-table tr:hover { background: rgba(100, 255, 218, 0.03); }
+  .bar { height: 8px; border-radius: 4px; background: rgba(136, 146, 176, 0.1); min-width: 60px; }
+  .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #64ffda, #00ff88); }
+  .badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+  .badge.ok { background: rgba(100, 255, 218, 0.15); color: #64ffda; }
+  .badge.miss { background: rgba(136, 146, 176, 0.1); color: #8892b0; }
+
+  .sort-btn {
+    background: rgba(136,146,176,0.1); border: 1px solid rgba(136,146,176,0.2);
+    color: #8892b0; padding: 0.35rem 0.8rem; border-radius: 6px; font-size: 0.75rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .sort-btn:hover { border-color: rgba(100,255,218,0.3); color: #ccd6f6; }
+  .sort-btn.active { background: rgba(100,255,218,0.15); border-color: #64ffda; color: #64ffda; }
+
+  @media (max-width: 768px) { .charts { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(3, 1fr); } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <h1>Ralphthon Seoul #2</h1>
+    <div class="sub">Live Dashboard</div>
+    <div class="live"><span class="dot"></span> <span id="lastUpdate">Loading...</span></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="num white" id="sTeams">-</div><div class="label">Teams</div></div>
+    <div class="stat-card"><div class="num white" id="sPeople">-</div><div class="label">Builders</div></div>
+    <div class="stat-card"><div class="num green" id="sGithub">-</div><div class="label">GitHub Submitted</div></div>
+    <div class="stat-card"><div class="num yellow" id="sActive">-</div><div class="label">Active Repos</div></div>
+    <div class="stat-card"><div class="num green" id="sCommits">-</div><div class="label">Total Commits</div></div>
+    <div class="stat-card"><div class="num red" id="sLobster">-</div><div class="label">Lobsters Fired</div></div>
+  </div>
+
+  <div class="charts">
+    <div class="chart-card full">
+      <h3>Commits per Hour (KST)</h3>
+      <canvas id="commitTimeline" height="80"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Lobster Events Timeline</h3>
+      <canvas id="lobsterTimeline" height="160"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Lobster Ranking (fewer = better delegation)</h3>
+      <canvas id="lobsterRanking" height="160"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card full" style="margin-bottom:2rem;">
+    <h3>Team Activity</h3>
+    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+      <button class="sort-btn active" data-sort="lobster" onclick="setSort('lobster')">Lobster (fewer first)</button>
+      <button class="sort-btn" data-sort="commits" onclick="setSort('commits')">Commits (most first)</button>
+      <button class="sort-btn" data-sort="name" onclick="setSort('name')">Name</button>
+    </div>
+    <table class="team-table">
+      <thead><tr><th>Team</th><th>Members</th><th>Commits</th><th>Activity</th><th>GitHub</th><th>Lobster</th></tr></thead>
+      <tbody id="teamTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+Chart.defaults.color = '#8892b0';
+Chart.defaults.borderColor = 'rgba(136,146,176,0.1)';
+
+const SUPABASE_URL = 'https://ybvoohbalevxctrhhihp.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlidm9vaGJhbGV2eGN0cmhoaWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0Nzk1NzIsImV4cCI6MjA5MDA1NTU3Mn0.9u6uck_lwSrYMz_0Ci34_n761QBC4Pl03snjQ9eq5lE';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// Chart instances (for update)
+let commitChart, lobsterChart, rankingChart;
+// Cached data
+let cachedTeams = [], cachedMembers = [], cachedEvents = [], cachedCommits = {};
+
+// --- REPOS ---
+const REPOS = [
+  'ralphton-seoul-2026/ralphthon-team-kaos','ralphteamgp/sigmulhae','jays0606/DigestAnything',
+  'mindful-labs-ai/crayfish-farm','acne0226/beavernzookeeper','alslrl/SwarmOps',
+  'aristoapp/DDalkkak','ProudBiz/supermango','NomaDamas/Cat-In-Lattice',
+  'iqhubco/self-improving-rag','psh10066/ralphthon','shaun0927/ghostview-ralphthon',
+  'vogueyale/032926','gmuffiness/ralphton-dormammu','cosmos-makers/generative-kiosk',
+  'Shaun-Kim-maker/ralphthon_real','reborn-everyday/woowoomo','PJH6029/agent-ludens',
+  'ralphthon-autohunt/omp-best-product','LilMGenius/polysona','WOULDU-pres/nudge',
+  'sunLeee/dRagon-sTone','Me1e/ralphthon'
+];
+
+function repoToName(repo) {
+  const map = {
+    'ralphton-seoul-2026/ralphthon-team-kaos':'Team Kaos','ralphteamgp/sigmulhae':'Team GP',
+    'jays0606/DigestAnything':'DigestAnything','mindful-labs-ai/crayfish-farm':'Mindful Labs',
+    'acne0226/beavernzookeeper':'비버와 사육사','alslrl/SwarmOps':'SwarmOps',
+    'aristoapp/DDalkkak':'Aristo','ProudBiz/supermango':'Supermango',
+    'NomaDamas/Cat-In-Lattice':'Nomadams','iqhubco/self-improving-rag':'SELF_RALPH',
+    'psh10066/ralphthon':'gowider','shaun0927/ghostview-ralphthon':'GhostView',
+    'vogueyale/032926':'032926Today','gmuffiness/ralphton-dormammu':'Dormammu',
+    'cosmos-makers/generative-kiosk':'cosmos-makers','Shaun-Kim-maker/ralphthon_real':'Sunhoo Kim',
+    'reborn-everyday/woowoomo':'WooWooMo','PJH6029/agent-ludens':'Agent Ludens',
+    'ralphthon-autohunt/omp-best-product':'auto-hunt','LilMGenius/polysona':'polysona',
+    'WOULDU-pres/nudge':'Nudge','sunLeee/dRagon-sTone':'dragon stone','Me1e/ralphthon':'One For All'
+  };
+  return map[repo] || repo;
+}
+
+// --- FETCH SUPABASE ---
+async function fetchSupabase() {
+  const [teamsRes, membersRes, eventsRes] = await Promise.all([
+    sb.from('teams').select('id,name,github_url,demo_video_url,lobster_count,lobster_requested').eq('region','KR').neq('name','test-inkeun'),
+    sb.from('team_members').select('team_id'),
+    sb.from('lobster_events').select('team_name,created_at').eq('region','KR').order('created_at',{ascending:true})
+  ]);
+  cachedTeams = teamsRes.data || [];
+  cachedMembers = membersRes.data || [];
+  cachedEvents = (eventsRes.data || []).filter(e => e.team_name !== 'test-inkeun');
+}
+
+// --- FETCH GITHUB (batched, rate-limit friendly) ---
+async function fetchGithubCommits() {
+  const since = '2026-03-29T00:00:00Z';
+  const results = {};
+  // Fetch in parallel but catch errors
+  await Promise.all(REPOS.map(async repo => {
+    try {
+      const res = await fetch(`https://api.github.com/repos/${repo}/commits?per_page=100&since=${since}`);
+      if (res.ok) {
+        const data = await res.json();
+        const name = repoToName(repo);
+        results[name] = data.map(c => c.commit.committer.date);
+      }
+    } catch(e) {}
+  }));
+  cachedCommits = results;
+}
+
+// --- RENDER ---
+function render() {
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent =
+    `Last update: ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+  // Member count map
+  const memberCnt = {};
+  cachedMembers.forEach(m => { memberCnt[m.team_id] = (memberCnt[m.team_id]||0) + 1; });
+
+  // Stats
+  const totalTeams = cachedTeams.length;
+  const totalPeople = cachedTeams.reduce((s,t) => s + (memberCnt[t.id]||0), 0);
+  const withGithub = cachedTeams.filter(t => t.github_url).length;
+  const totalLobster = cachedTeams.reduce((s,t) => s + t.lobster_count, 0);
+
+  const allCommitTimes = Object.values(cachedCommits).flat();
+  const activeRepos = Object.values(cachedCommits).filter(c => c.some(d => new Date(d) >= new Date('2026-03-29T03:00:00Z'))).length;
+
+  document.getElementById('sTeams').textContent = totalTeams;
+  document.getElementById('sPeople').textContent = totalPeople;
+  document.getElementById('sGithub').textContent = withGithub;
+  document.getElementById('sActive').textContent = activeRepos;
+  document.getElementById('sCommits').textContent = allCommitTimes.length;
+  document.getElementById('sLobster').textContent = totalLobster;
+
+  // --- COMMIT TIMELINE ---
+  const hours = [];
+  for (let h = 9; h <= 15; h++) hours.push(h);
+  const hourCounts = new Array(hours.length).fill(0);
+  allCommitTimes.forEach(c => {
+    const kstH = (new Date(c).getUTCHours() + 9) % 24;
+    const idx = kstH - 9;
+    if (idx >= 0 && idx < hourCounts.length) hourCounts[idx]++;
+  });
+
+  const commitLabels = hours.map(h => h + ':00');
+  if (commitChart) {
+    commitChart.data.labels = commitLabels;
+    commitChart.data.datasets[0].data = hourCounts;
+    commitChart.update('none');
+  } else {
+    commitChart = new Chart(document.getElementById('commitTimeline'), {
+      type: 'bar',
+      data: {
+        labels: commitLabels,
+        datasets: [{ label: 'Commits', data: hourCounts,
+          backgroundColor: 'rgba(100,255,218,0.6)', borderColor: '#64ffda', borderWidth: 1, borderRadius: 4 }]
+      },
+      options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,grid:{color:'rgba(136,146,176,0.08)'}},x:{grid:{display:false}}} }
+    });
+  }
+
+  // --- LOBSTER TIMELINE ---
+  const lobByHour = new Array(hours.length).fill(0);
+  cachedEvents.forEach(e => {
+    const kstH = (new Date(e.created_at).getUTCHours() + 9) % 24;
+    const idx = kstH - 9;
+    if (idx >= 0 && idx < lobByHour.length) lobByHour[idx]++;
+  });
+  let cum = 0;
+  const lobCum = lobByHour.map(v => cum += v);
+
+  if (lobsterChart) {
+    lobsterChart.data.labels = commitLabels;
+    lobsterChart.data.datasets[0].data = lobCum;
+    lobsterChart.update('none');
+  } else {
+    lobsterChart = new Chart(document.getElementById('lobsterTimeline'), {
+      type: 'line',
+      data: {
+        labels: commitLabels,
+        datasets: [{ label: 'Cumulative', data: lobCum,
+          borderColor: '#E63946', backgroundColor: 'rgba(230,57,70,0.1)', fill: true,
+          tension: 0.3, pointRadius: 4, pointBackgroundColor: '#E63946' }]
+      },
+      options: { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,grid:{color:'rgba(136,146,176,0.08)'}},x:{grid:{display:false}}} }
+    });
+  }
+
+  // --- LOBSTER RANKING (fewer = better, active teams only) ---
+  const activeTeamNames = new Set(Object.entries(cachedCommits).filter(([,c]) => c.length > 0).map(([n]) => n));
+  const rankTeams = cachedTeams
+    .filter(t => activeTeamNames.has(t.name.trim()) || t.lobster_count > 0)
+    .sort((a,b) => a.lobster_count - b.lobster_count);
+  const rankLabels = rankTeams.map(t => t.name.trim());
+  const rankData = rankTeams.map(t => t.lobster_count);
+  const rankColors = rankTeams.map(t =>
+    t.lobster_count === 0 ? 'rgba(100,255,218,0.7)' : t.lobster_count <= 1 ? 'rgba(255,217,15,0.5)' : 'rgba(230,57,70,0.7)');
+
+  if (rankingChart) {
+    rankingChart.data.labels = rankLabels;
+    rankingChart.data.datasets[0].data = rankData;
+    rankingChart.data.datasets[0].backgroundColor = rankColors;
+    rankingChart.update('none');
+  } else {
+    rankingChart = new Chart(document.getElementById('lobsterRanking'), {
+      type: 'bar',
+      data: { labels: rankLabels, datasets: [{ label: 'Count', data: rankData, backgroundColor: rankColors, borderRadius: 4 }] },
+      options: { indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(136,146,176,0.08)'}},y:{grid:{display:false}}} }
+    });
+  }
+
+  // --- TEAM TABLE ---
+  const commitMap = {};
+  Object.entries(cachedCommits).forEach(([name, times]) => { commitMap[name] = times.length; });
+  const maxC = Math.max(...Object.values(commitMap), 1);
+
+  const merged = cachedTeams.map(t => ({
+    name: t.name.trim(),
+    members: memberCnt[t.id] || 0,
+    github: !!t.github_url,
+    lobster: t.lobster_count,
+    commits: commitMap[t.name.trim()] || 0,
+  })).sort((a,b) => {
+    if (currentSort === 'lobster') return a.lobster - b.lobster || b.commits - a.commits;
+    if (currentSort === 'commits') return b.commits - a.commits || a.lobster - b.lobster;
+    return a.name.localeCompare(b.name);
+  });
+
+  const tbody = document.getElementById('teamTableBody');
+  tbody.innerHTML = '';
+  merged.forEach(t => {
+    const pct = Math.round((t.commits / maxC) * 100);
+    const lob = t.lobster > 0
+      ? Array.from({length:Math.min(t.lobster,5)},()=>'\u{1F99E}').join('') + (t.lobster>5?` +${t.lobster-5}`:'')
+      : '-';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:600">${t.name}</td>
+      <td>${t.members}</td>
+      <td style="font-family:monospace;font-weight:700;color:${t.commits>0?'#64ffda':'#8892b0'}">${t.commits}</td>
+      <td><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div></td>
+      <td><span class="badge ${t.github?'ok':'miss'}">${t.github?'Submitted':'Missing'}</span></td>
+      <td>${lob}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// --- REALTIME ---
+sb.channel('dashboard-realtime')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'teams' }, async () => {
+    await fetchSupabase();
+    render();
+  })
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'lobster_events' }, async () => {
+    await fetchSupabase();
+    render();
+  })
+  .subscribe();
+
+// --- SORT ---
+let currentSort = 'lobster';
+function setSort(mode) {
+  currentSort = mode;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.dataset.sort === mode));
+  render();
+}
+
+// --- INIT & INTERVALS ---
+async function init() {
+  await fetchSupabase();
+  render();
+  // GitHub commits: fetch now and every 5 min
+  await fetchGithubCommits();
+  render();
+  setInterval(async () => { await fetchGithubCommits(); render(); }, 5 * 60 * 1000);
+  // Supabase refresh every 30s as fallback
+  setInterval(async () => { await fetchSupabase(); render(); }, 30 * 1000);
+}
+
+init();
+</script>
+</body>
+</html>
