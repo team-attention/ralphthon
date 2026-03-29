@@ -13,10 +13,11 @@ const SCHEDULE = {
 const JUDGES = ['한기용', '이태양', '제프리', '이재규', '이상희']
 
 const TEAMS = [
-  'Ha-fam',
-  'Supermango',
-  'polysona',
-  // remaining teams TBD - add as selected
+  { name: 'Ha-fam', confirmed: true },
+  { name: 'Supermango', confirmed: true },
+  { name: 'polysona', confirmed: true },
+  { name: 'TBD', confirmed: false },
+  { name: 'TBD', confirmed: false },
 ]
 
 function getTimeSlot(index: number): string {
@@ -145,6 +146,7 @@ export default function FinalPage() {
             const time = getTimeSlot(idx)
             const isActive = currentSlot === idx
             const isDone = currentSlot > idx
+            const isTbd = !team.confirmed
 
             return (
               <div
@@ -153,18 +155,20 @@ export default function FinalPage() {
                 style={{
                   borderColor: isActive
                     ? 'rgba(255,217,15,0.5)'
-                    : 'rgba(255,217,15,0.08)',
+                    : isTbd
+                      ? 'rgba(255,255,255,0.05)'
+                      : 'rgba(255,217,15,0.08)',
                   boxShadow: isActive
                     ? '0 0 30px rgba(255,217,15,0.15)'
                     : 'none',
-                  opacity: isDone ? 0.4 : 1,
+                  opacity: isDone ? 0.4 : isTbd ? 0.5 : 1,
                 }}
               >
                 {/* Number */}
                 <div
                   className="font-display text-3xl w-12 text-center shrink-0"
                   style={{
-                    color: isActive ? '#FFD90F' : isDone ? '#8892b0' : '#e2e8f0',
+                    color: isActive ? '#FFD90F' : isDone || isTbd ? '#8892b0' : '#e2e8f0',
                   }}
                 >
                   {idx + 1}
@@ -180,19 +184,36 @@ export default function FinalPage() {
 
                 {/* Team Name */}
                 <div className="flex-1">
-                  <span
-                    className="text-xl font-bold"
-                    style={{
-                      color: isActive ? '#FFD90F' : '#e2e8f0',
-                    }}
-                  >
-                    {team}
-                  </span>
+                  {isTbd ? (
+                    <span
+                      className="text-xl italic"
+                      style={{ color: '#8892b0' }}
+                    >
+                      ? ? ?
+                    </span>
+                  ) : (
+                    <span
+                      className="text-xl font-bold"
+                      style={{
+                        color: isActive ? '#FFD90F' : '#e2e8f0',
+                      }}
+                    >
+                      {team.name}
+                    </span>
+                  )}
                 </div>
 
                 {/* Status */}
                 <div className="shrink-0">
-                  {isDone && (
+                  {isTbd && (
+                    <span
+                      className="text-xs px-3 py-1 rounded-full"
+                      style={{ background: 'rgba(230,57,70,0.15)', color: '#E63946' }}
+                    >
+                      TBD
+                    </span>
+                  )}
+                  {!isTbd && isDone && (
                     <span
                       className="text-xs px-3 py-1 rounded-full"
                       style={{ background: 'rgba(69,182,73,0.2)', color: '#45B649' }}
@@ -200,7 +221,7 @@ export default function FinalPage() {
                       Done
                     </span>
                   )}
-                  {isActive && (
+                  {!isTbd && isActive && (
                     <span
                       className="text-xs px-3 py-1 rounded-full font-bold"
                       style={{
@@ -212,7 +233,7 @@ export default function FinalPage() {
                       NOW
                     </span>
                   )}
-                  {!isDone && !isActive && (
+                  {!isTbd && !isDone && !isActive && (
                     <span
                       className="text-xs px-3 py-1 rounded-full"
                       style={{ background: 'rgba(255,255,255,0.05)', color: '#8892b0' }}
