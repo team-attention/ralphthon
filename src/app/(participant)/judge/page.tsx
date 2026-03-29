@@ -143,7 +143,7 @@ export default function JudgePage() {
       const { data, error } = await supabase
         .from('judging_scores' as never)
         .select('*')
-        .eq('judge_name', selectedJudge)
+        .eq('judge_name', selectedJudge!)
       if (!error && data) {
         setDbAvailable(true)
         const dbScores: Record<string, TeamScore> = {}
@@ -164,11 +164,11 @@ export default function JudgePage() {
           }
         }
         // Merge: DB takes priority, then localStorage
-        const localScores = loadScoresFromStorage(selectedJudge)
+        const localScores = loadScoresFromStorage(selectedJudge!)
         setScores({ ...localScores, ...dbScores })
       } else {
         // DB not available, use localStorage only
-        setScores(loadScoresFromStorage(selectedJudge))
+        setScores(loadScoresFromStorage(selectedJudge!))
       }
     }
     loadFromDb()

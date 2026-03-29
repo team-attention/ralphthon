@@ -15,8 +15,8 @@ export async function GET() {
     supabase.from('team_members').select('team_id'),
   ])
 
-  const teams = teamsRes.data ?? []
-  const members = membersRes.data ?? []
+  const teams = (teamsRes.data ?? []) as Array<{ id: string; name: string; github_url: string | null; lobster_count: number }>
+  const members = (membersRes.data ?? []) as Array<{ team_id: string }>
 
   const memberCount: Record<string, number> = {}
   for (const m of members) {
