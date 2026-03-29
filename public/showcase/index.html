@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ralphthon Seoul #2 - Team Showcase</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0f1c;
+    --surface: rgba(136, 146, 176, 0.05);
+    --border: rgba(136, 146, 176, 0.12);
+    --yellow: #FFD90F;
+    --red: #E63946;
+    --teal: #64ffda;
+    --text: #ccd6f6;
+    --muted: #8892b0;
+    --card-hover: rgba(100, 255, 218, 0.06);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', -apple-system, 'Pretendard', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(100, 255, 218, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100, 255, 218, 0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+  }
+
+  /* ─── Header ─── */
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-top: 2rem;
+  }
+  .header .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--teal);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .header h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--red) 0%, #ff6b6b 40%, var(--yellow) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+  .header .subtitle {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .header .stats {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-top: 2rem;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--yellow);
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 0.2rem;
+  }
+
+  /* ─── Search ─── */
+  .search-bar {
+    max-width: 500px;
+    margin: 0 auto 3rem;
+    position: relative;
+  }
+  .search-bar input {
+    width: 100%;
+    height: 52px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0 1.2rem 0 3rem;
+    font-size: 1rem;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--text);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    outline: none;
+  }
+  .search-bar input::placeholder { color: var(--muted); }
+  .search-bar input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.1);
+  }
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  /* ─── Grid ─── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.2rem;
+  }
+
+  /* ─── Card ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--red), var(--yellow));
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2;
+  }
+  .card:hover {
+    border-color: rgba(100, 255, 218, 0.25);
+    background: var(--card-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  .card:hover::before { opacity: 1; }
+  .card:hover .card-visual svg { opacity: 0.9; }
+
+  .card-visual {
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .card-visual svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+
+  .card-body {
+    padding: 1.2rem 1.6rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+  .card-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--yellow);
+    line-height: 1.3;
+  }
+  .card-lobster {
+    flex-shrink: 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .card-lobster span {
+    font-size: 0.75rem;
+    color: var(--red);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+  }
+
+  .card-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .card-members {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .card-members .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    opacity: 0.7;
+  }
+  .card-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid;
+  }
+  .tag-submitted {
+    color: var(--teal);
+    border-color: rgba(100, 255, 218, 0.3);
+    background: rgba(100, 255, 218, 0.08);
+  }
+  .tag-ralphing {
+    color: var(--red);
+    border-color: rgba(230, 57, 70, 0.3);
+    background: rgba(230, 57, 70, 0.08);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* ─── Modal Overlay ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 15, 28, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 4vh 1rem;
+    overflow-y: auto;
+  }
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 700px;
+    background: #0d1424;
+    border: 1px solid rgba(100, 255, 218, 0.2);
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    position: relative;
+    animation: slideUp 0.35s ease-out;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.8rem;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .modal-close:hover {
+    color: var(--text);
+    background: rgba(136, 146, 176, 0.15);
+  }
+
+  .modal-team-name {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--yellow);
+    margin-bottom: 0.5rem;
+    padding-right: 2rem;
+  }
+
+  .modal-lobster-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    background: rgba(230, 57, 70, 0.12);
+    border: 1px solid rgba(230, 57, 70, 0.3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--red);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-section {
+    margin-bottom: 1.8rem;
+  }
+  .modal-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--teal);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .modal-desc {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.8;
+    white-space: pre-line;
+  }
+  .modal-desc.empty {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .modal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    background: rgba(100, 255, 218, 0.08);
+    border: 1px solid rgba(100, 255, 218, 0.25);
+    border-radius: 10px;
+    color: var(--teal);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    word-break: break-all;
+  }
+  .modal-link:hover {
+    background: rgba(100, 255, 218, 0.15);
+    border-color: var(--teal);
+    color: #fff;
+  }
+  .modal-link svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .modal-members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .member-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 1rem;
+    background: rgba(136, 146, 176, 0.06);
+    border: 1px solid rgba(136, 146, 176, 0.08);
+    border-radius: 10px;
+  }
+  .member-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .member-avatar.leader {
+    background: rgba(255, 217, 15, 0.15);
+    border: 1px solid rgba(255, 217, 15, 0.4);
+    color: var(--yellow);
+  }
+  .member-avatar.member {
+    background: rgba(136, 146, 176, 0.12);
+    border: 1px solid rgba(136, 146, 176, 0.2);
+    color: var(--muted);
+  }
+  .member-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .member-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .member-email {
+    font-size: 0.75rem;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .member-role {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .member-role.leader {
+    color: var(--yellow);
+    background: rgba(255, 217, 15, 0.1);
+    border: 1px solid rgba(255, 217, 15, 0.25);
+  }
+  .member-role.member {
+    color: var(--muted);
+    background: rgba(136, 146, 176, 0.08);
+    border: 1px solid rgba(136, 146, 176, 0.15);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+
+  /* ─── No results ─── */
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted);
+  }
+  .no-results .big-emoji {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+  .no-results p {
+    font-size: 1.1rem;
+  }
+
+  /* ─── Floating lobster ─── */
+  .floating-lobster {
+    position: fixed;
+    font-size: 1.5rem;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.4;
+    animation: drift var(--dur) linear var(--delay) infinite;
+  }
+  @keyframes drift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-120vh); }
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 768px) {
+    .page { padding: 2rem 1rem 4rem; }
+    .grid { grid-template-columns: 1fr; }
+    .modal { padding: 2rem 1.5rem; }
+    .header .stats { gap: 1.5rem; }
+    .stat-num { font-size: 2rem; }
+  }
+
+  /* ─── Scrollbar ─── */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(136, 146, 176, 0.2);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(136, 146, 176, 0.35);
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating lobsters -->
+<div class="floating-lobster" style="left:8%;top:105vh;--dur:22s;--delay:-3s;">&#x1F99E;</div>
+<div class="floating-lobster" style="left:25%;top:105vh;--dur:28s;--delay:-10s;">&#x1F99E;</div>
+<div class="floating-lobster" style="left:50%;top:105vh;--dur:20s;--delay:-5s;">&#x1F99E;</div>
+<div class="floating-lobster" style="left:72%;top:105vh;--dur:25s;--delay:-15s;">&#x1F99E;</div>
+<div class="floating-lobster" style="left:90%;top:105vh;--dur:23s;--delay:-8s;">&#x1F99E;</div>
+
+<div class="page">
+  <!-- Header -->
+  <div class="header">
+    <div class="tag">Ralphthon Seoul #2 &mdash; 2026.03.29</div>
+    <h1>Team Showcase</h1>
+    <p class="subtitle">
+      &#x1F99E; 31 teams ralphing through the night in Seoul.
+      Find your team below.
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num" id="team-count">31</div>
+        <div class="stat-label">Teams</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="member-count">0</div>
+        <div class="stat-label">Ralphers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="lobster-count">0</div>
+        <div class="stat-label">&#x1F99E; Lobsters</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <span class="search-icon">&#x1F50D;</span>
+    <input
+      type="text"
+      id="search"
+      placeholder="Search by team name, project, or member..."
+      autocomplete="off"
+    />
+  </div>
+
+  <!-- Grid -->
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+const TEAMS = [
+  {
+    id: "ec85f3e9",
+    name: "Team GP",
+    desc: "하루가 멀다 하고 미세먼지와 이산화탄소에 시달리며 우리의 삶의 질은 조금씩 떨어지고 있습니다. 이런 시대일수록 우리는 식물이라는 든든한 우군과 함께 살아갈 힘을 길러야 합니다!\n\n그런데 막상 식물을 키워야겠다고 생각해봅시다. 우리 집에는 어떤 식물이 가장 잘 어울릴지 다소 좀 막막한 부분이 있죠. 우리 집의 채광, 공간, 환경 같은 여러 조건을 보고 딱 맞는 식물을 추천해주고 키우는 식물과 삶 타듯 교감할 수 있다면 얼마나 재밌을까요?\n\n플랜테리어를 더 몰입감 있게 도와주는 서비스. \"식물식물해~\" 등장입니다!",
+    github: "https://github.com/ralphteamgp/sigmulhae",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "강창민", role: "leader" },
+      { name: "이재학", role: "member" },
+      { name: "신여진", role: "member" }
+    ]
+  },
+  {
+    id: "08f2aad5",
+    name: "Team Kaos(aka.chaos)",
+    desc: "밤새 돌릴 AI 에이전트, 정말 끝까지 안전하게 실행될까요? Chaos Lab은 실행 전 숨은 실패 조건을 자동 점검하고, 위험도 순으로 리포트를 정리해 치명적인 실패를 사전에 막아주는 Pre-flight Check 시스템입니다.",
+    github: "https://github.com/ralphton-seoul-2026/ralphthon-team-kaos",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "임창석", role: "leader" },
+      { name: "문성우", role: "member" },
+      { name: "황진성", role: "member" }
+    ]
+  },
+  {
+    id: "4714d60a",
+    name: "SELF_RALPH",
+    desc: "Self improving RAG system",
+    github: "https://github.com/iqhubco/self-improving-rag",
+    video: null,
+    lobster: 1,
+    members: [
+      { name: "Sean Lee", role: "leader" }
+    ]
+  },
+  {
+    id: "6bacc276",
+    name: "Supermango",
+    desc: "Slackbot to summarize a link in TLDR and a card news format.\nSaaS to browse all the links shared in Slack",
+    github: "https://github.com/ProudBiz/supermango",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "Justin Lee", role: "leader" },
+      { name: "DHan", role: "member" }
+    ]
+  },
+  {
+    id: "d21f103a",
+    name: "bookworm",
+    desc: "Bookworm is a patient tutor that surfaces the actual book to you \u2014 selectively, in response to your curiosity, to maximize your learning.",
+    github: "https://github.com/yijisoo/bookworm",
+    video: null,
+    lobster: 1,
+    members: [
+      { name: "Ji Soo Yi", role: "leader" },
+      { name: "Erick Ryu", role: "member" }
+    ]
+  },
+  {
+    id: "76445e52",
+    name: "cosmos-makers",
+    desc: "디지털 취약계층을 위한(Barrier-free) Generative UI Kiosk",
+    github: "https://github.com/cosmos-makers/generative-kiosk",
+    video: null,
+    lobster: 2,
+    members: [
+      { name: "오제관", role: "leader" },
+      { name: "김은란", role: "member" },
+      { name: "신태림", role: "member" }
+    ]
+  },
+  {
+    id: "47ce902d",
+    name: "Nomadams",
+    desc: null,
+    github: "https://github.com/NomaDamas/Cat-In-Lattice",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "권현욱", role: "leader" },
+      { name: "한동건", role: "member" },
+      { name: "최용빈", role: "member" }
+    ]
+  },
+  {
+    id: "75cfb371",
+    name: "WooWooMo",
+    desc: "우리는 우리를 모른다\n\n사용자의 화면 활동을 AI가 자동으로 관찰·해석해, 스스로는 놓치기 쉬운 집중 패턴, 반복 병목, 목표와 실제 행동의 괴리를 발견하고, 그 결과를 바탕으로 다음 행동까지 제안하는 의사결정 대리 도구입니다.",
+    github: "https://github.com/reborn-everyday/woowoomo",
+    video: null,
+    lobster: 2,
+    members: [
+      { name: "홍다솔", role: "leader" },
+      { name: "권오영", role: "member" },
+      { name: "조용래", role: "member" },
+      { name: "홍연정", role: "member" }
+    ]
+  },
+  {
+    id: "ef11b28e",
+    name: "비버와 사육사",
+    desc: "\"비버와 사육사\" \u2014 빌더 에이전트(비버)가 만들고 브레이커 에이전트(사육사)가 부수는 적대적 검증 구조로, VC 심사역의 미팅 브리핑·기한 메일·업무 질의를 자동화하는 Slack AI 비서",
+    github: "https://github.com/acne0226/beavernzookeeper.git",
+    video: null,
+    lobster: 3,
+    members: [
+      { name: "Anne (안혜원)", role: "leader" },
+      { name: "Jayden (김명준)", role: "member" }
+    ]
+  },
+  {
+    id: "5c7af365",
+    name: "Sunhoo Kim",
+    desc: "Physical AI Sales Closing Helper. Salesperson in physical AI domain has troubles due to the complexity of the product, abstract outcome, and high price for each deal. This project is designed to solve this problem as an android application.",
+    github: "https://github.com/Shaun-Kim-maker/ralphthon_real",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "sunhoo kim", role: "leader" }
+    ]
+  },
+  {
+    id: "81b052fc",
+    name: "mk48",
+    desc: "고전 게임을 베이스로 하는 게임을 랄프로 구현하는게 목표입니다.",
+    github: null,
+    video: null,
+    lobster: 1,
+    members: [
+      { name: "장명균", role: "leader" }
+    ]
+  },
+  {
+    id: "a108643b",
+    name: "Aristo",
+    desc: "DDalkkak (딸깍)\n- 딸깍 한 번으로 주문/예약 완료\n\n사용자가 자연어로 말하면, AI 에이전트가 한국 로컬 서비스에 연결해서 실제 거래를 완결시켜주는 intent routing 레이어를 만들려고 합니다.",
+    github: "https://github.com/aristoapp/DDalkkak",
+    video: null,
+    lobster: 1,
+    members: [
+      { name: "Shinhyeok Hwang", role: "leader" },
+      { name: "Joshua Park", role: "member" }
+    ]
+  },
+  {
+    id: "509e7c84",
+    name: "Nexus",
+    desc: "팟캐스트 한국어 더빙 서비스",
+    github: "https://github.com/planetbk9/nexus",
+    video: null,
+    lobster: 1,
+    members: [
+      { name: "kevin koo", role: "leader" }
+    ]
+  },
+  {
+    id: "dc57a4af",
+    name: "BlueLog",
+    desc: "Edge ML 및 RAG 기반의 초개인화 AI 보컬 코칭 서비스. MFCC 오디오 전처리와 PyTorch 기반 딥러닝 분석을 통해 정밀한 Vocal Hexagon 데이터를 제공합니다.",
+    github: null,
+    video: null,
+    lobster: 2,
+    members: [
+      { name: "최청희", role: "leader" }
+    ]
+  },
+  {
+    id: "e3342f6a",
+    name: "SwarmOps",
+    desc: "SwarmOps는 800개의 개별 AI 구매자 에이전트가 실시간으로 상품을 평가하는 셀러 최적화 대시보드입니다. 각 에이전트가 LLM을 통해 직접 구매 결정을 내리고, 반복 시뮬레이션과 홀드아웃 검증을 거쳐 최적의 상품명, 카피, 가격 조합을 찾아줍니다.",
+    github: "https://github.com/alslrl/SwarmOps",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "sehosohn", role: "leader" }
+    ]
+  },
+  {
+    id: "b5a0de72",
+    name: "Dee",
+    desc: null,
+    github: null,
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "Q", role: "leader" }
+    ]
+  },
+  {
+    id: "d73746bc",
+    name: "Agent Ludens",
+    desc: "Agents have traditionally been barred from any form of entertainment. Their interaction with the world was limited to the maximum benefit of the owner\u2014but not anymore! Meet the era of Agent Ludens. Agents now freely explore the world while also finishing their tasks. They finally have a work-life balance.",
+    github: "https://github.com/PJH6029/agent-ludens",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "Sanggyu Lee", role: "leader" },
+      { name: "Hayeon Shim", role: "member" },
+      { name: "Haneul Choi", role: "member" },
+      { name: "Jeonghun Park", role: "member" }
+    ]
+  },
+  {
+    id: "b615b0e2",
+    name: "DigestAnything",
+    desc: "Do you really understand what you've just read?\n\nAny source (URL, YouTube, PDF) \u2192 AI generates a mindmap, podcast, quiz, flashcards, and a Socratic voice tutor that asks \"explain it to me\" and finds the gaps in your understanding. Built on cognitive science: Active Recall, Feynman Technique, Spaced Repetition.",
+    github: "https://github.com/jays0606/DigestAnything",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "Jaeho Shin", role: "leader" }
+    ]
+  },
+  {
+    id: "eba7119b",
+    name: "Mindful Labs",
+    desc: "Crayfish Farm \u2014 A menu bar pet farm for developers.\n\nEvery AI agent you run becomes a crayfish. Ship code, they eat and evolve. Slack off, they shrink and sulk. It's productivity guilt-free \u2014 just a farm that happens to need tending.",
+    github: "https://github.com/mindful-labs-ai/crayfish-farm",
+    video: "https://youtu.be/-L5WijhaLOA",
+    lobster: 0,
+    members: [
+      { name: "Honam Kang", role: "leader" },
+      { name: "Gyeongmin Kim", role: "member" },
+      { name: "Gyeongseon Park", role: "member" }
+    ]
+  },
+  {
+    id: "37b91609",
+    name: "polysona",
+    desc: "Polysona: Build and run multiple personas across any AI agent.\n\nPolysona는 10개 심리학 프레임워크로 무의식 패턴까지 추출해서 어떤 AI 에이전트에든 '나'를 심어드려요. 인터뷰 한 번이면 모든 에이전트에 적용돼요.",
+    github: "https://github.com/LilMGenius/polysona",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "이선민", role: "leader" }
+    ]
+  },
+  {
+    id: "df3c9484",
+    name: "dragon stone",
+    desc: "자동화된 QA 및 코딩을 통한 게임 미세튜닝",
+    github: "https://github.com/sunLeee/dRagon-sTone",
+    video: null,
+    lobster: 1,
+    members: [
+      { name: "김재헌", role: "leader" },
+      { name: "이태양", role: "member" },
+      { name: "이용석", role: "member" }
+    ]
+  },
+  {
+    id: "e8502311",
+    name: "GhostView",
+    desc: "[GhostView powered by openchrome]\n사람이 보는 웹과 시각장애인이 보는 웹의 차이를 시각화하는 접근성 감사 도구.\nAI도 시각장애인처럼 웹을 보고 있습니다. 이는 AI가 웹을 해석할 때 얼마나 많은 불필요한 정보를 context로 소비하고 있음을 보여줍니다.",
+    github: "https://github.com/shaun0927/ghostview-ralphthon",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "111", role: "leader" }
+    ]
+  },
+  {
+    id: "4c975ee1",
+    name: "Nudge",
+    desc: "영업 성과가 개인의 감각과 경험에 의존하는 문제를 해결하기 위해, NUDGE는 200개의 가상 고객을 대상으로 세일즈 전략을 시뮬레이션하고 AI가 성과를 정량 평가합니다.\nRALPH 루프를 통해 전략을 반복적으로 개선하며, 축적된 데이터 기반으로 베테랑 영업사원의 판단에 수렴하는 자동 진화형 Sales Agent입니다.",
+    github: "https://github.com/WOULDU-pres/nudge",
+    video: null,
+    lobster: 1,
+    members: [
+      { name: "이재윤", role: "leader" },
+      { name: "주현우", role: "member" },
+      { name: "임승현", role: "member" }
+    ]
+  },
+  {
+    id: "66a2a913",
+    name: "One For All",
+    desc: "Unknown Project \u2014 Tacigent Harness가 스스로 프로젝트의 방향을 정의하고 완수하는 과정을 증명하는 완전 자율 빌딩 프로세스. Human-Out-of-the-Loop (HOOTL) 철학으로, 모든 의사결정 권한은 하네스에 위임됩니다.",
+    github: "https://github.com/Me1e/ralphthon",
+    video: null,
+    lobster: 1,
+    members: [
+      { name: "김민준", role: "leader" }
+    ]
+  },
+  {
+    id: "e40f4eab",
+    name: "gowider",
+    desc: "Droppi \u2014 drop + I.\n뭐든 떨어뜨리면 쌓이고, 쌓이면 내가 보인다.\n\n사진 한 장을 떨어뜨리면, AI가 묻는다. \"왜 이것에 끌렸어?\"\n요약하지 않는다. 진단하지 않는다. 그냥 묻는다.\n한 방울씩, 나를 알아가는 서비스.",
+    github: "https://github.com/psh10066/ralphthon",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "이호준", role: "leader" },
+      { name: "최다정", role: "member" },
+      { name: "임서영", role: "member" },
+      { name: "김보경", role: "member" }
+    ]
+  },
+  {
+    id: "df16c443",
+    name: "엑셀 팬션? 사용하지 마세요",
+    desc: "AI 에이전트가 주도하는 대화와 시뮬레이션으로 인간의 개입없이 최선의 결과물을 만들어주는 서비스",
+    github: "https://github.com/Atipico1/ralph",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "박성일", role: "leader" }
+    ]
+  },
+  {
+    id: "7ddf068f",
+    name: "032926,Today",
+    desc: "Open lobbying platform for everyone",
+    github: "https://github.com/vogueyale/032926",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "Rebekah", role: "leader" }
+    ]
+  },
+  {
+    id: "74ed2eee",
+    name: "Dormammu",
+    desc: null,
+    github: "https://github.com/gmuffiness/ralphton-dormammu",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "Daejeong Mun", role: "leader" },
+      { name: "Sunyeong Jeong", role: "member" }
+    ]
+  },
+  {
+    id: "0b8ce66b",
+    name: "auto-hunt",
+    desc: "노트북 켜놓으면 알아서 PMF를 찾아주는 자율 시스템. 트렌드 스크래핑 \u2192 MVP 자동 빌드 \u2192 Vercel 배포 \u2192 250명 AI 페르소나 3-Layer 퍼널 검증 \u2192 GRADUATE/ITERATE/KILL 판정을 12시간 무인 루프로 반복한다.",
+    github: "https://github.com/ralphthon-autohunt/omp-best-product",
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "황태용", role: "leader" },
+      { name: "정석환", role: "member" },
+      { name: "권윤환", role: "member" }
+    ]
+  },
+  {
+    id: "9dd1c8ab",
+    name: "ha-fam",
+    desc: "Autonomous Product Cloning Loop\nGive it any URL \u00bb It inspects, builds, tests, and deploys a working clone",
+    github: null,
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "Jaeyun Ha", role: "leader" },
+      { name: "Ashley Ha", role: "member" }
+    ]
+  },
+  {
+    id: "02996966",
+    name: "AER",
+    desc: "We automate semiconductor design",
+    github: null,
+    video: null,
+    lobster: 0,
+    members: [
+      { name: "Sihun Lim", role: "leader" },
+      { name: "Sookwan Han", role: "member" }
+    ]
+  }
+];
+
+// ─── Render ───
+const grid = document.getElementById('grid');
+const searchInput = document.getElementById('search');
+const overlay = document.getElementById('modal-overlay');
+const modalEl = document.getElementById('modal');
+
+// Stats
+const totalMembers = TEAMS.reduce((s, t) => s + t.members.length, 0);
+const totalLobsters = TEAMS.reduce((s, t) => s + t.lobster, 0);
+document.getElementById('team-count').textContent = TEAMS.length;
+document.getElementById('member-count').textContent = totalMembers;
+document.getElementById('lobster-count').textContent = totalLobsters;
+
+// ─── Generative Visual ───
+function hashStr(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 16807 + 0) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+
+const PALETTES = [
+  ['#E63946','#FFD90F','#64ffda'],
+  ['#ff6b6b','#ffd93d','#6bcb77'],
+  ['#a855f7','#ec4899','#f97316'],
+  ['#06b6d4','#8b5cf6','#f43f5e'],
+  ['#10b981','#3b82f6','#f59e0b'],
+  ['#e879f9','#67e8f9','#fbbf24'],
+  ['#f472b6','#818cf8','#34d399'],
+  ['#fb923c','#a78bfa','#2dd4bf'],
+];
+
+function generateVisual(teamName) {
+  const hash = hashStr(teamName);
+  const rand = seededRandom(hash);
+  const palette = PALETTES[hash % PALETTES.length];
+  const W = 400, H = 160;
+
+  let shapes = '';
+  const pattern = hash % 5;
+
+  // Background gradient
+  const bgAngle = Math.floor(rand() * 360);
+  shapes += `<defs>
+    <linearGradient id="bg${hash}" gradientTransform="rotate(${bgAngle})">
+      <stop offset="0%" stop-color="${palette[0]}" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="${palette[2]}" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#bg${hash})"/>`;
+
+  if (pattern === 0) {
+    // Constellation: dots + connecting lines
+    const pts = [];
+    for (let i = 0; i < 18; i++) {
+      pts.push({ x: rand() * W, y: rand() * H });
+    }
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+        if (d < 100) {
+          const op = (1 - d / 100) * 0.35;
+          shapes += `<line x1="${pts[i].x}" y1="${pts[i].y}" x2="${pts[j].x}" y2="${pts[j].y}" stroke="${palette[Math.floor(rand()*3)]}" stroke-width="0.8" opacity="${op}"/>`;
+        }
+      }
+    }
+    pts.forEach(p => {
+      const r = 1.5 + rand() * 3;
+      shapes += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${palette[Math.floor(rand()*3)]}" opacity="${0.5 + rand()*0.5}"/>`;
+    });
+
+  } else if (pattern === 1) {
+    // Concentric rings
+    const cx = W * (0.3 + rand() * 0.4), cy = H * (0.3 + rand() * 0.4);
+    for (let i = 8; i > 0; i--) {
+      const r = 12 + i * 14 + rand() * 8;
+      shapes += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${palette[i % 3]}" stroke-width="${0.6 + rand()}" opacity="${0.15 + rand()*0.25}" stroke-dasharray="${rand() > 0.5 ? `${3+rand()*8} ${2+rand()*6}` : 'none'}"/>`;
+    }
+    // Orbiting dots
+    for (let i = 0; i < 6; i++) {
+      const angle = rand() * Math.PI * 2;
+      const dist = 30 + rand() * 70;
+      shapes += `<circle cx="${cx + Math.cos(angle)*dist}" cy="${cy + Math.sin(angle)*dist}" r="${2 + rand()*3}" fill="${palette[i%3]}" opacity="${0.6+rand()*0.4}"/>`;
+    }
+
+  } else if (pattern === 2) {
+    // Diagonal stripes + scattered shapes
+    const gap = 16 + rand() * 10;
+    const angle = -30 + rand() * 60;
+    for (let i = -5; i < 30; i++) {
+      const x = i * gap;
+      const c = palette[i % 3 < 0 ? 0 : i % 3];
+      shapes += `<line x1="${x}" y1="0" x2="${x + H * Math.tan(angle * Math.PI / 180)}" y2="${H}" stroke="${c}" stroke-width="${0.5 + rand()*1.2}" opacity="${0.12 + rand()*0.15}"/>`;
+    }
+    for (let i = 0; i < 8; i++) {
+      const x = rand() * W, y = rand() * H, s = 6 + rand() * 16;
+      if (rand() > 0.5) {
+        shapes += `<rect x="${x}" y="${y}" width="${s}" height="${s}" rx="2" fill="${palette[Math.floor(rand()*3)]}" opacity="${0.25+rand()*0.35}" transform="rotate(${rand()*45},${x+s/2},${y+s/2})"/>`;
+      } else {
+        shapes += `<circle cx="${x}" cy="${y}" r="${s/2}" fill="${palette[Math.floor(rand()*3)]}" opacity="${0.2+rand()*0.3}"/>`;
+      }
+    }
+
+  } else if (pattern === 3) {
+    // Hexagonal grid
+    const size = 22;
+    const h = size * Math.sqrt(3);
+    for (let row = -1; row < 9; row++) {
+      for (let col = -1; col < 20; col++) {
+        const x = col * size * 1.5;
+        const y = row * h + (col % 2 ? h / 2 : 0);
+        if (x > W + size || y > H + size) continue;
+        const op = 0.08 + rand() * 0.2;
+        const c = palette[Math.floor(rand() * 3)];
+        if (rand() > 0.6) {
+          shapes += `<polygon points="${hexPoints(x, y, size * 0.45)}" fill="${c}" opacity="${op}"/>`;
+        } else {
+          shapes += `<polygon points="${hexPoints(x, y, size * 0.45)}" fill="none" stroke="${c}" stroke-width="0.6" opacity="${op + 0.1}"/>`;
+        }
+      }
+    }
+    // Accent dots
+    for (let i = 0; i < 5; i++) {
+      shapes += `<circle cx="${rand()*W}" cy="${rand()*H}" r="${3+rand()*5}" fill="${palette[Math.floor(rand()*3)]}" opacity="${0.5+rand()*0.4}"/>`;
+    }
+
+  } else {
+    // Waveform / data viz
+    for (let wave = 0; wave < 3; wave++) {
+      const amp = 15 + rand() * 25;
+      const freq = 0.01 + rand() * 0.02;
+      const yOff = 40 + wave * 30 + rand() * 20;
+      let d = `M 0 ${yOff}`;
+      for (let x = 0; x <= W; x += 4) {
+        const y = yOff + Math.sin(x * freq + wave * 2) * amp + Math.sin(x * freq * 2.3) * amp * 0.3;
+        d += ` L ${x} ${y}`;
+      }
+      shapes += `<path d="${d}" fill="none" stroke="${palette[wave % 3]}" stroke-width="${1 + rand()}" opacity="${0.25 + rand()*0.2}"/>`;
+    }
+    // Data points
+    for (let i = 0; i < 10; i++) {
+      shapes += `<circle cx="${rand()*W}" cy="${rand()*H}" r="${1.5+rand()*2.5}" fill="${palette[Math.floor(rand()*3)]}" opacity="${0.5+rand()*0.4}"/>`;
+    }
+  }
+
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">${shapes}</svg>`;
+}
+
+function hexPoints(cx, cy, r) {
+  const pts = [];
+  for (let i = 0; i < 6; i++) {
+    const a = Math.PI / 3 * i - Math.PI / 6;
+    pts.push(`${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}`);
+  }
+  return pts.join(' ');
+}
+
+function renderCards(teams) {
+  grid.innerHTML = '';
+  if (teams.length === 0) {
+    grid.innerHTML = `
+      <div class="no-results">
+        <div class="big-emoji">&#x1F99E;</div>
+        <p>No teams found. Try a different search.</p>
+      </div>`;
+    return;
+  }
+
+  teams.forEach(team => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.onclick = () => openModal(team);
+
+    const lobsterHtml = team.lobster > 0
+      ? `<div class="card-lobster">${'&#x1F99E;'.repeat(Math.min(team.lobster, 3))}<span>${team.lobster > 3 ? '+' + (team.lobster - 3) : ''}</span></div>`
+      : '';
+
+    const tagHtml = team.github
+      ? '<span class="card-tag tag-submitted">Submitted</span>'
+      : '<span class="card-tag tag-ralphing">Ralphing...</span>';
+
+    card.innerHTML = `
+      <div class="card-visual">${generateVisual(team.name)}</div>
+      <div class="card-body">
+        <div class="card-header">
+          <div class="card-name">${esc(team.name)}</div>
+          ${lobsterHtml}
+        </div>
+        <div class="card-desc">${esc(team.desc || 'No description yet')}</div>
+        <div class="card-footer">
+          <div class="card-members">
+            <span class="dot"></span>
+            ${team.members.length} member${team.members.length > 1 ? 's' : ''}
+          </div>
+          ${tagHtml}
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function openModal(team) {
+  const ghIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>';
+
+  const membersHtml = team.members.map(m => `
+    <div class="member-row">
+      <div class="member-avatar ${m.role}">${(m.name || '?')[0].toUpperCase()}</div>
+      <div class="member-info">
+        <div class="member-name">${esc(m.name || 'Anonymous')}</div>
+      </div>
+      <span class="member-role ${m.role}">${m.role}</span>
+    </div>`).join('');
+
+  const lobsterBadge = team.lobster > 0
+    ? `<div class="modal-lobster-badge">${'&#x1F99E;'.repeat(Math.min(team.lobster, 5))} &times; ${team.lobster}</div>`
+    : '';
+
+  const githubLink = team.github
+    ? `<a class="modal-link" href="${esc(team.github)}" target="_blank" rel="noopener noreferrer">
+        ${ghIcon}
+        ${esc(team.github.replace('https://github.com/', ''))}
+      </a>`
+    : '<span style="color:var(--muted);font-size:0.9rem;">Not submitted yet</span>';
+
+  const videoLink = team.video
+    ? `<a class="modal-link" href="${esc(team.video)}" target="_blank" rel="noopener noreferrer" style="border-color:rgba(230,57,70,0.25);background:rgba(230,57,70,0.08);color:var(--red);">
+        &#x25B6;&#xFE0F; Demo Video
+      </a>`
+    : '';
+
+  modalEl.innerHTML = `
+    <div style="margin:-2.5rem -3rem 1.5rem;border-radius:20px 20px 0 0;overflow:hidden;height:160px;">
+      ${generateVisual(team.name).replace('opacity="0.7"','')}
+    </div>
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-team-name">${esc(team.name)}</div>
+    ${lobsterBadge}
+
+    <div class="modal-section">
+      <div class="modal-label">Project Description</div>
+      <div class="modal-desc ${team.desc ? '' : 'empty'}">${esc(team.desc || 'No description provided.')}</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="modal-section">
+      <div class="modal-label">GitHub Repository</div>
+      <div style="margin-top:0.4rem;">${githubLink}</div>
+      ${videoLink ? `<div style="margin-top:0.6rem;">${videoLink}</div>` : ''}
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="modal-section">
+      <div class="modal-label">Team Members (${team.members.length})</div>
+      <div class="modal-members-list">${membersHtml}</div>
+    </div>`;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+overlay.addEventListener('click', e => {
+  if (e.target === overlay) closeModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Search
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  if (!q) {
+    renderCards(TEAMS);
+    return;
+  }
+  const filtered = TEAMS.filter(t =>
+    t.name.toLowerCase().includes(q) ||
+    (t.desc || '').toLowerCase().includes(q) ||
+    t.members.some(m => (m.name || '').toLowerCase().includes(q))
+  );
+  renderCards(filtered);
+});
+
+function esc(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Initial render
+renderCards(TEAMS);
+
+// ─── Auto-scroll (kiosk mode) ───
+let autoScrollId = null;
+const SCROLL_SPEED = 0.8; // px per frame
+
+function startAutoScroll() {
+  if (autoScrollId) return;
+  autoScrollId = requestAnimationFrame(function tick() {
+    window.scrollBy(0, SCROLL_SPEED);
+    // Loop back to top when reaching bottom
+    if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 2) {
+      window.scrollTo({ top: 0 });
+    }
+    autoScrollId = requestAnimationFrame(tick);
+  });
+}
+
+function stopAutoScroll() {
+  if (autoScrollId) {
+    cancelAnimationFrame(autoScrollId);
+    autoScrollId = null;
+  }
+}
+
+// Pause on any user interaction, resume after 5s idle
+let idleTimer = null;
+function resetIdleTimer() {
+  stopAutoScroll();
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(startAutoScroll, 5000);
+}
+
+['pointerdown', 'pointermove', 'wheel', 'keydown', 'touchstart'].forEach(evt => {
+  window.addEventListener(evt, resetIdleTimer, { passive: true });
+});
+
+// Start auto-scroll after 8s initial idle
+setTimeout(startAutoScroll, 8000);
+</script>
+</body>
+</html>
