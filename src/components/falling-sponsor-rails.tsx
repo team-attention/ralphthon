@@ -10,11 +10,9 @@ type Sponsor = {
 
 const LEFT_SPONSORS: Sponsor[] = [
   { src: '/openai-1.png', alt: 'OpenAI', h: 'h-12', delay: '0s', duration: '5s' },
-  { src: '/d2sf-2.png', alt: 'D2SF', h: 'h-40', delay: '-1.5s', duration: '4.5s' },
 ]
 
 const RIGHT_SPONSORS: Sponsor[] = [
-  { src: '/hp-3.png', alt: 'HP', h: 'h-24', delay: '-3s', duration: '5.5s' },
   { src: '/hashed.svg', alt: 'Hashed', h: 'h-10', delay: '-1s', duration: '4.8s' },
 ]
 
