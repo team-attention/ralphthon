@@ -1,10 +1,12 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { createClient } from '@/lib/supabase'
 import { HackathonBg } from '@/components/hackathon-bg'
+import { createClient } from '@/lib/supabase'
+import { ALL_LOGOS, PARTNER_LOGOS, SPONSOR_LOGOS, SponsorLogoCard } from '@/components/falling-sponsor-rails'
 
 export default function LoginPage() {
   const t = useTranslations('login')
@@ -74,69 +76,44 @@ export default function LoginPage() {
       <HackathonBg />
 
       <div className="relative z-20 flex flex-col items-center gap-3 text-center">
-        {/* Ralph + Sponsors */}
-        <div className="relative flex items-center justify-center gap-4 sm:gap-8">
-          {/* Left sponsors */}
-          <div className="hidden sm:flex flex-col items-center gap-8">
-            {[
-              { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', h: 'h-12' },
-              { src: '/d2sf-2.png', alt: 'D2SF', delay: '-1.5s', duration: '4.5s', h: 'h-40' },
-              { src: '/hp-3.png', alt: 'HP', delay: '-3s', duration: '5.5s', h: 'h-24' },
-            ].map((s) => (
-              <img
-                key={s.src}
-                src={s.src}
-                alt={s.alt}
-                className={`${s.h} w-auto opacity-70 hover:opacity-100 transition-opacity duration-300`}
-                style={{
-                  animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
-                  filter: 'brightness(0.8)',
-                }}
-              />
+        {/* Ralph + Partners/Sponsors */}
+        <div className="relative flex items-center justify-center gap-3 sm:gap-5 lg:gap-8">
+          <div className="hidden flex-col items-center gap-3 sm:flex">
+            <p className="font-mono text-[10px] uppercase tracking-[0.34em] text-[rgba(255,217,15,0.55)]">
+              Partners
+            </p>
+            {PARTNER_LOGOS.slice(0, 4).map((sponsor) => (
+              <SponsorLogoCard key={sponsor.src} sponsor={sponsor} mounted={mounted} compact />
             ))}
           </div>
 
           {/* Ralph */}
-          <img
+          <Image
             src="/ralphthon.png"
             alt="Ralphthon"
+            width={288}
+            height={288}
+            priority
             className="-mb-4 h-56 w-56 sm:-mb-6 sm:h-72 sm:w-72"
             style={{
               animation: mounted ? 'float 4s ease-in-out infinite, fadeInUp 0.5s ease-out' : undefined,
             }}
           />
 
-          {/* Right sponsors */}
-          <div className="hidden -translate-y-10 sm:flex flex-col items-center gap-8">
-            {[
-              { src: '/kv-4.png', alt: 'KV', delay: '-2s', duration: '4.8s', h: 'h-32' },
-              { src: '/bass-5.png', alt: 'Bass', delay: '-0.5s', duration: '5.2s', h: 'h-32' },
-              { src: '/wb-6.svg', alt: 'WB', delay: '-3.5s', duration: '4.3s', h: 'h-[2.625rem]' },
-            ].map((s) => (
-              <img
-                key={s.src}
-                src={s.src}
-                alt={s.alt}
-                className={`${s.h} w-auto opacity-70 hover:opacity-100 transition-opacity duration-300`}
-                style={{
-                  animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
-                  filter: 'brightness(0.8)',
-                }}
-              />
+          <div className="hidden -translate-y-8 flex-col items-center gap-3 sm:flex">
+            <p className="font-mono text-[10px] uppercase tracking-[0.34em] text-[rgba(255,217,15,0.55)]">
+              Sponsors
+            </p>
+            {[SPONSOR_LOGOS[0], PARTNER_LOGOS[4], SPONSOR_LOGOS[1], SPONSOR_LOGOS[2]].map((sponsor) => (
+              <SponsorLogoCard key={sponsor.src} sponsor={sponsor} mounted={mounted} compact />
             ))}
           </div>
         </div>
 
-        {/* Mobile sponsors (horizontal scroll) */}
-        <div className="flex sm:hidden flex-wrap items-center justify-center gap-4 -mt-2">
-          {['/openai-1.png', '/d2sf-2.png', '/hp-3.png', '/kv-4.png', '/bass-5.png', '/wb-6.svg'].map((src) => (
-            <img
-              key={src}
-              src={src}
-              alt="Sponsor"
-              className="h-7 w-auto opacity-60"
-              style={{ filter: 'brightness(0.8)' }}
-            />
+        {/* Mobile partners/sponsors */}
+        <div className="-mt-2 flex max-w-sm flex-wrap items-center justify-center gap-2 sm:hidden">
+          {ALL_LOGOS.map((sponsor) => (
+            <SponsorLogoCard key={sponsor.src} sponsor={sponsor} mounted={mounted} compact floating={false} className="h-9 w-24 rounded-xl px-2" />
           ))}
         </div>
 
