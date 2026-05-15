@@ -81,7 +81,6 @@ export default function LoginPage() {
             {[
               { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', h: 'h-12' },
               { src: '/d2sf-2.png', alt: 'D2SF', delay: '-1.5s', duration: '4.5s', h: 'h-40' },
-              { src: '/hp-3.png', alt: 'HP', delay: '-3s', duration: '5.5s', h: 'h-24' },
             ].map((s) => (
               <img
                 key={s.src}
@@ -109,9 +108,8 @@ export default function LoginPage() {
           {/* Right sponsors */}
           <div className="hidden -translate-y-10 sm:flex flex-col items-center gap-8">
             {[
-              { src: '/kv-4.png', alt: 'KV', delay: '-2s', duration: '4.8s', h: 'h-32' },
-              { src: '/bass-5.png', alt: 'Bass', delay: '-0.5s', duration: '5.2s', h: 'h-32' },
-              { src: '/wb-6.svg', alt: 'WB', delay: '-3.5s', duration: '4.3s', h: 'h-[2.625rem]' },
+              { src: '/hp-3.png', alt: 'HP', delay: '-3s', duration: '5.5s', h: 'h-24' },
+              { src: '/hashed.svg', alt: 'Hashed', delay: '-1s', duration: '4.8s', h: 'h-10' },
             ].map((s) => (
               <img
                 key={s.src}
@@ -129,7 +127,7 @@ export default function LoginPage() {
 
         {/* Mobile sponsors (horizontal scroll) */}
         <div className="flex sm:hidden flex-wrap items-center justify-center gap-4 -mt-2">
-          {['/openai-1.png', '/d2sf-2.png', '/hp-3.png', '/kv-4.png', '/bass-5.png', '/wb-6.svg'].map((src) => (
+          {['/openai-1.png', '/d2sf-2.png', '/hp-3.png', '/hashed.svg'].map((src) => (
             <img
               key={src}
               src={src}
