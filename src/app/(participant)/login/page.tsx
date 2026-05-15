@@ -20,14 +20,10 @@ const lightLogoFilter = 'brightness(0) invert(1) opacity(0.82)'
 
 const legacyLeftSponsors: Logo[] = [
   { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', h: 'h-12' },
-  { src: '/d2sf-2.png', alt: 'D2SF', delay: '-1.5s', duration: '4.5s', h: 'h-40' },
-  { src: '/hp-3.png', alt: 'HP', delay: '-3s', duration: '5.5s', h: 'h-24' },
 ]
 
 const legacyRightSponsors: Logo[] = [
-  { src: '/kv-4.png', alt: 'KV', delay: '-2s', duration: '4.8s', h: 'h-32' },
-  { src: '/bass-5.png', alt: 'Bass', delay: '-0.5s', duration: '5.2s', h: 'h-32' },
-  { src: '/wb-6.svg', alt: 'WB', delay: '-3.5s', duration: '4.3s', h: 'h-[2.625rem]' },
+  { src: '/partners/hashed.svg', alt: 'Hashed', delay: '-2s', duration: '4.8s', h: 'h-9 sm:h-10', filter: lightLogoFilter },
 ]
 
 const newPartnerSponsorLogos: Logo[] = [
