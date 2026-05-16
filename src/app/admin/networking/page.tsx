@@ -91,7 +91,7 @@ export default function AdminNetworkingPage() {
           <a className="rounded-md border px-3 py-2 text-sm font-medium" href={exportHref} target="_blank" rel="noreferrer">
             Export participants
           </a>
-          <a className="rounded-md border px-3 py-2 text-sm font-medium" href="http://127.0.0.1:8765/web/admin.html" target="_blank" rel="noreferrer">
+          <a className="rounded-md border px-3 py-2 text-sm font-medium" href="https://ralph-net.vercel.app/web/admin" target="_blank" rel="noreferrer">
             Engine backoffice
           </a>
         </div>
