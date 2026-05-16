@@ -15,15 +15,17 @@
 
 `/web/admin`은 실행 버튼이 있는 관리자 화면이다. `/web/ops`는 읽기 전용 화면으로 운영 현황 확인용이다.
 
-### 2026-05-16 17:33 KST 기준 검증 결과
+### 2026-05-16 17:45 KST 기준 검증 결과
 
 - `https://ralph-net.vercel.app/web/admin` 접속 가능.
-- Engine -> Ralphthon status API 호출은 production DB schema 때문에 막혀 있었다.
-- 확인된 실패 메시지: `column team_members.discord_user_id does not exist`
-- 의미: Ralphthon DB에 networking delivery migration이 아직 적용되지 않았거나, production DB schema가 배포 코드보다 뒤처져 있다.
-- 관련 migration: `supabase/migrations/20260515000001_networking_delivery_fields.sql`
+- Engine -> Ralphthon status API 호출은 `ok=true`, `http_status=200`.
+- 현재 참가자 상태: 97 teams, 170 participants.
+- 현재 gate 상태: `export_ready=false`, `invite_ready=false`, `networking_ready=false`.
+- `duplicate_emails=3`.
+- `discord_linked=0`, `missing_discord=170`.
+- `delivery_schema.has_networking_columns=false`.
 
-현재 상태는 **real Discord delivery 전 No-Go**다. production DB에 위 migration이 적용되어야 Discord readiness와 실제 발송 대상이 정상 집계된다. 단, 코드에는 fallback을 넣어 migration 전에도 참가자 export/status 화면은 500으로 죽지 않게 한다.
+현재 상태는 **real Discord delivery 전 No-Go**다. production DB에 `supabase/migrations/20260515000001_networking_delivery_fields.sql`이 적용되어야 Discord readiness와 실제 발송 대상이 정상 집계된다. 지금 코드는 fallback으로 참가자 export/status 화면이 500으로 죽지는 않게 해둔 상태다.
 
 해결 후 기대 상태:
 
