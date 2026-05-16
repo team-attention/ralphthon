@@ -13,7 +13,7 @@ export interface Database {
         Row: {
           id: string
           name: string
-          region: 'KR' | 'US'
+          region: 'KR' | 'US' | 'SG'
           leader_email: string
           leader_user_id: string | null
           project_desc: string | null
@@ -23,12 +23,13 @@ export interface Database {
           lobster_activated: boolean
           lobster_activated_at: string | null
           lobster_count: number
+          track: 'impact' | 'harness' | null
           created_at: string
         }
         Insert: {
           id?: string
           name: string
-          region: 'KR' | 'US'
+          region: 'KR' | 'US' | 'SG'
           leader_email: string
           leader_user_id?: string | null
           project_desc?: string | null
@@ -38,12 +39,13 @@ export interface Database {
           lobster_activated?: boolean
           lobster_activated_at?: string | null
           lobster_count?: number
+          track?: 'impact' | 'harness' | null
           created_at?: string
         }
         Update: {
           id?: string
           name?: string
-          region?: 'KR' | 'US'
+          region?: 'KR' | 'US' | 'SG'
           leader_email?: string
           leader_user_id?: string | null
           project_desc?: string | null
@@ -53,6 +55,7 @@ export interface Database {
           lobster_activated?: boolean
           lobster_activated_at?: string | null
           lobster_count?: number
+          track?: 'impact' | 'harness' | null
           created_at?: string
         }
       }
@@ -61,21 +64,21 @@ export interface Database {
           id: string
           team_id: string
           team_name: string
-          region: 'KR' | 'US'
+          region: 'KR' | 'US' | 'SG'
           created_at: string
         }
         Insert: {
           id?: string
           team_id: string
           team_name: string
-          region: 'KR' | 'US'
+          region: 'KR' | 'US' | 'SG'
           created_at?: string
         }
         Update: {
           id?: string
           team_id?: string
           team_name?: string
-          region?: 'KR' | 'US'
+          region?: 'KR' | 'US' | 'SG'
           created_at?: string
         }
       }

@@ -21,7 +21,8 @@ export default function RegisterPage() {
 
   const [teamName, setTeamName] = useState('')
   const [leaderName, setLeaderName] = useState('')
-  const [region, setRegion] = useState<'KR' | 'US'>('KR')
+  const [region] = useState<'KR' | 'US' | 'SG'>('SG')
+  const [track, setTrack] = useState<'impact' | 'harness' | null>(null)
   const [projectDesc, setProjectDesc] = useState('')
   const [members, setMembersInput] = useState<{ name: string; email: string }[]>([{ name: '', email: '' }])
 
@@ -67,15 +68,7 @@ export default function RegisterPage() {
 
       setUser(currentUser)
 
-      // Auto-set region from locale
-      const locale =
-        document.cookie
-          .split('; ')
-          .find((c) => c.startsWith('NEXT_LOCALE='))
-          ?.split('=')[1] ||
-        document.documentElement.lang ||
-        'ko'
-      setRegion(locale === 'en' ? 'US' : 'KR')
+      // Region is fixed to SG for Singapore hackathon
 
       setLoading(false)
     })
@@ -104,6 +97,7 @@ export default function RegisterPage() {
     const teamPayload: TeamInsert = {
       name: teamName,
       region,
+      track,
       leader_email: user.email!,
       leader_user_id: user.id,
       project_desc: projectDesc || null,
@@ -199,20 +193,58 @@ export default function RegisterPage() {
               <span style={{ color: '#8892b0' }}>{'>'}</span> {t('region')}
             </label>
             <div className="flex gap-2">
-              {(['KR', 'US'] as const).map((r) => (
+              <div
+                className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium text-center opacity-40 cursor-not-allowed"
+                style={{
+                  borderColor: 'rgba(255, 217, 15, 0.1)',
+                  color: '#8892b0',
+                }}
+              >
+                {'\u{1F1F0}\u{1F1F7}'} Seoul <span className="text-xs ml-1">Closed</span>
+              </div>
+              <div
+                className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium text-center opacity-40 cursor-not-allowed"
+                style={{
+                  borderColor: 'rgba(255, 217, 15, 0.1)',
+                  color: '#8892b0',
+                }}
+              >
+                {'\u{1F1FA}\u{1F1F8}'} SF <span className="text-xs ml-1">Closed</span>
+              </div>
+              <div
+                className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium text-center"
+                style={{
+                  borderColor: '#FFD90F',
+                  background: 'rgba(255, 217, 15, 0.1)',
+                  color: '#FFD90F',
+                  boxShadow: '0 0 12px rgba(255, 217, 15, 0.15)',
+                }}
+              >
+                {'\u{1F1F8}\u{1F1EC}'} Singapore
+              </div>
+            </div>
+          </div>
+
+          {/* Track */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium" style={{ color: '#FFD90F' }}>
+              <span style={{ color: '#8892b0' }}>{'>'}</span> Track
+            </label>
+            <div className="flex gap-2">
+              {(['impact', 'harness'] as const).map((t_) => (
                 <button
-                  key={r}
+                  key={t_}
                   type="button"
-                  onClick={() => setRegion(r)}
+                  onClick={() => setTrack(t_)}
                   className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-all duration-200"
                   style={{
-                    borderColor: region === r ? '#FFD90F' : 'rgba(255, 217, 15, 0.15)',
-                    background: region === r ? 'rgba(255, 217, 15, 0.1)' : 'transparent',
-                    color: region === r ? '#FFD90F' : '#8892b0',
-                    boxShadow: region === r ? '0 0 12px rgba(255, 217, 15, 0.15)' : 'none',
+                    borderColor: track === t_ ? '#FFD90F' : 'rgba(255, 217, 15, 0.15)',
+                    background: track === t_ ? 'rgba(255, 217, 15, 0.1)' : 'transparent',
+                    color: track === t_ ? '#FFD90F' : '#8892b0',
+                    boxShadow: track === t_ ? '0 0 12px rgba(255, 217, 15, 0.15)' : 'none',
                   }}
                 >
-                  {r === 'KR' ? '\u{1F1F0}\u{1F1F7} KR' : '\u{1F1FA}\u{1F1F8} US'}
+                  {t_ === 'impact' ? 'Impact' : 'Harness'}
                 </button>
               ))}
             </div>
@@ -338,7 +370,7 @@ export default function RegisterPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={submitting || !teamName}
+            disabled={submitting || !teamName || !track}
             className="mt-2 flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-display text-xl tracking-wider transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100"
             style={{
               background: '#FFD90F',
