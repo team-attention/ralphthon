@@ -6,37 +6,6 @@ import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase'
 import { HackathonBg } from '@/components/hackathon-bg'
 
-type Logo = {
-  src: string
-  alt: string
-  h: string
-  delay: string
-  duration: string
-  filter?: string
-}
-
-const baseLogoFilter = 'brightness(0.8)'
-const lightLogoFilter = 'brightness(0) invert(1) opacity(0.82)'
-
-const legacyLeftSponsors: Logo[] = [
-  { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', h: 'h-12' },
-]
-
-const legacyRightSponsors: Logo[] = [
-  { src: '/partners/hashed.svg', alt: 'Hashed', delay: '-2s', duration: '4.8s', h: 'h-9 sm:h-10', filter: lightLogoFilter },
-]
-
-const newPartnerSponsorLogos: Logo[] = [
-  { src: '/partners/superteam-sg.svg', alt: 'Superteam SG', h: 'h-6 sm:h-7', delay: '-0.8s', duration: '4.9s', filter: lightLogoFilter },
-  { src: '/partners/petani.png', alt: 'Petani', h: 'h-6 sm:h-7', delay: '-2.4s', duration: '5.2s', filter: lightLogoFilter },
-  { src: '/partners/network-school.svg', alt: 'Network School', h: 'h-5 sm:h-6', delay: '-3.8s', duration: '4.7s', filter: lightLogoFilter },
-  { src: '/partners/65labs.png', alt: '65labs', h: 'h-8 sm:h-10', delay: '-4.4s', duration: '5.4s', filter: lightLogoFilter },
-  { src: '/partners/arize-ai.svg', alt: 'Arize AI', h: 'h-6 sm:h-7', delay: '-1.2s', duration: '5.1s', filter: lightLogoFilter },
-  { src: '/partners/aer-labs.png', alt: 'AER Labs', h: 'h-6 sm:h-7', delay: '-2.8s', duration: '4.6s', filter: lightLogoFilter },
-  { src: '/partners/ironclaw.png', alt: 'near AI / IronClaw', h: 'h-7 sm:h-8', delay: '-4s', duration: '5.3s', filter: lightLogoFilter },
-  { src: '/partners/iyuno.png', alt: 'iyuno', h: 'h-6 sm:h-7', delay: '-0.4s', duration: '4.8s', filter: lightLogoFilter },
-]
-
 export default function LoginPage() {
   const t = useTranslations('login')
   const router = useRouter()
@@ -109,7 +78,9 @@ export default function LoginPage() {
         <div className="relative flex items-center justify-center gap-4 sm:gap-8">
           {/* Left sponsors */}
           <div className="hidden sm:flex flex-col items-center gap-8">
-            {legacyLeftSponsors.map((s) => (
+            {[
+              { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', h: 'h-12' },
+            ].map((s) => (
               <img
                 key={s.src}
                 src={s.src}
@@ -117,7 +88,7 @@ export default function LoginPage() {
                 className={`${s.h} w-auto opacity-70 hover:opacity-100 transition-opacity duration-300`}
                 style={{
                   animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
-                  filter: s.filter ?? baseLogoFilter,
+                  filter: 'brightness(0.8)',
                 }}
               />
             ))}
@@ -135,7 +106,9 @@ export default function LoginPage() {
 
           {/* Right sponsors */}
           <div className="hidden -translate-y-10 sm:flex flex-col items-center gap-8">
-            {legacyRightSponsors.map((s) => (
+            {[
+              { src: '/hashed.svg', alt: 'Hashed', delay: '-1s', duration: '4.8s', h: 'h-10' },
+            ].map((s) => (
               <img
                 key={s.src}
                 src={s.src}
@@ -143,38 +116,22 @@ export default function LoginPage() {
                 className={`${s.h} w-auto opacity-70 hover:opacity-100 transition-opacity duration-300`}
                 style={{
                   animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
-                  filter: s.filter ?? baseLogoFilter,
+                  filter: 'brightness(0.8)',
                 }}
               />
             ))}
           </div>
         </div>
 
-        {/* Additional partners/sponsors */}
-        <div className="hidden max-w-3xl flex-wrap items-center justify-center gap-x-8 gap-y-4 sm:flex">
-          {newPartnerSponsorLogos.map((s) => (
-            <img
-              key={s.src}
-              src={s.src}
-              alt={s.alt}
-              className={`${s.h} w-auto max-w-32 opacity-65 hover:opacity-100 transition-opacity duration-300`}
-              style={{
-                animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
-                filter: s.filter ?? baseLogoFilter,
-              }}
-            />
-          ))}
-        </div>
-
         {/* Mobile sponsors (horizontal scroll) */}
         <div className="flex sm:hidden flex-wrap items-center justify-center gap-4 -mt-2">
-          {[...legacyLeftSponsors, ...legacyRightSponsors, ...newPartnerSponsorLogos].map((s) => (
+          {['/openai-1.png', '/hashed.svg'].map((src) => (
             <img
-              key={s.src}
-              src={s.src}
-              alt={s.alt}
-              className="h-6 w-auto max-w-24 opacity-60"
-              style={{ filter: s.filter ?? baseLogoFilter }}
+              key={src}
+              src={src}
+              alt="Sponsor"
+              className="h-7 w-auto opacity-60"
+              style={{ filter: 'brightness(0.8)' }}
             />
           ))}
         </div>
