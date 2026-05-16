@@ -14,7 +14,7 @@ const baseFilter = 'brightness(0.8)'
 const partnerFilter = 'brightness(0) invert(1) opacity(0.82)'
 
 const LEFT_SPONSORS: Sponsor[] = [
-  { src: '/openai-1.png', alt: 'OpenAI', className: 'w-44 xl:w-52', delay: '0s', duration: '5s', offset: '-translate-x-2' },
+  { src: '/openai-1.png', alt: 'OpenAI', className: 'w-[8.8rem] xl:w-[10.4rem]', delay: '0s', duration: '5s', offset: '-translate-x-2' },
   { src: '/partners/superteam-sg.svg', alt: 'Superteam SG', className: 'w-32 xl:w-36', delay: '-0.8s', duration: '4.9s', filter: partnerFilter, offset: 'translate-x-10 -rotate-3' },
   { src: '/partners/petani.png', alt: 'Petani', className: 'w-28 xl:w-32', delay: '-2.4s', duration: '5.2s', filter: partnerFilter, offset: 'translate-x-2 rotate-2' },
   { src: '/partners/network-school.svg', alt: 'Network School', className: 'w-36 xl:w-40', delay: '-3.8s', duration: '4.7s', filter: partnerFilter, offset: 'translate-x-12' },

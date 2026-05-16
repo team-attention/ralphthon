@@ -21,7 +21,7 @@ const baseLogoFilter = 'brightness(0.8)'
 const partnerLogoFilter = 'brightness(0) invert(1) opacity(0.82)'
 
 const LEFT_SPONSORS: SponsorLogo[] = [
-  { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', className: 'w-36 sm:w-44 lg:w-52', mobileClassName: 'w-28', position: 'left-4 top-[15%] lg:left-8 xl:left-16' },
+  { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', className: 'w-[7.2rem] sm:w-[8.8rem] lg:w-[10.4rem]', mobileClassName: 'w-[5.6rem]', position: 'left-4 top-[15%] lg:left-8 xl:left-16' },
   { src: '/partners/superteam-sg.svg', alt: 'Superteam SG', delay: '-0.8s', duration: '4.9s', className: 'w-28 lg:w-36', mobileClassName: 'w-24', filter: partnerLogoFilter, position: 'left-[10%] top-[31%] -rotate-3 lg:left-[8%] xl:left-[11%]' },
   { src: '/partners/petani.png', alt: 'Petani', delay: '-2.4s', duration: '5.2s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'left-5 top-[50%] rotate-2 lg:left-12 xl:left-24' },
   { src: '/partners/network-school.svg', alt: 'Network School', delay: '-3.8s', duration: '4.7s', className: 'w-32 lg:w-40', mobileClassName: 'w-28', filter: partnerLogoFilter, position: 'left-[12%] top-[66%] lg:left-[9%] xl:left-[12%]' },
