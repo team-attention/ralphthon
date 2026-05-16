@@ -9,32 +9,35 @@ import { HackathonBg } from '@/components/hackathon-bg'
 type SponsorLogo = {
   src: string
   alt: string
-  h: string
+  className: string
+  mobileClassName?: string
   delay: string
   duration: string
   filter?: string
+  position: string
 }
 
 const baseLogoFilter = 'brightness(0.8)'
 const partnerLogoFilter = 'brightness(0) invert(1) opacity(0.82)'
 
 const LEFT_SPONSORS: SponsorLogo[] = [
-  { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', h: 'h-12' },
-  { src: '/partners/superteam-sg.svg', alt: 'Superteam SG', delay: '-0.8s', duration: '4.9s', h: 'h-6 sm:h-7', filter: partnerLogoFilter },
-  { src: '/partners/petani.png', alt: 'Petani', delay: '-2.4s', duration: '5.2s', h: 'h-6 sm:h-7', filter: partnerLogoFilter },
-  { src: '/partners/network-school.svg', alt: 'Network School', delay: '-3.8s', duration: '4.7s', h: 'h-5 sm:h-6', filter: partnerLogoFilter },
-  { src: '/partners/65labs.png', alt: '65labs', delay: '-4.4s', duration: '5.4s', h: 'h-8 sm:h-10', filter: partnerLogoFilter },
+  { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', className: 'w-36 sm:w-44 lg:w-52', mobileClassName: 'w-28', position: 'left-4 top-[15%] lg:left-8 xl:left-16' },
+  { src: '/partners/superteam-sg.svg', alt: 'Superteam SG', delay: '-0.8s', duration: '4.9s', className: 'w-28 lg:w-36', mobileClassName: 'w-24', filter: partnerLogoFilter, position: 'left-[10%] top-[31%] -rotate-3 lg:left-[8%] xl:left-[11%]' },
+  { src: '/partners/petani.png', alt: 'Petani', delay: '-2.4s', duration: '5.2s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'left-5 top-[50%] rotate-2 lg:left-12 xl:left-24' },
+  { src: '/partners/network-school.svg', alt: 'Network School', delay: '-3.8s', duration: '4.7s', className: 'w-32 lg:w-40', mobileClassName: 'w-28', filter: partnerLogoFilter, position: 'left-[12%] top-[66%] lg:left-[9%] xl:left-[12%]' },
+  { src: '/partners/65labs.png', alt: '65labs', delay: '-4.4s', duration: '5.4s', className: 'w-20 lg:w-24', mobileClassName: 'w-16', filter: partnerLogoFilter, position: 'left-8 top-[80%] -rotate-2 lg:left-16 xl:left-28' },
 ]
 
 const RIGHT_SPONSORS: SponsorLogo[] = [
-  { src: '/hashed.svg', alt: 'Hashed', delay: '-1s', duration: '4.8s', h: 'h-10' },
-  { src: '/partners/arize-ai.svg', alt: 'Arize AI', delay: '-1.2s', duration: '5.1s', h: 'h-6 sm:h-7', filter: partnerLogoFilter },
-  { src: '/partners/aer-labs.png', alt: 'AER Labs', delay: '-2.8s', duration: '4.6s', h: 'h-6 sm:h-7', filter: partnerLogoFilter },
-  { src: '/partners/ironclaw.png', alt: 'Ironclaw / nearAI', delay: '-4s', duration: '5.3s', h: 'h-7 sm:h-8', filter: partnerLogoFilter },
-  { src: '/partners/iyuno.png', alt: 'Iyuno', delay: '-0.4s', duration: '4.8s', h: 'h-6 sm:h-7', filter: partnerLogoFilter },
+  { src: '/hashed.svg', alt: 'Hashed', delay: '-1s', duration: '4.8s', className: 'w-28 lg:w-36', mobileClassName: 'w-24', position: 'right-6 top-[18%] lg:right-12 xl:right-20' },
+  { src: '/partners/arize-ai.svg', alt: 'Arize AI', delay: '-1.2s', duration: '5.1s', className: 'w-28 lg:w-36', mobileClassName: 'w-24', filter: partnerLogoFilter, position: 'right-[12%] top-[34%] rotate-2 lg:right-[9%] xl:right-[12%]' },
+  { src: '/partners/aer-labs.png', alt: 'AER Labs', delay: '-2.8s', duration: '4.6s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'right-5 top-[51%] -rotate-2 lg:right-12 xl:right-24' },
+  { src: '/partners/ironclaw.png', alt: 'Ironclaw / nearAI', delay: '-4s', duration: '5.3s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'right-[11%] top-[67%] lg:right-[8%] xl:right-[11%]' },
+  { src: '/partners/iyuno.png', alt: 'Iyuno', delay: '-0.4s', duration: '4.8s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'right-8 top-[81%] rotate-3 lg:right-16 xl:right-28' },
 ]
 
 const MOBILE_SPONSORS = [...LEFT_SPONSORS, ...RIGHT_SPONSORS]
+const DESKTOP_SPONSORS = [...LEFT_SPONSORS, ...RIGHT_SPONSORS]
 
 export default function LoginPage() {
   const t = useTranslations('login')
@@ -103,25 +106,24 @@ export default function LoginPage() {
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-0">
       <HackathonBg />
 
+      <div className="pointer-events-none fixed inset-0 z-10 hidden overflow-hidden sm:block">
+        {DESKTOP_SPONSORS.map((s) => (
+          <img
+            key={s.src}
+            src={s.src}
+            alt={s.alt}
+            className={`absolute h-auto object-contain opacity-60 transition-opacity duration-300 hover:opacity-95 ${s.className} ${s.position}`}
+            style={{
+              animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
+              filter: s.filter ?? baseLogoFilter,
+            }}
+          />
+        ))}
+      </div>
+
       <div className="relative z-20 flex flex-col items-center gap-3 text-center">
         {/* Ralph + Sponsors */}
-        <div className="relative flex items-center justify-center gap-4 sm:gap-8">
-          {/* Left sponsors */}
-          <div className="hidden sm:flex flex-col items-center gap-5 lg:gap-6">
-            {LEFT_SPONSORS.map((s) => (
-              <img
-                key={s.src}
-                src={s.src}
-                alt={s.alt}
-                className={`${s.h} w-auto max-w-28 opacity-70 hover:opacity-100 transition-opacity duration-300`}
-                style={{
-                  animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
-                  filter: s.filter ?? baseLogoFilter,
-                }}
-              />
-            ))}
-          </div>
-
+        <div className="relative flex items-center justify-center">
           {/* Ralph */}
           <img
             src="/ralphthon.png"
@@ -131,22 +133,6 @@ export default function LoginPage() {
               animation: mounted ? 'float 4s ease-in-out infinite, fadeInUp 0.5s ease-out' : undefined,
             }}
           />
-
-          {/* Right sponsors */}
-          <div className="hidden -translate-y-10 sm:flex flex-col items-center gap-5 lg:gap-6">
-            {RIGHT_SPONSORS.map((s) => (
-              <img
-                key={s.src}
-                src={s.src}
-                alt={s.alt}
-                className={`${s.h} w-auto max-w-28 opacity-70 hover:opacity-100 transition-opacity duration-300`}
-                style={{
-                  animation: mounted ? `float ${s.duration} ease-in-out ${s.delay} infinite, fadeInUp 0.5s ease-out` : undefined,
-                  filter: s.filter ?? baseLogoFilter,
-                }}
-              />
-            ))}
-          </div>
         </div>
 
         {/* Mobile sponsors (horizontal scroll) */}
@@ -156,7 +142,7 @@ export default function LoginPage() {
               key={s.src}
               src={s.src}
               alt={s.alt}
-              className="h-6 w-auto max-w-24 opacity-60"
+              className={`h-auto object-contain opacity-60 ${s.mobileClassName ?? 'w-24'}`}
               style={{ filter: s.filter ?? baseLogoFilter }}
             />
           ))}
