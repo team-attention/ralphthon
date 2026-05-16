@@ -193,35 +193,41 @@ export default function RegisterPage() {
               <span style={{ color: '#8892b0' }}>{'>'}</span> {t('region')}
             </label>
             <div className="flex gap-2">
-              <div
-                className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium text-center opacity-40 cursor-not-allowed"
-                style={{
-                  borderColor: 'rgba(255, 217, 15, 0.1)',
-                  color: '#8892b0',
-                }}
-              >
-                {'\u{1F1F0}\u{1F1F7}'} Seoul <span className="text-xs ml-1">Closed</span>
-              </div>
-              <div
-                className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium text-center opacity-40 cursor-not-allowed"
-                style={{
-                  borderColor: 'rgba(255, 217, 15, 0.1)',
-                  color: '#8892b0',
-                }}
-              >
-                {'\u{1F1FA}\u{1F1F8}'} SF <span className="text-xs ml-1">Closed</span>
-              </div>
-              <div
-                className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium text-center"
-                style={{
-                  borderColor: '#FFD90F',
-                  background: 'rgba(255, 217, 15, 0.1)',
-                  color: '#FFD90F',
-                  boxShadow: '0 0 12px rgba(255, 217, 15, 0.15)',
-                }}
-              >
-                {'\u{1F1F8}\u{1F1EC}'} Singapore
-              </div>
+              {[
+                { flag: '\u{1F1F0}\u{1F1F7}', label: 'Seoul', closed: true },
+                { flag: '\u{1F1FA}\u{1F1F8}', label: 'SF', closed: true },
+                { flag: '\u{1F1F8}\u{1F1EC}', label: 'Singapore', closed: false },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className={`relative flex-1 rounded-lg border px-4 py-2 text-sm font-medium text-center${item.closed ? ' cursor-not-allowed select-none' : ''}`}
+                  style={item.closed ? {
+                    borderColor: 'rgba(136, 146, 176, 0.15)',
+                    color: 'rgba(136, 146, 176, 0.5)',
+                  } : {
+                    borderColor: '#FFD90F',
+                    background: 'rgba(255, 217, 15, 0.1)',
+                    color: '#FFD90F',
+                    boxShadow: '0 0 12px rgba(255, 217, 15, 0.15)',
+                  }}
+                >
+                  {item.closed && (
+                    <span
+                      className="absolute inset-0 flex items-center justify-center"
+                      style={{ background: 'rgba(10, 10, 26, 0.6)' }}
+                    >
+                      <span className="rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wider"
+                        style={{ borderColor: 'rgba(136, 146, 176, 0.3)', color: 'rgba(136, 146, 176, 0.7)' }}
+                      >
+                        Closed
+                      </span>
+                    </span>
+                  )}
+                  <span className={item.closed ? 'opacity-30' : ''}>
+                    {item.flag} {item.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
