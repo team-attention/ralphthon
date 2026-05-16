@@ -18,18 +18,19 @@
 ### 2026-05-16 17:33 KST 기준 검증 결과
 
 - `https://ralph-net.vercel.app/web/admin` 접속 가능.
-- Engine -> Ralphthon status API 호출은 현재 실패 중.
-- 실패 메시지: `column team_members.discord_user_id does not exist`
+- Engine -> Ralphthon status API 호출은 production DB schema 때문에 막혀 있었다.
+- 확인된 실패 메시지: `column team_members.discord_user_id does not exist`
 - 의미: Ralphthon DB에 networking delivery migration이 아직 적용되지 않았거나, production DB schema가 배포 코드보다 뒤처져 있다.
 - 관련 migration: `supabase/migrations/20260515000001_networking_delivery_fields.sql`
 
-현재 상태는 **dry run 전 No-Go**다. 먼저 위 migration이 production Supabase DB에 적용되어야 한다.
+현재 상태는 **real Discord delivery 전 No-Go**다. production DB에 위 migration이 적용되어야 Discord readiness와 실제 발송 대상이 정상 집계된다. 단, 코드에는 fallback을 넣어 migration 전에도 참가자 export/status 화면은 500으로 죽지 않게 한다.
 
 해결 후 기대 상태:
 
 - Engine admin 상단의 Ralphthon 연결이 초록색.
 - Ralphthon `/admin/networking`에서 참가자 수, Discord linked, Networking ready 값이 보임.
 - `missing_discord`, `invalid_discord`, `duplicate_emails`가 운영자가 판단 가능한 숫자로 보임.
+- `delivery_schema.has_networking_columns = true`.
 
 ## 1. 전체 플로우
 
@@ -326,4 +327,3 @@ No-Go:
 - 대상 수가 예상보다 크게 다름.
 - Discord ID invalid가 1명 이상.
 - 승인자가 없는 상태에서 real send가 필요한 경우.
-

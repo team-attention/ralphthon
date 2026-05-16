@@ -15,9 +15,9 @@ type TeamMemberRow = {
   name: string | null
   email: string
   role: 'leader' | 'member'
-  discord_user_id: string | null
-  discord_username: string | null
-  networking_delivery_opt_in: boolean | null
+  discord_user_id?: string | null
+  discord_username?: string | null
+  networking_delivery_opt_in?: boolean | null
 }
 
 type ParticipantExport = {
@@ -31,6 +31,14 @@ type ParticipantExport = {
   discord_user_id?: string
   discord_username?: string
   delivery_opt_in: boolean
+}
+
+const NETWORKING_COLUMNS = 'discord_user_id,discord_username,networking_delivery_opt_in'
+
+function isMissingNetworkingColumn(message: string) {
+  return ['discord_user_id', 'discord_username', 'networking_delivery_opt_in'].some((column) =>
+    message.includes(column)
+  )
 }
 
 function isAdminEmail(email: string) {
@@ -92,19 +100,30 @@ export async function GET(request: NextRequest) {
   const exportRunId = crypto.randomUUID()
   const admin = createAdminClient()
 
-  const [teamsRes, membersRes] = await Promise.all([
+  const [teamsRes, extendedMembersRes] = await Promise.all([
     admin
       .from('teams')
       .select('id,name,region')
       .order('name', { ascending: true }),
     admin
       .from('team_members')
-      .select('id,team_id,name,email,role,discord_user_id,discord_username,networking_delivery_opt_in')
+      .select(`id,team_id,name,email,role,${NETWORKING_COLUMNS}`)
       .order('created_at', { ascending: true }),
   ])
 
   if (teamsRes.error) {
     return NextResponse.json({ error: teamsRes.error.message }, { status: 500 })
+  }
+
+  let membersRes = extendedMembersRes
+  let hasNetworkingColumns = true
+
+  if (extendedMembersRes.error && isMissingNetworkingColumn(extendedMembersRes.error.message)) {
+    hasNetworkingColumns = false
+    membersRes = await admin
+      .from('team_members')
+      .select('id,team_id,name,email,role')
+      .order('created_at', { ascending: true })
   }
 
   if (membersRes.error) {
@@ -148,6 +167,13 @@ export async function GET(request: NextRequest) {
     event_slug: eventSlug,
     export_run_id: exportRunId,
     exported_at: exportedAt,
+    delivery_schema: {
+      has_networking_columns: hasNetworkingColumns,
+      required_columns: ['discord_user_id', 'discord_username', 'networking_delivery_opt_in'],
+      warning: hasNetworkingColumns
+        ? null
+        : 'Production DB is missing networking delivery columns. Export contains participants but no Discord delivery addresses.',
+    },
     participants,
   })
 }

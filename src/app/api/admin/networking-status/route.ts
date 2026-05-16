@@ -12,13 +12,20 @@ type TeamMemberRow = {
   id: string
   team_id: string
   email: string
-  discord_user_id: string | null
-  discord_username: string | null
-  networking_delivery_opt_in: boolean | null
+  discord_user_id?: string | null
+  discord_username?: string | null
+  networking_delivery_opt_in?: boolean | null
 }
 
 const DISCORD_SNOWFLAKE_RE = /^\d{15,25}$/
 const BACKOFFICE_ORIGIN = process.env.NETWORKING_BACKOFFICE_ORIGIN ?? 'https://ralph-net.vercel.app'
+const NETWORKING_COLUMNS = 'discord_user_id,discord_username,networking_delivery_opt_in'
+
+function isMissingNetworkingColumn(message: string) {
+  return ['discord_user_id', 'discord_username', 'networking_delivery_opt_in'].some((column) =>
+    message.includes(column)
+  )
+}
 
 function json(data: unknown, init?: ResponseInit) {
   const headers = new Headers(init?.headers)
@@ -82,15 +89,23 @@ export async function GET(request: NextRequest) {
   }
 
   const admin = createAdminClient()
-  const [teamsRes, membersRes] = await Promise.all([
+  const [teamsRes, extendedMembersRes] = await Promise.all([
     admin.from('teams').select('id,region'),
     admin
       .from('team_members')
-      .select('id,team_id,email,discord_user_id,discord_username,networking_delivery_opt_in'),
+      .select(`id,team_id,email,${NETWORKING_COLUMNS}`),
   ])
 
   if (teamsRes.error) {
     return json({ error: teamsRes.error.message }, { status: 500 })
+  }
+
+  let membersRes = extendedMembersRes
+  let hasNetworkingColumns = true
+
+  if (extendedMembersRes.error && isMissingNetworkingColumn(extendedMembersRes.error.message)) {
+    hasNetworkingColumns = false
+    membersRes = await admin.from('team_members').select('id,team_id,email')
   }
 
   if (membersRes.error) {
@@ -160,8 +175,15 @@ export async function GET(request: NextRequest) {
     by_region: byRegion,
     gates: {
       export_ready: members.length > 0 && duplicateEmailCount === 0,
-      invite_ready: optInCount > 0,
-      networking_ready: networkingReadyCount > 0 && invalidDiscordCount === 0,
+      invite_ready: hasNetworkingColumns && optInCount > 0,
+      networking_ready: hasNetworkingColumns && networkingReadyCount > 0 && invalidDiscordCount === 0,
+    },
+    delivery_schema: {
+      has_networking_columns: hasNetworkingColumns,
+      required_columns: ['discord_user_id', 'discord_username', 'networking_delivery_opt_in'],
+      warning: hasNetworkingColumns
+        ? null
+        : 'Production DB is missing networking delivery columns. Participant export works, but Discord readiness and real delivery are blocked until the migration is applied.',
     },
     links: {
       export: '/api/admin/networking-export?event_slug=ralphthon-sg',
