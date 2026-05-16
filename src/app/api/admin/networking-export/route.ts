@@ -47,7 +47,7 @@ function isAdminEmail(email: string) {
 }
 
 function hasBackofficeToken(request: NextRequest) {
-  const expected = process.env.NETWORKING_BACKOFFICE_TOKEN
+  const expected = process.env.NETWORKING_BACKOFFICE_TOKEN || process.env.RALPHTHON_BACKOFFICE_TOKEN
   if (!expected) return false
   const bearer = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   const header = request.headers.get('x-networking-backoffice-token')

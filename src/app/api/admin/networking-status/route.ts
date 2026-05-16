@@ -18,10 +18,11 @@ type TeamMemberRow = {
 }
 
 const DISCORD_SNOWFLAKE_RE = /^\d{15,25}$/
+const BACKOFFICE_ORIGIN = process.env.NETWORKING_BACKOFFICE_ORIGIN ?? 'https://ralph-net.vercel.app'
 
 function json(data: unknown, init?: ResponseInit) {
   const headers = new Headers(init?.headers)
-  headers.set('Access-Control-Allow-Origin', process.env.NETWORKING_BACKOFFICE_ORIGIN ?? 'http://127.0.0.1:8765')
+  headers.set('Access-Control-Allow-Origin', BACKOFFICE_ORIGIN)
   headers.set('Access-Control-Allow-Credentials', 'true')
   return NextResponse.json(data, { ...init, headers })
 }
@@ -40,7 +41,7 @@ function isAdminEmail(email: string) {
 }
 
 function hasBackofficeToken(request: NextRequest) {
-  const expected = process.env.NETWORKING_BACKOFFICE_TOKEN
+  const expected = process.env.NETWORKING_BACKOFFICE_TOKEN || process.env.RALPHTHON_BACKOFFICE_TOKEN
   if (!expected) return false
   const bearer = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   const header = request.headers.get('x-networking-backoffice-token')
@@ -172,7 +173,7 @@ export async function OPTIONS() {
   return new Response(null, {
     status: 204,
     headers: {
-      'Access-Control-Allow-Origin': process.env.NETWORKING_BACKOFFICE_ORIGIN ?? 'http://127.0.0.1:8765',
+      'Access-Control-Allow-Origin': BACKOFFICE_ORIGIN,
       'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-networking-backoffice-token',
