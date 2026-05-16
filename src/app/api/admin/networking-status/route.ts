@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase-server'
 
 type TeamRow = {
   id: string
-  region: 'KR' | 'US'
+  region: 'KR' | 'US' | 'SG'
 }
 
 type TeamMemberRow = {
@@ -116,9 +116,10 @@ export async function GET(request: NextRequest) {
   const members = (membersRes.data ?? []) as TeamMemberRow[]
   const teamsById = new Map(teams.map((team) => [team.id, team]))
   const emailCounts = new Map<string, number>()
-  const byRegion = {
+  const byRegion: Record<string, { teams: number; participants: number; networking_ready: number }> = {
     KR: { teams: 0, participants: 0, networking_ready: 0 },
     US: { teams: 0, participants: 0, networking_ready: 0 },
+    SG: { teams: 0, participants: 0, networking_ready: 0 },
   }
 
   for (const team of teams) {

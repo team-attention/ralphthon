@@ -276,7 +276,7 @@ export default function TeamPage() {
               {team.name}
             </h1>
             <p className="mt-1 text-sm" style={{ color: '#8892b0' }}>
-              {t('region')}: <span style={{ color: '#e2e8f0' }}>{team.region === 'KR' ? '\u{1F1F0}\u{1F1F7} KR' : '\u{1F1FA}\u{1F1F8} US'}</span>
+              {t('region')}: <span style={{ color: '#e2e8f0' }}>{team.region === 'KR' ? '\u{1F1F0}\u{1F1F7} KR' : team.region === 'US' ? '\u{1F1FA}\u{1F1F8} US' : '\u{1F1F8}\u{1F1EC} SG'}</span>
             </p>
           </div>
           <div className="flex items-center gap-2">

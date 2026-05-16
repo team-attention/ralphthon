@@ -25,7 +25,7 @@ import {
 
 type Team = Database['public']['Tables']['teams']['Row']
 type TeamMember = Database['public']['Tables']['team_members']['Row']
-type RegionFilter = 'KR' | 'US'
+type RegionFilter = 'KR' | 'US' | 'SG'
 type TeamFilter = 'all' | 'lobster' | 'unsubmitted'
 
 const LOBSTER_DURATION_MS = 10 * 60 * 1000 // 10 minutes
@@ -312,16 +312,16 @@ function useRegionCountdown(filter: RegionFilter) {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
   }
 
-  return filter === 'US'
-    ? { label: 'SF 3:30 PM', value: fmt(remaining.sf) }
-    : { label: 'Seoul 5:00 PM', value: fmt(remaining.seoul) }
+  if (filter === 'US') return { label: 'SF 3:30 PM', value: fmt(remaining.sf) }
+  if (filter === 'KR') return { label: 'Seoul 5:00 PM', value: fmt(remaining.seoul) }
+  return { label: 'Singapore', value: null }
 }
 
 export default function DashboardPage() {
   const t = useTranslations('admin')
   const supabase = useMemo(() => createClient(), [])
   const [teams, setTeams] = useState<Team[]>([])
-  const [filter, setFilter] = useState<RegionFilter>('US')
+  const [filter, setFilter] = useState<RegionFilter>('SG')
   const [teamFilter, setTeamFilter] = useState<TeamFilter>('all')
   const [loading, setLoading] = useState(true)
   const [authorized, setAuthorized] = useState(false)
@@ -579,6 +579,7 @@ export default function DashboardPage() {
   }, [supabase, filteredTeams, filter])
 
   const regionLabels: Record<RegionFilter, string> = {
+    SG: 'Singapore',
     US: 'SF',
     KR: 'Seoul',
   }
@@ -660,7 +661,7 @@ export default function DashboardPage() {
 
         {/* Region tabs - always visible */}
         <div className={`flex items-center gap-2 ${isFullscreen ? 'mb-4' : 'mb-6'}`}>
-          {(['US', 'KR'] as const).map((r) => (
+          {(['SG', 'US', 'KR'] as const).map((r) => (
             <Button
               key={r}
               variant={filter === r ? 'default' : 'outline'}

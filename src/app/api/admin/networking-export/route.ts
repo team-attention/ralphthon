@@ -6,7 +6,7 @@ import { createAdminClient } from '@/lib/supabase-server'
 type TeamRow = {
   id: string
   name: string
-  region: 'KR' | 'US'
+  region: 'KR' | 'US' | 'SG'
 }
 
 type TeamMemberRow = {
@@ -24,7 +24,7 @@ type ParticipantExport = {
   team_member_id: string
   team_id: string
   team_name: string
-  region: 'KR' | 'US'
+  region: 'KR' | 'US' | 'SG'
   role: 'leader' | 'member'
   name: string | null
   email_normalized: string

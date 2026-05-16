@@ -16,7 +16,7 @@ export function ActivityFeed({
   regionFilter,
 }: {
   supabase: SupabaseClient<Database>
-  regionFilter: 'KR' | 'US'
+  regionFilter: 'KR' | 'US' | 'SG'
 }) {
   const t = useTranslations('admin')
   const [events, setEvents] = useState<LobsterEvent[]>([])
