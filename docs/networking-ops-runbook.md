@@ -15,24 +15,26 @@
 
 `/web/admin`은 실행 버튼이 있는 관리자 화면이다. `/web/ops`는 읽기 전용 화면으로 운영 현황 확인용이다.
 
-### 2026-05-16 17:45 KST 기준 검증 결과
+### 2026-05-17 기준 검증 결과
 
 - `https://ralph-net.vercel.app/web/admin` 접속 가능.
 - Engine -> Ralphthon status API 호출은 `ok=true`, `http_status=200`.
 - 현재 참가자 상태: 97 teams, 170 participants.
-- 현재 gate 상태: `export_ready=false`, `invite_ready=false`, `networking_ready=false`.
+- 현재 gate 상태: `export_ready=false`, `invite_ready=true`, `networking_ready=false`.
 - `duplicate_emails=3`.
 - `discord_linked=0`, `missing_discord=170`.
-- `delivery_schema.has_networking_columns=false`.
+- `delivery_schema.has_networking_columns=true`.
+- production Vercel은 새 Supabase project `dusroyxctqyagrpeqtud`를 보고 있다.
 
-현재 상태는 **real Discord delivery 전 No-Go**다. production DB에 `supabase/migrations/20260515000001_networking_delivery_fields.sql`이 적용되어야 Discord readiness와 실제 발송 대상이 정상 집계된다. 지금 코드는 fallback으로 참가자 export/status 화면이 500으로 죽지는 않게 해둔 상태다.
+현재 상태는 **real Discord delivery 전 No-Go**다. migration blocker는 해소됐지만 Discord 연결 대상이 아직 0명이고, duplicate email 3건 때문에 export gate가 false다. 먼저 중복 이메일을 운영 기준으로 정리하고, Discord 연결/초대 상태가 채워지는지 확인한다.
 
 해결 후 기대 상태:
 
 - Engine admin 상단의 Ralphthon 연결이 초록색.
 - Ralphthon `/admin/networking`에서 참가자 수, Discord linked, Networking ready 값이 보임.
 - `missing_discord`, `invalid_discord`, `duplicate_emails`가 운영자가 판단 가능한 숫자로 보임.
-- `delivery_schema.has_networking_columns = true`.
+- `duplicate_emails = 0`.
+- `discord_linked`가 실제 발송 대상 수만큼 증가.
 
 ## 1. 전체 플로우
 
