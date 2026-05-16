@@ -125,6 +125,10 @@ export interface Database {
           email: string
           role: 'leader' | 'member'
           user_id: string | null
+          discord_user_id: string | null
+          discord_username: string | null
+          discord_linked_at: string | null
+          networking_delivery_opt_in: boolean
           created_at: string
         }
         Insert: {
@@ -134,6 +138,10 @@ export interface Database {
           email: string
           role?: 'leader' | 'member'
           user_id?: string | null
+          discord_user_id?: string | null
+          discord_username?: string | null
+          discord_linked_at?: string | null
+          networking_delivery_opt_in?: boolean
           created_at?: string
         }
         Update: {
@@ -143,6 +151,10 @@ export interface Database {
           email?: string
           role?: 'leader' | 'member'
           user_id?: string | null
+          discord_user_id?: string | null
+          discord_username?: string | null
+          discord_linked_at?: string | null
+          networking_delivery_opt_in?: boolean
           created_at?: string
         }
       }
