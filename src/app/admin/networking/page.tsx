@@ -21,6 +21,11 @@ type NetworkingStatus = {
     networking_ready: number
   }>
   gates: Record<string, boolean>
+  delivery_schema?: {
+    has_networking_columns: boolean
+    required_columns: string[]
+    warning: string | null
+  }
   links: {
     export: string
   }
@@ -76,6 +81,7 @@ export default function AdminNetworkingPage() {
 
   const t = status.totals
   const exportHref = status.links.export
+  const deliverySchemaReady = status.delivery_schema?.has_networking_columns ?? true
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 p-6">
@@ -96,6 +102,21 @@ export default function AdminNetworkingPage() {
           </a>
         </div>
       </header>
+
+      {!deliverySchemaReady && (
+        <section className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-amber-700">Schema migration required</p>
+              <h2 className="mt-1 text-lg font-semibold">Discord delivery fields are not on production yet</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Participant counts and export are available, but Discord readiness and real DM delivery stay blocked until the networking delivery migration is applied.
+              </p>
+            </div>
+            <code className="rounded-md border bg-background px-2 py-1 text-xs">20260515000001_networking_delivery_fields.sql</code>
+          </div>
+        </section>
+      )}
 
       <section className="grid gap-3 md:grid-cols-4">
         <Stat label="Teams" value={t.teams} />
