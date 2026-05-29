@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase-server'
 
 type TeamRow = {
   id: string
-  region: 'KR' | 'US' | 'SG'
+  region: 'KR' | 'US' | 'SG' | 'BUSAN'
 }
 
 type TeamMemberRow = {
@@ -120,6 +120,7 @@ export async function GET(request: NextRequest) {
     KR: { teams: 0, participants: 0, networking_ready: 0 },
     US: { teams: 0, participants: 0, networking_ready: 0 },
     SG: { teams: 0, participants: 0, networking_ready: 0 },
+    BUSAN: { teams: 0, participants: 0, networking_ready: 0 },
   }
 
   for (const team of teams) {
@@ -187,7 +188,7 @@ export async function GET(request: NextRequest) {
         : 'Production DB is missing networking delivery columns. Participant export works, but Discord readiness and real delivery are blocked until the migration is applied.',
     },
     links: {
-      export: '/api/admin/networking-export?event_slug=ralphthon-sg',
+      export: '/api/admin/networking-export?event_slug=ralphthon-busan',
     },
   })
 }

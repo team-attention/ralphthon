@@ -9,6 +9,7 @@ const TIERS = [
 ] as const
 
 const EVENTS = [
+  { name: 'Ralphthon Busan', date: 'May 2026' },
   { name: 'Ralphthon SF', date: 'Mar 2026' },
   { name: 'Ralphthon Seoul #2', date: 'Mar 2026' },
   { name: 'Ralphthon Seoul #1', date: 'Feb 2026' },

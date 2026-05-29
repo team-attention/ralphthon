@@ -9,6 +9,15 @@ import type { Database } from '@/lib/database.types'
 import { HackathonBg } from '@/components/hackathon-bg'
 import { FallingSponsorRails } from '@/components/falling-sponsor-rails'
 
+type TrackValue = 'codex_plugin' | 'image_service' | 'busan_local' | 'ai_application'
+
+const TRACK_OPTIONS: { value: TrackValue; label: string }[] = [
+  { value: 'codex_plugin', label: 'Codex Plugin' },
+  { value: 'image_service', label: 'Image-native Service' },
+  { value: 'busan_local', label: 'Busan Local Advantage' },
+  { value: 'ai_application', label: 'AI Application' },
+]
+
 export default function RegisterPage() {
   const t = useTranslations('register')
   const tc = useTranslations('common')
@@ -21,8 +30,8 @@ export default function RegisterPage() {
 
   const [teamName, setTeamName] = useState('')
   const [leaderName, setLeaderName] = useState('')
-  const [region] = useState<'KR' | 'US' | 'SG'>('SG')
-  const [track, setTrack] = useState<'impact' | 'harness' | null>(null)
+  const [region] = useState<'KR' | 'US' | 'SG' | 'BUSAN'>('BUSAN')
+  const [track, setTrack] = useState<TrackValue | null>(null)
   const [projectDesc, setProjectDesc] = useState('')
   const [members, setMembersInput] = useState<{ name: string; email: string }[]>([{ name: '', email: '' }])
 
@@ -68,7 +77,7 @@ export default function RegisterPage() {
 
       setUser(currentUser)
 
-      // Region is fixed to SG for Singapore hackathon
+      // Region is fixed to BUSAN for the Busan Ralphthon.
 
       setLoading(false)
     })
@@ -194,9 +203,9 @@ export default function RegisterPage() {
             </label>
             <div className="flex gap-2">
               {[
-                { flag: '\u{1F1F0}\u{1F1F7}', label: 'Seoul', closed: true },
+                { flag: '\u{1F1F0}\u{1F1F7}', label: 'Busan', closed: false },
                 { flag: '\u{1F1FA}\u{1F1F8}', label: 'SF', closed: true },
-                { flag: '\u{1F1F8}\u{1F1EC}', label: 'Singapore', closed: false },
+                { flag: '\u{1F1F8}\u{1F1EC}', label: 'Singapore', closed: true },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -236,21 +245,21 @@ export default function RegisterPage() {
             <label className="text-sm font-medium" style={{ color: '#FFD90F' }}>
               <span style={{ color: '#8892b0' }}>{'>'}</span> Track
             </label>
-            <div className="flex gap-2">
-              {(['impact', 'harness'] as const).map((t_) => (
+            <div className="grid gap-2 sm:grid-cols-2">
+              {TRACK_OPTIONS.map((option) => (
                 <button
-                  key={t_}
+                  key={option.value}
                   type="button"
-                  onClick={() => setTrack(t_)}
-                  className="flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-all duration-200"
+                  onClick={() => setTrack(option.value)}
+                  className="rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-200"
                   style={{
-                    borderColor: track === t_ ? '#FFD90F' : 'rgba(255, 217, 15, 0.15)',
-                    background: track === t_ ? 'rgba(255, 217, 15, 0.1)' : 'transparent',
-                    color: track === t_ ? '#FFD90F' : '#8892b0',
-                    boxShadow: track === t_ ? '0 0 12px rgba(255, 217, 15, 0.15)' : 'none',
+                    borderColor: track === option.value ? '#FFD90F' : 'rgba(255, 217, 15, 0.15)',
+                    background: track === option.value ? 'rgba(255, 217, 15, 0.1)' : 'transparent',
+                    color: track === option.value ? '#FFD90F' : '#8892b0',
+                    boxShadow: track === option.value ? '0 0 12px rgba(255, 217, 15, 0.15)' : 'none',
                   }}
                 >
-                  {t_ === 'impact' ? 'Impact' : 'Harness'}
+                  {option.label}
                 </button>
               ))}
             </div>

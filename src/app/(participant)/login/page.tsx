@@ -18,22 +18,13 @@ type SponsorLogo = {
 }
 
 const baseLogoFilter = 'brightness(0.8)'
-const partnerLogoFilter = 'brightness(0) invert(1) opacity(0.82)'
 
 const LEFT_SPONSORS: SponsorLogo[] = [
   { src: '/openai-1.png', alt: 'OpenAI', delay: '0s', duration: '5s', className: 'w-[7.2rem] sm:w-[8.8rem] lg:w-[10.4rem]', mobileClassName: 'w-[5.6rem]', position: 'left-4 top-[15%] lg:left-8 xl:left-16' },
-  { src: '/partners/superteam-sg.svg', alt: 'Superteam SG', delay: '-0.8s', duration: '4.9s', className: 'w-28 lg:w-36', mobileClassName: 'w-24', filter: partnerLogoFilter, position: 'left-[10%] top-[31%] -rotate-3 lg:left-[8%] xl:left-[11%]' },
-  { src: '/partners/petani.png', alt: 'Petani', delay: '-2.4s', duration: '5.2s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'left-5 top-[50%] rotate-2 lg:left-12 xl:left-24' },
-  { src: '/partners/network-school.svg', alt: 'Network School', delay: '-3.8s', duration: '4.7s', className: 'w-32 lg:w-40', mobileClassName: 'w-28', filter: partnerLogoFilter, position: 'left-[12%] top-[66%] lg:left-[9%] xl:left-[12%]' },
-  { src: '/partners/65labs.png', alt: '65labs', delay: '-4.4s', duration: '5.4s', className: 'w-20 lg:w-24', mobileClassName: 'w-16', filter: partnerLogoFilter, position: 'left-8 top-[80%] -rotate-2 lg:left-16 xl:left-28' },
 ]
 
 const RIGHT_SPONSORS: SponsorLogo[] = [
-  { src: '/hashed.svg', alt: 'Hashed', delay: '-1s', duration: '4.8s', className: 'w-28 lg:w-36', mobileClassName: 'w-24', position: 'right-6 top-[18%] lg:right-12 xl:right-20' },
-  { src: '/partners/arize-ai.svg', alt: 'Arize AI', delay: '-1.2s', duration: '5.1s', className: 'w-28 lg:w-36', mobileClassName: 'w-24', filter: partnerLogoFilter, position: 'right-[12%] top-[34%] rotate-2 lg:right-[9%] xl:right-[12%]' },
-  { src: '/partners/aer-labs.png', alt: 'AER Labs', delay: '-2.8s', duration: '4.6s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'right-5 top-[51%] -rotate-2 lg:right-12 xl:right-24' },
-  { src: '/partners/ironclaw.png', alt: 'Ironclaw / nearAI', delay: '-4s', duration: '5.3s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'right-[11%] top-[67%] lg:right-[8%] xl:right-[11%]' },
-  { src: '/partners/iyuno.png', alt: 'Iyuno', delay: '-0.4s', duration: '4.8s', className: 'w-24 lg:w-32', mobileClassName: 'w-20', filter: partnerLogoFilter, position: 'right-8 top-[81%] rotate-3 lg:right-16 xl:right-28' },
+  { src: '/ralphthon.png', alt: 'Ralphthon', delay: '-1s', duration: '4.8s', className: 'w-28 lg:w-36', mobileClassName: 'w-24', position: 'right-6 top-[18%] lg:right-12 xl:right-20' },
 ]
 
 const MOBILE_SPONSORS = [...LEFT_SPONSORS, ...RIGHT_SPONSORS]
@@ -168,9 +159,9 @@ export default function LoginPage() {
             animation: mounted ? 'fadeInUp 0.9s ease-out' : undefined,
           }}
         >
-          <span style={{ color: '#FFD90F' }}>{'>'}</span> Register your team.{' '}
-          <span style={{ color: '#FFD90F' }}>{'>'}</span> Build with AI.{' '}
-          <span style={{ color: '#FFD90F' }}>{'>'}</span> Happy Ralphing!
+          <span style={{ color: '#FFD90F' }}>{'>'}</span> Busan Codex Community.{' '}
+          <span style={{ color: '#FFD90F' }}>{'>'}</span> Build with Codex Goal.{' '}
+          <span style={{ color: '#FFD90F' }}>{'>'}</span> May 30, 1-7 PM.
         </p>
 
         {/* Login Card */}

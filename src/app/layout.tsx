@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "Ralphthon",
-  description: "Hackathon Operations — Register, Collaborate, Request Lobsters!",
+  description: "Codex Community 부산 Ralphthon - Build with Codex Goal",
 };
 
 export default async function RootLayout({

@@ -128,7 +128,7 @@ export default function JudgePage() {
       const { data } = await supabase
         .from('teams')
         .select('*')
-        .eq('region', 'KR')
+        .eq('region', 'BUSAN')
         .order('name')
       if (data) setTeams(data)
       setLoading(false)
@@ -277,7 +277,7 @@ export default function JudgePage() {
             RALPHTHON
           </h1>
           <p className="text-center text-lg mb-2" style={{ color: '#8892b0' }}>
-            Seoul Hackathon Judging
+            Ralphthon Busan Judging
           </p>
           <p className="text-center text-sm mb-10" style={{ color: '#E63946' }}>
             Final 5 Teams (1+1+2+1)

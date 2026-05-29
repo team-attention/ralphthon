@@ -66,7 +66,7 @@ export default function FinalPage() {
           FINAL ROUND
         </h1>
         <p className="text-xl mt-2" style={{ color: '#8892b0' }}>
-          Seoul Hackathon Presentations
+          Ralphthon Busan Presentations
         </p>
         <div
           className="font-display text-3xl mt-4"

@@ -25,7 +25,7 @@ import {
 
 type Team = Database['public']['Tables']['teams']['Row']
 type TeamMember = Database['public']['Tables']['team_members']['Row']
-type RegionFilter = 'KR' | 'US' | 'SG'
+type RegionFilter = 'KR' | 'US' | 'SG' | 'BUSAN'
 type TeamFilter = 'all' | 'lobster' | 'unsubmitted'
 
 const LOBSTER_DURATION_MS = 10 * 60 * 1000 // 10 minutes
@@ -282,17 +282,21 @@ function AdminTeamCard({
 const SF_DEADLINE = new Date('2026-03-28T22:30:00Z')
 // Seoul ralphing ends: 2026-03-29 5:00 PM KST (UTC+9) = 2026-03-29T08:00:00Z
 const SEOUL_DEADLINE = new Date('2026-03-29T08:00:00Z')
+// Busan mini ralphthon building sprint ends: 2026-05-30 4:45 PM KST (UTC+9)
+const BUSAN_DEADLINE = new Date('2026-05-30T07:45:00Z')
 
 function useRegionCountdown(filter: RegionFilter) {
-  const [remaining, setRemaining] = useState<{ sf: number | null; seoul: number | null }>({ sf: null, seoul: null })
+  const [remaining, setRemaining] = useState<{ sf: number | null; seoul: number | null; busan: number | null }>({ sf: null, seoul: null, busan: null })
 
   useEffect(() => {
     function update() {
       const sfDiff = SF_DEADLINE.getTime() - Date.now()
       const seoulDiff = SEOUL_DEADLINE.getTime() - Date.now()
+      const busanDiff = BUSAN_DEADLINE.getTime() - Date.now()
       setRemaining({
         sf: sfDiff > 0 ? sfDiff : 0,
         seoul: seoulDiff > 0 ? seoulDiff : 0,
+        busan: busanDiff > 0 ? busanDiff : 0,
       })
     }
     update()
@@ -313,6 +317,7 @@ function useRegionCountdown(filter: RegionFilter) {
   }
 
   if (filter === 'US') return { label: 'SF 3:30 PM', value: fmt(remaining.sf) }
+  if (filter === 'BUSAN') return { label: 'Busan 4:45 PM', value: fmt(remaining.busan) }
   if (filter === 'KR') return { label: 'Seoul 5:00 PM', value: fmt(remaining.seoul) }
   return { label: 'Singapore', value: null }
 }
@@ -321,7 +326,7 @@ export default function DashboardPage() {
   const t = useTranslations('admin')
   const supabase = useMemo(() => createClient(), [])
   const [teams, setTeams] = useState<Team[]>([])
-  const [filter, setFilter] = useState<RegionFilter>('SG')
+  const [filter, setFilter] = useState<RegionFilter>('BUSAN')
   const [teamFilter, setTeamFilter] = useState<TeamFilter>('all')
   const [loading, setLoading] = useState(true)
   const [authorized, setAuthorized] = useState(false)
@@ -579,6 +584,7 @@ export default function DashboardPage() {
   }, [supabase, filteredTeams, filter])
 
   const regionLabels: Record<RegionFilter, string> = {
+    BUSAN: 'Busan',
     SG: 'Singapore',
     US: 'SF',
     KR: 'Seoul',
@@ -661,7 +667,7 @@ export default function DashboardPage() {
 
         {/* Region tabs - always visible */}
         <div className={`flex items-center gap-2 ${isFullscreen ? 'mb-4' : 'mb-6'}`}>
-          {(['SG', 'US', 'KR'] as const).map((r) => (
+          {(['BUSAN', 'SG', 'US', 'KR'] as const).map((r) => (
             <Button
               key={r}
               variant={filter === r ? 'default' : 'outline'}

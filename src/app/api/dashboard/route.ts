@@ -10,7 +10,7 @@ export async function GET() {
     supabase
       .from('teams')
       .select('id,name,github_url,lobster_count')
-      .eq('region', 'KR')
+      .eq('region', 'BUSAN')
       .neq('name', 'test-inkeun'),
     supabase.from('team_members').select('team_id'),
   ])

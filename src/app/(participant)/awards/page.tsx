@@ -159,7 +159,7 @@ export default function AwardsPage() {
       {/* Header */}
       <div className="text-center mb-12">
         <p className="text-sm uppercase tracking-[0.3em] mb-3" style={{ color: '#E63946' }}>
-          Ralphthon Seoul 2026
+          Ralphthon Busan 2026
         </p>
         <h1 className="font-display text-6xl md:text-8xl text-glow-yellow" style={{ color: '#FFD90F' }}>
           AWARDS

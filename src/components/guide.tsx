@@ -51,23 +51,29 @@ function TrackBlock({
 }
 
 function TrackTable({ rows }: { rows: string[] }) {
+  const headers = ['Codex Plugin', 'Image-native Service', 'Busan Local Advantage', 'AI Application']
+
   return (
     <div className="overflow-x-auto">
-      <div className="grid min-w-[640px] grid-cols-[160px_1fr_1fr] border-b text-sm font-bold">
+      <div className="grid min-w-[1120px] grid-cols-[160px_repeat(4,minmax(0,1fr))] border-b text-sm font-bold">
         <div className="px-3 py-2"></div>
-        <div className="px-3 py-2" style={{ color: '#FFD90F' }}>Impact</div>
-        <div className="px-3 py-2" style={{ color: '#64ffda' }}>Harness</div>
+        {headers.map((header, index) => (
+          <div key={header} className="px-3 py-2" style={{ color: index % 2 === 1 ? '#64ffda' : '#FFD90F' }}>
+            {header}
+          </div>
+        ))}
       </div>
       {rows.map((row) => {
         const parts = row.split('|')
         return (
           <div
             key={parts[0]}
-            className="grid min-w-[640px] grid-cols-[160px_1fr_1fr] border-b text-sm last:border-b-0"
+            className="grid min-w-[1120px] grid-cols-[160px_repeat(4,minmax(0,1fr))] border-b text-sm last:border-b-0"
           >
             <div className="px-3 py-3 font-medium">{parts[0]}</div>
-            <div className="px-3 py-3" style={{ color: '#8892b0' }}>{parts[1]}</div>
-            <div className="px-3 py-3" style={{ color: '#8892b0' }}>{parts[2]}</div>
+            {parts.slice(1, 5).map((part) => (
+              <div key={part} className="px-3 py-3" style={{ color: '#8892b0' }}>{part}</div>
+            ))}
           </div>
         )
       })}
@@ -80,6 +86,8 @@ export function Guide() {
 
   const track1Bullets = [t('track1Bullet1'), t('track1Bullet2'), t('track1Bullet3'), t('track1Bullet4')]
   const track2Bullets = [t('track2Bullet1'), t('track2Bullet2'), t('track2Bullet3'), t('track2Bullet4')]
+  const track3Bullets = [t('track3Bullet1'), t('track3Bullet2'), t('track3Bullet3'), t('track3Bullet4')]
+  const track4Bullets = [t('track4Bullet1'), t('track4Bullet2'), t('track4Bullet3'), t('track4Bullet4')]
   const trackTableRows = [
     t('trackTableRow1'),
     t('trackTableRow2'),
@@ -94,7 +102,7 @@ export function Guide() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Singapore label */}
+      {/* Busan label */}
       <div className="flex items-center gap-2">
         <span
           className="rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider"
@@ -104,7 +112,7 @@ export function Guide() {
             border: '1px solid rgba(255, 217, 15, 0.3)',
           }}
         >
-          Singapore
+          Busan
         </span>
       </div>
 
@@ -128,6 +136,22 @@ export function Guide() {
             bullets={track2Bullets}
             closing={t('track2CodexRequired')}
             think={t('track2Think')}
+          />
+          <TrackBlock
+            title={t('track3Title')}
+            tagline={t('track3Tagline')}
+            desc={t('track3Desc')}
+            bullets={track3Bullets}
+            closing={t('track3Closing')}
+            think={t('track3Think')}
+          />
+          <TrackBlock
+            title={t('track4Title')}
+            tagline={t('track4Tagline')}
+            desc={t('track4Desc')}
+            bullets={track4Bullets}
+            closing={t('track4Closing')}
+            think={t('track4Think')}
           />
 
           <div>
