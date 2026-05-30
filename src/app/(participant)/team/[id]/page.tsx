@@ -70,6 +70,7 @@ export default function TeamPage() {
   const isLobsterActive = lobsterCountdown > 0
   const [videoUrlError, setVideoUrlError] = useState<string | null>(null)
   const [goalPromptUrlError, setGoalPromptUrlError] = useState<string | null>(null)
+  const [editingSubmission, setEditingSubmission] = useState(false)
 
   const fetchTeam = useCallback(async () => {
     const { data } = await supabase
@@ -203,7 +204,19 @@ export default function TeamPage() {
 
     await fetchTeam()
     setSubmitting(false)
+    setEditingSubmission(false)
     toast.success(t('submitSuccess'))
+  }
+
+  function handleEditSubmission() {
+    if (!team) return
+    setGithubUrl(team.github_url || '')
+    setGoalPromptUrl(team.goal_prompt_url || '')
+    setDemoVideoUrl(team.demo_video_url || '')
+    setUrlError(null)
+    setGoalPromptUrlError(null)
+    setVideoUrlError(null)
+    setEditingSubmission(true)
   }
 
   async function handleAddMember() {
@@ -265,6 +278,8 @@ export default function TeamPage() {
   }
 
   const isTeamMember = userId === team.leader_user_id || members.some((m) => m.user_id === userId)
+  const submissionSubmitted = Boolean(team.github_url && team.goal_prompt_url)
+  const showSubmissionForm = isTeamMember && (!submissionSubmitted || editingSubmission)
 
   return (
     <div className="relative flex min-h-screen flex-col items-center overflow-hidden p-4 pt-8">
@@ -530,12 +545,61 @@ export default function TeamPage() {
               <span>{'>'}</span> {t('submitSection')}
             </h2>
 
+            {isTeamMember && submissionSubmitted && !editingSubmission ? (
+              <div
+                className="rounded-lg border p-4"
+                style={{ borderColor: 'rgba(69, 182, 73, 0.28)', background: 'rgba(69, 182, 73, 0.08)' }}
+              >
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="font-display text-2xl tracking-wider" style={{ color: '#45B649' }}>
+                        {t('submissionSubmittedTitle')}
+                      </p>
+                      <p className="mt-1 text-sm" style={{ color: '#8892b0' }}>
+                        {t('submissionSubmittedDesc')}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleEditSubmission}
+                      className="shrink-0 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
+                      style={{ background: 'rgba(255, 217, 15, 0.12)', color: '#FFD90F', border: '1px solid rgba(255, 217, 15, 0.24)' }}
+                    >
+                      {t('editSubmission')}
+                    </button>
+                  </div>
+                  <div className="grid gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
+                        {t('submitGithub')}
+                      </p>
+                      <SafeLink href={team.github_url || ''}>{team.github_url}</SafeLink>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
+                        {t('goalPromptUrl')}
+                      </p>
+                      <SafeLink href={team.goal_prompt_url || ''}>{team.goal_prompt_url}</SafeLink>
+                    </div>
+                    {team.demo_video_url && (
+                      <div>
+                        <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
+                          {t('demoVideo')}
+                        </p>
+                        <SafeLink href={team.demo_video_url}>{team.demo_video_url}</SafeLink>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
                   {t('submitGithub')}
                 </p>
-                {isTeamMember ? (
+                {showSubmissionForm ? (
                   <>
                     <input
                       value={githubUrl}
@@ -565,7 +629,7 @@ export default function TeamPage() {
                 <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
                   {t('goalPromptUrl')}
                 </p>
-                {isTeamMember ? (
+                {showSubmissionForm ? (
                   <>
                     <input
                       value={goalPromptUrl}
@@ -594,7 +658,7 @@ export default function TeamPage() {
                 <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
                   {t('demoVideo')}
                 </p>
-                {isTeamMember ? (
+                {showSubmissionForm ? (
                   <>
                     <input
                       value={demoVideoUrl}
@@ -618,7 +682,7 @@ export default function TeamPage() {
                   )
                 )}
               </div>
-              {isTeamMember && (
+              {showSubmissionForm && (
                 <button
                   onClick={handleSaveSubmission}
                   disabled={submitting}
@@ -629,6 +693,7 @@ export default function TeamPage() {
                 </button>
               )}
             </div>
+            )}
           </div>
 
 
