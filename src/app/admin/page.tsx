@@ -53,6 +53,7 @@ function ProjectDetailDialog({
   if (!team) return null
 
   const hasGithub = !!team.github_url
+  const hasGoalPrompt = !!team.goal_prompt_url
   const hasVideo = !!team.demo_video_url
 
   return (
@@ -71,6 +72,9 @@ function ProjectDetailDialog({
           <div className="flex gap-2">
             <Badge variant={hasGithub ? 'default' : 'outline'}>
               GitHub: {hasGithub ? t('submitted') : t('missing')}
+            </Badge>
+            <Badge variant={hasGoalPrompt ? 'default' : 'outline'}>
+              Goal: {hasGoalPrompt ? t('submitted') : t('missing')}
             </Badge>
             <Badge variant={hasVideo ? 'default' : 'outline'}>
               Video: {hasVideo ? t('submitted') : t('missing')}
@@ -109,6 +113,26 @@ function ProjectDetailDialog({
               </a>
             ) : (
               <p className="text-sm" style={{ color: '#8892b0' }}>{t('noGithub')}</p>
+            )}
+          </div>
+
+          {/* Goal Prompt URL */}
+          <div>
+            <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
+              {t('goalPromptUrl')}
+            </p>
+            {team.goal_prompt_url ? (
+              <a
+                href={team.goal_prompt_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block break-all text-sm underline underline-offset-2 hover:text-foreground"
+                style={{ color: '#64ffda' }}
+              >
+                {team.goal_prompt_url}
+              </a>
+            ) : (
+              <p className="text-sm" style={{ color: '#8892b0' }}>{t('noGoalPrompt')}</p>
             )}
           </div>
 
@@ -188,7 +212,7 @@ function AdminTeamCard({
           ? { animation: 'redBlink 2s ease-in-out infinite' }
           : isPendingLobster
             ? { borderColor: 'rgba(230, 57, 70, 0.4)' }
-            : !team.github_url
+            : !team.github_url || !team.goal_prompt_url
               ? { borderColor: 'rgba(255, 217, 15, 0.4)', background: 'rgba(255, 217, 15, 0.03)' }
               : undefined
       }
@@ -268,7 +292,7 @@ function AdminTeamCard({
                 </span>
               )}
               <Badge variant="outline" className="w-fit text-[10px] px-1.5 py-0">
-                {team.github_url ? 'Ralphing' : t('noGithub')}
+                {team.github_url && team.goal_prompt_url ? 'Ralphing' : t('missing')}
               </Badge>
             </div>
           )}
@@ -516,7 +540,7 @@ export default function DashboardPage() {
         return tt.lobster_requested || remaining > 0
       })
     } else if (teamFilter === 'unsubmitted') {
-      result = result.filter((tt) => !tt.github_url && !tt.demo_video_url)
+      result = result.filter((tt) => !tt.github_url || !tt.goal_prompt_url)
     }
 
     // Step 3: Sort — lobster_requested first, then lobster_active (countdown ASC), then rest (created_at DESC)
@@ -557,7 +581,7 @@ export default function DashboardPage() {
       countMap[m.team_id] = (countMap[m.team_id] || 0) + 1
     }
 
-    const columns = ['id', 'name', 'region', 'leader_email', 'member_count', 'project_desc', 'github_url', 'demo_video_url', 'lobster_count'] as const
+    const columns = ['id', 'name', 'region', 'leader_email', 'member_count', 'project_desc', 'github_url', 'goal_prompt_url', 'demo_video_url', 'lobster_count'] as const
     const escape = (v: unknown) => {
       if (v === null || v === undefined) return ''
       const s = String(v)

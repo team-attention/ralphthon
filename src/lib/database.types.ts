@@ -18,6 +18,7 @@ export interface Database {
           leader_user_id: string | null
           project_desc: string | null
           github_url: string | null
+          goal_prompt_url: string | null
           demo_video_url: string | null
           lobster_requested: boolean
           lobster_activated: boolean
@@ -34,6 +35,7 @@ export interface Database {
           leader_user_id?: string | null
           project_desc?: string | null
           github_url?: string | null
+          goal_prompt_url?: string | null
           demo_video_url?: string | null
           lobster_requested?: boolean
           lobster_activated?: boolean
@@ -50,6 +52,7 @@ export interface Database {
           leader_user_id?: string | null
           project_desc?: string | null
           github_url?: string | null
+          goal_prompt_url?: string | null
           demo_video_url?: string | null
           lobster_requested?: boolean
           lobster_activated?: boolean

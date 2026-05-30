@@ -59,6 +59,7 @@ export default function TeamPage() {
   const [teamName, setTeamName] = useState('')
   const [projectDesc, setProjectDesc] = useState('')
   const [githubUrl, setGithubUrl] = useState('')
+  const [goalPromptUrl, setGoalPromptUrl] = useState('')
   const [demoVideoUrl, setDemoVideoUrl] = useState('')
   const [editingMembers, setEditingMembers] = useState(false)
   const [newMemberName, setNewMemberName] = useState('')
@@ -68,6 +69,7 @@ export default function TeamPage() {
   const lobsterCountdown = useLobsterCountdown(lobsterActivatedAt)
   const isLobsterActive = lobsterCountdown > 0
   const [videoUrlError, setVideoUrlError] = useState<string | null>(null)
+  const [goalPromptUrlError, setGoalPromptUrlError] = useState<string | null>(null)
 
   const fetchTeam = useCallback(async () => {
     const { data } = await supabase
@@ -82,6 +84,7 @@ export default function TeamPage() {
       setTeamName(teamData.name)
       setProjectDesc(teamData.project_desc || '')
       setGithubUrl(teamData.github_url || '')
+      setGoalPromptUrl(teamData.goal_prompt_url || '')
       setDemoVideoUrl(teamData.demo_video_url || '')
       lastLobsterAtRef.current = teamData.lobster_activated_at
       setLobsterActivatedAt(teamData.lobster_activated_at)
@@ -177,12 +180,15 @@ export default function TeamPage() {
   async function handleSaveSubmission() {
     const githubMissing = !githubUrl
     const githubInvalid = githubUrl && !isValidHttpsUrl(githubUrl)
+    const goalPromptMissing = !goalPromptUrl
+    const goalPromptInvalid = goalPromptUrl && !isValidHttpsUrl(goalPromptUrl)
     const videoInvalid = demoVideoUrl && !isValidHttpsUrl(demoVideoUrl)
 
     setUrlError(githubMissing ? t('submitGithubRequired') : githubInvalid ? t('submitGithubNote') : null)
+    setGoalPromptUrlError(goalPromptMissing ? t('goalPromptRequired') : goalPromptInvalid ? t('videoUrlInvalid') : null)
     setVideoUrlError(videoInvalid ? t('videoUrlInvalid') : null)
 
-    if (githubMissing || githubInvalid || videoInvalid) return
+    if (githubMissing || githubInvalid || goalPromptMissing || goalPromptInvalid || videoInvalid) return
 
     setSubmitting(true)
 
@@ -190,6 +196,7 @@ export default function TeamPage() {
       .from('teams')
       .update({
         github_url: githubUrl || null,
+        goal_prompt_url: goalPromptUrl || null,
         demo_video_url: demoVideoUrl || null,
       } as never)
       .eq('id', id)
@@ -548,6 +555,35 @@ export default function TeamPage() {
                 ) : (
                   team.github_url ? (
                     <SafeLink href={team.github_url}>{team.github_url}</SafeLink>
+                  ) : (
+                    <p className="text-sm" style={{ color: '#8892b0' }}>—</p>
+                  )
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <p className="text-xs uppercase tracking-wider" style={{ color: '#8892b0' }}>
+                  {t('goalPromptUrl')}
+                </p>
+                {isTeamMember ? (
+                  <>
+                    <input
+                      value={goalPromptUrl}
+                      onChange={(e) => { setGoalPromptUrl(e.target.value); setGoalPromptUrlError(null) }}
+                      placeholder={t('goalPromptPlaceholder')}
+                      className="h-10 w-full rounded-lg border bg-transparent px-3 text-sm"
+                      style={{ borderColor: goalPromptUrlError ? 'rgba(230, 57, 70, 0.5)' : 'rgba(255, 217, 15, 0.2)', color: '#e2e8f0' }}
+                    />
+                    {goalPromptUrlError && (
+                      <p className="text-xs" style={{ color: '#E63946' }}>{goalPromptUrlError}</p>
+                    )}
+                    <p className="text-xs" style={{ color: '#8892b0' }}>
+                      {t('goalPromptHint')}
+                    </p>
+                  </>
+                ) : (
+                  team.goal_prompt_url ? (
+                    <SafeLink href={team.goal_prompt_url}>{team.goal_prompt_url}</SafeLink>
                   ) : (
                     <p className="text-sm" style={{ color: '#8892b0' }}>—</p>
                   )
