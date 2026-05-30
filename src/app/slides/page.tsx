@@ -13,12 +13,20 @@ type Slide = {
   accent?: 'yellow' | 'red' | 'green'
   body?: string
   bullets?: string[]
-  kind?: 'title' | 'video' | 'flow' | 'timer' | 'warning' | 'transition'
+  kind?: 'welcome' | 'title' | 'video' | 'flow' | 'timer' | 'warning' | 'transition'
 }
 
 const flowSteps = ['Spec', 'Goal Test', 'Ralph', 'Hands-on', 'Demo', 'Awards']
 
 const slides: Slide[] = [
+  {
+    id: 'welcome',
+    eyebrow: 'WELCOME',
+    title: 'Welcome',
+    body: 'Codex Meetup Busan',
+    kind: 'welcome',
+    accent: 'green',
+  },
   {
     id: 'checkin',
     eyebrow: 'CHECK-IN',
@@ -212,6 +220,50 @@ function SlideShell({
         </p>
       </div>
       <div className="relative flex flex-1 items-center">{children}</div>
+    </section>
+  )
+}
+
+function WelcomeSlide({ slide }: { slide: Slide }) {
+  return (
+    <section
+      className="relative z-20 flex aspect-video w-full max-w-7xl flex-col items-center justify-center overflow-hidden rounded-xl border p-10 shadow-2xl"
+      style={{
+        background: 'radial-gradient(circle at 50% 36%, rgba(106,118,255,0.46) 0%, rgba(44,74,194,0.28) 32%, rgba(10,10,26,0.96) 78%)',
+        borderColor: 'rgba(174, 212, 255, 0.22)',
+        boxShadow: '0 0 90px rgba(76, 101, 255, 0.18)',
+      }}
+    >
+      <div className="absolute inset-0 opacity-35 grid-bg" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(180deg, rgba(10,10,26,0.08) 0%, rgba(10,10,26,0.36) 100%)',
+        }}
+      />
+      <div className="relative flex w-full flex-col items-center justify-center gap-8">
+        <div
+          className="h-[min(46vh,430px)] w-[min(46vh,430px)] rounded-[28px] border bg-cover bg-center shadow-2xl"
+          style={{
+            backgroundImage: 'url(/codex-meetup-busan.avif)',
+            borderColor: 'rgba(255,255,255,0.2)',
+            boxShadow: '0 28px 90px rgba(17, 36, 140, 0.42), 0 0 80px rgba(130, 164, 255, 0.18)',
+          }}
+          aria-label="Codex Community Meetup Busan"
+          role="img"
+        />
+        <div className="text-center">
+          <p className="font-mono text-sm font-bold uppercase tracking-[0.28em]" style={{ color: '#C8D8FF' }}>
+            {slide.body}
+          </p>
+          <h1
+            className="mt-4 font-display text-8xl leading-none tracking-wider sm:text-9xl lg:text-[10.5rem]"
+            style={{ color: '#ffffff', textShadow: '0 0 34px rgba(255,255,255,0.32), 0 0 90px rgba(82,112,255,0.42)' }}
+          >
+            {slide.title}
+          </h1>
+        </div>
+      </div>
     </section>
   )
 }
@@ -429,6 +481,7 @@ function SlideContent({
     onReset: () => void
   }
 }) {
+  if (slide.kind === 'welcome') return <WelcomeSlide slide={slide} />
   if (slide.kind === 'video') return <VideoSlide slide={slide} />
   if (slide.kind === 'flow') return <FlowSlide slide={slide} />
   if (slide.kind === 'timer') return <TimerSlide slide={slide} {...timer} />
@@ -521,18 +574,22 @@ export default function SlidesPage() {
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-6">
       <HackathonBg showQuotes={false} />
       <LobsterEffect active={showLobster} onDismiss={() => setShowLobster(false)} />
-      <SlideShell slide={slide}>
-        <SlideContent
-          slide={slide}
-          timer={{
-            remaining,
-            running: timerRunning,
-            finished: timerFinished,
-            onStart: startTimer,
-            onReset: resetTimer,
-          }}
-        />
-      </SlideShell>
+      {slide.kind === 'welcome' ? (
+        <WelcomeSlide slide={slide} />
+      ) : (
+        <SlideShell slide={slide}>
+          <SlideContent
+            slide={slide}
+            timer={{
+              remaining,
+              running: timerRunning,
+              finished: timerFinished,
+              onStart: startTimer,
+              onReset: resetTimer,
+            }}
+          />
+        </SlideShell>
+      )}
       <div className="fixed bottom-5 left-1/2 z-30 flex w-[min(760px,calc(100vw-40px))] -translate-x-1/2 items-center gap-4">
         <button
           type="button"
