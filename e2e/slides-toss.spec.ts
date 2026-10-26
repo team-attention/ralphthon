@@ -1,0 +1,40 @@
+import { expect, test } from '@playwright/test'
+
+test('toss slide deck shows the three event slides', async ({ page }) => {
+  await page.goto('/slides-toss')
+
+  await expect(page.getByRole('heading', { name: 'Welcome to Ralphthon' })).toBeVisible()
+  await expect(page.getByText('> Toss AI Surf > Team Attention')).toBeVisible()
+  await expect(page.getByText('Goal > 2년 6월 19일')).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Toss' }).first()).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Ralph' })).toBeVisible()
+  await expect(page.getByRole('img', { name: 'OpenAI' })).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Claude Code' })).toBeVisible()
+  await expect(page.getByRole('img', { name: 'LazyCodex' })).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Gajae Code' })).toBeVisible()
+
+  await page.keyboard.press('ArrowRight')
+  await expect(page.getByRole('heading', { name: 'Team Attention' })).toBeVisible()
+  await expect(page.getByText('정구봉')).toBeVisible()
+  await expect(page.getByText('김우영')).toBeVisible()
+  await expect(page.getByText('이정민')).toBeVisible()
+  await expect(page.getByText('이호연')).toBeVisible()
+  await expect(page.getByText('박준영')).toBeVisible()
+  await expect(page.getByText('linkedin.com/in/gb-jeong')).toBeVisible()
+  await expect(page.getByText('1인 빌더를 위한 해커하우스')).toBeVisible()
+  await expect(page.getByText('callva.ai')).toBeVisible()
+
+  await page.keyboard.press('ArrowRight')
+  await expect(page.getByRole('heading', { name: 'Timetable' })).toBeVisible()
+  await expect(page.getByText('2:00 ~ 2:30')).toBeVisible()
+  await expect(page.getByText('팀어텐션 소개 및 오프닝 세션')).toBeVisible()
+  await expect(page.getByText('랄프를 돌린 이후에는 팀어텐션 분들과 자유롭게 네트워킹 해보세요!')).toBeVisible()
+  await expect(page.getByText('상품은 당일에 공개됩니다!')).toBeVisible()
+
+  await page.keyboard.press('ArrowRight')
+  await expect(page.getByRole('heading', { name: 'Rule' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '가재존' })).toBeVisible()
+  await expect(page.getByText('컴퓨터를 만지고 싶으시다면 앞쪽 가재존에 와서 가재탈을 쓰고 진행합니다.')).toBeVisible()
+  await expect(page.getByText('데모는 포함되어야 합니다!')).toBeVisible()
+  await expect(page.getByText('Ralphthon 캘린더에 있는 구글밋')).toBeVisible()
+})
