@@ -85,7 +85,7 @@ export function TimerPageView() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-6">
-      <HackathonBg showQuotes={false} />
+      <HackathonBg />
       <LobsterEffect active={showLobster} onDismiss={() => setShowLobster(false)} />
       {state.kind === 'setup' ? (
         <SetupView

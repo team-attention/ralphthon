@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { HackathonBg } from '@/components/hackathon-bg'
 import { LobsterEffect } from '@/components/lobster-effect'
+import { formatCountdown } from '@/lib/use-lobster-countdown'
 
 const TIMER_SECONDS = 5 * 60
 
@@ -10,7 +11,7 @@ type Slide = {
   id: string
   eyebrow: string
   title: string
-  accent?: 'yellow' | 'red' | 'green'
+  accent?: 'red'
   body?: string
   bullets?: string[]
   kind?: 'welcome' | 'title' | 'video' | 'flow' | 'timer' | 'warning' | 'transition'
@@ -25,7 +26,6 @@ const slides: Slide[] = [
     title: 'Welcome',
     body: 'Codex Meetup Busan',
     kind: 'welcome',
-    accent: 'green',
   },
   {
     id: 'checkin',
@@ -186,12 +186,6 @@ function findInitialSlide() {
   return index >= 0 ? index : 0
 }
 
-function formatTime(seconds: number) {
-  const minutes = Math.floor(seconds / 60)
-  const rest = seconds % 60
-  return `${minutes}:${rest.toString().padStart(2, '0')}`
-}
-
 function SlideShell({
   children,
   slide,
@@ -199,7 +193,7 @@ function SlideShell({
   children: React.ReactNode
   slide: Slide
 }) {
-  const accentColor = slide.accent === 'red' ? '#E63946' : slide.accent === 'green' ? '#45B649' : '#FFD90F'
+  const accentColor = slide.accent === 'red' ? '#E63946' : '#FFD90F'
 
   return (
     <section
@@ -457,7 +451,7 @@ function TimerSlide({
             className="mt-4 font-display text-8xl leading-none tracking-wider lg:text-[8rem]"
             style={{ color: running || finished ? '#E63946' : '#FFD90F' }}
           >
-            {formatTime(remaining)}
+            {formatCountdown(remaining)}
           </span>
           <span className="mt-6 text-6xl" style={{ animation: running ? 'lobsterPulse 1.5s ease-in-out infinite' : undefined }}>
             {'\u{1F99E}'}
@@ -481,7 +475,6 @@ function SlideContent({
     onReset: () => void
   }
 }) {
-  if (slide.kind === 'welcome') return <WelcomeSlide slide={slide} />
   if (slide.kind === 'video') return <VideoSlide slide={slide} />
   if (slide.kind === 'flow') return <FlowSlide slide={slide} />
   if (slide.kind === 'timer') return <TimerSlide slide={slide} {...timer} />
@@ -572,7 +565,7 @@ export default function SlidesPage() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-6">
-      <HackathonBg showQuotes={false} />
+      <HackathonBg />
       <LobsterEffect active={showLobster} onDismiss={() => setShowLobster(false)} />
       {slide.kind === 'welcome' ? (
         <WelcomeSlide slide={slide} />

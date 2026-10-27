@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# scripts/export-csv.ts output (participant PII)
+/exports
+
 # next.js
 /.next/
 /out/
@@ -40,4 +43,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-.env*.local

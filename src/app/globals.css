@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss" source("..");
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -40,8 +40,6 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-yellow: #FFD90F;
-  --color-lobster: #E63946;
-  --color-springfield: #45B649;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -148,25 +146,6 @@
   100% { transform: translateX(-60px) translateY(0) rotate(360deg); opacity: 0.7; }
 }
 
-@keyframes sponsorFloat {
-  0% { transform: translateX(-60px) translateY(0); opacity: 0.7; }
-  50% { transform: translateX(60px) translateY(-50vh); opacity: 0.7; }
-  100% { transform: translateX(-60px) translateY(0); opacity: 0.7; }
-}
-
-@keyframes sponsorTilt {
-  0% { transform: rotate(-90deg); }
-  50% { transform: rotate(90deg); }
-  100% { transform: rotate(-90deg); }
-}
-
-@keyframes glitch {
-  0%, 100% { text-shadow: 2px 0 #E63946, -2px 0 #45B649; }
-  25% { text-shadow: -2px -2px #E63946, 2px 2px #45B649; }
-  50% { text-shadow: 2px 2px #E63946, -2px -2px #45B649; }
-  75% { text-shadow: -2px 0 #E63946, 2px 0 #45B649; }
-}
-
 @keyframes yellowGlow {
   0%, 100% { text-shadow: 0 0 20px rgba(255, 217, 15, 0.6), 0 0 40px rgba(255, 217, 15, 0.3); }
   50% { text-shadow: 0 0 40px rgba(255, 217, 15, 0.9), 0 0 80px rgba(255, 217, 15, 0.5), 0 0 120px rgba(255, 217, 15, 0.2); }
@@ -189,42 +168,6 @@
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
-@keyframes sponsorRain {
-  0% {
-    transform: translate3d(0, -24vh, 0) rotate(-4deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.72;
-  }
-  35% {
-    transform: translate3d(10px, 26vh, 0) rotate(3deg);
-    opacity: 0.72;
-  }
-  68% {
-    transform: translate3d(-8px, 78vh, 0) rotate(-3deg);
-    opacity: 0.68;
-  }
-  80% {
-    transform: translate3d(6px, 112vh, 0) rotate(5deg);
-    opacity: 0;
-  }
-  100% {
-    transform: translate3d(6px, 112vh, 0) rotate(5deg);
-    opacity: 0;
-  }
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
@@ -241,27 +184,9 @@
   20%, 40%, 60%, 80% { transform: translateX(4px); }
 }
 
-@keyframes pulse-ring {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(1.5); opacity: 0; }
-}
-
 @keyframes redBlink {
   0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
   50% { box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.6); border-color: red; }
-}
-
-@keyframes lobsterDance {
-  0%, 100% { transform: translateY(0) rotate(0deg) scaleX(1); }
-  10% { transform: translateY(-12px) rotate(-10deg) scaleX(1); }
-  20% { transform: translateY(0) rotate(0deg) scaleX(-1); }
-  30% { transform: translateY(-12px) rotate(10deg) scaleX(-1); }
-  40% { transform: translateY(0) rotate(0deg) scaleX(1); }
-  50% { transform: translateY(-6px) rotate(-5deg) scaleX(1.2); }
-  60% { transform: translateY(0) rotate(5deg) scaleX(1); }
-  70% { transform: translateY(-8px) rotate(0deg) scaleX(-1); }
-  80% { transform: translateY(0) rotate(-8deg) scaleX(1); }
-  90% { transform: translateY(-4px) rotate(8deg) scaleX(1); }
 }
 
 @keyframes feedSlideIn {
@@ -332,10 +257,6 @@
 
 .text-glow-yellow {
   text-shadow: 0 0 20px rgba(255, 217, 15, 0.6), 0 0 40px rgba(255, 217, 15, 0.3);
-}
-
-.text-glow-red {
-  text-shadow: 0 0 20px rgba(230, 57, 70, 0.6), 0 0 40px rgba(230, 57, 70, 0.3);
 }
 
 /* Hide admin nav in fullscreen */

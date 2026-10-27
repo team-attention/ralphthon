@@ -9,6 +9,9 @@ import type { Database } from '@/lib/database.types'
 import { HackathonBg } from '@/components/hackathon-bg'
 import { FallingSponsorRails } from '@/components/falling-sponsor-rails'
 
+// Registration is open only for the Busan Ralphthon.
+const REGION = 'BUSAN' as const
+
 type TrackValue = 'codex_plugin' | 'image_service' | 'busan_local' | 'ai_application'
 
 const TRACK_OPTIONS: { value: TrackValue; label: string }[] = [
@@ -30,7 +33,6 @@ export default function RegisterPage() {
 
   const [teamName, setTeamName] = useState('')
   const [leaderName, setLeaderName] = useState('')
-  const [region] = useState<'KR' | 'US' | 'SG' | 'BUSAN'>('BUSAN')
   const [track, setTrack] = useState<TrackValue | null>(null)
   const [projectDesc, setProjectDesc] = useState('')
   const [members, setMembersInput] = useState<{ name: string; email: string }[]>([{ name: '', email: '' }])
@@ -76,9 +78,6 @@ export default function RegisterPage() {
       }
 
       setUser(currentUser)
-
-      // Region is fixed to BUSAN for the Busan Ralphthon.
-
       setLoading(false)
     })
   }, [router, supabase])
@@ -105,7 +104,7 @@ export default function RegisterPage() {
 
     const teamPayload: TeamInsert = {
       name: teamName,
-      region,
+      region: REGION,
       track,
       leader_email: user.email!,
       leader_user_id: user.id,
@@ -145,7 +144,7 @@ export default function RegisterPage() {
   if (loading) {
     return (
       <div className="relative flex min-h-screen items-center justify-center">
-        <HackathonBg showQuotes={false} showLobsters={false} />
+        <HackathonBg showLobsters={false} />
         <div className="relative z-20 flex items-center gap-3">
           <span className="text-2xl" style={{ animation: 'lobsterPulse 1.5s ease-in-out infinite' }}>
             {'\u{1F99E}'}
@@ -158,7 +157,7 @@ export default function RegisterPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-4">
-      <HackathonBg showQuotes={false} showLobsters={false} />
+      <HackathonBg showLobsters={false} />
       <FallingSponsorRails />
 
       <div

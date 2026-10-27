@@ -13,8 +13,3 @@ export async function getUserLocale(): Promise<Locale> {
   }
   return DEFAULT_LOCALE
 }
-
-export async function setUserLocale(locale: Locale) {
-  const cookieStore = await cookies()
-  cookieStore.set(COOKIE_NAME, locale)
-}

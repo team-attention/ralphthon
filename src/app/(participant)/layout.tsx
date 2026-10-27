@@ -7,6 +7,37 @@ import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase'
 import { LocaleSwitcher } from '@/components/locale-switcher'
 
+const NAV_TONES = {
+  yellow: { hoverClassName: 'hover:bg-[rgba(255,217,15,0.1)]', color: '#FFD90F', background: 'rgba(255, 217, 15, 0.1)' },
+  teal: { hoverClassName: 'hover:bg-[rgba(100,255,218,0.1)]', color: '#64ffda', background: 'rgba(100, 255, 218, 0.1)' },
+}
+
+function NavLink({
+  href,
+  active,
+  tone = 'yellow',
+  children,
+}: {
+  href: string
+  active: boolean
+  tone?: keyof typeof NAV_TONES
+  children: React.ReactNode
+}) {
+  const colors = NAV_TONES[tone]
+  return (
+    <Link
+      href={href}
+      className={`rounded-md px-2.5 py-1 text-sm transition-all duration-200 ${colors.hoverClassName}`}
+      style={{
+        color: active ? colors.color : '#8892b0',
+        background: active ? colors.background : undefined,
+      }}
+    >
+      {children}
+    </Link>
+  )
+}
+
 export default function ParticipantLayout({
   children,
 }: {
@@ -62,49 +93,21 @@ export default function ParticipantLayout({
           >
             <span style={{ color: '#8892b0' }}>{'>'}_</span> RALPHTHON
           </Link>
-          <Link
-            href="/guide"
-            className="rounded-md px-2.5 py-1 text-sm transition-all duration-200 hover:bg-[rgba(255,217,15,0.1)]"
-            style={{
-              color: pathname === '/guide' ? '#FFD90F' : '#8892b0',
-              background: pathname === '/guide' ? 'rgba(255, 217, 15, 0.1)' : undefined,
-            }}
-          >
+          <NavLink href="/guide" active={pathname === '/guide'}>
             Guide
-          </Link>
-          <Link
-            href="/support"
-            className="rounded-md px-2.5 py-1 text-sm transition-all duration-200 hover:bg-[rgba(100,255,218,0.1)]"
-            style={{
-              color: pathname === '/support' ? '#64ffda' : '#8892b0',
-              background: pathname === '/support' ? 'rgba(100, 255, 218, 0.1)' : undefined,
-            }}
-          >
+          </NavLink>
+          <NavLink href="/support" active={pathname === '/support'} tone="teal">
             Sponsor
-          </Link>
+          </NavLink>
           {checked && (
             teamId ? (
-              <Link
-                href={`/team/${teamId}`}
-                className="rounded-md px-2.5 py-1 text-sm transition-all duration-200 hover:bg-[rgba(255,217,15,0.1)]"
-                style={{
-                  color: pathname.startsWith('/team/') ? '#FFD90F' : '#8892b0',
-                  background: pathname.startsWith('/team/') ? 'rgba(255, 217, 15, 0.1)' : undefined,
-                }}
-              >
+              <NavLink href={`/team/${teamId}`} active={pathname.startsWith('/team/')}>
                 {t('myTeam')}
-              </Link>
+              </NavLink>
             ) : (
-              <Link
-                href="/register"
-                className="rounded-md px-2.5 py-1 text-sm transition-all duration-200 hover:bg-[rgba(255,217,15,0.1)]"
-                style={{
-                  color: (pathname === '/register' || pathname === '/login') ? '#FFD90F' : '#8892b0',
-                  background: (pathname === '/register' || pathname === '/login') ? 'rgba(255, 217, 15, 0.1)' : undefined,
-                }}
-              >
+              <NavLink href="/register" active={pathname === '/register' || pathname === '/login'}>
                 {t('register')}
-              </Link>
+              </NavLink>
             )
           )}
         </div>

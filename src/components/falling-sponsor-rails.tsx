@@ -6,7 +6,6 @@ type Sponsor = {
   className: string
   delay: string
   duration: string
-  filter?: string
   offset?: string
 }
 
@@ -30,7 +29,7 @@ function SponsorColumn({ sponsors }: { sponsors: Sponsor[] }) {
           alt={sponsor.alt}
           className={`h-auto object-contain opacity-60 transition-opacity duration-300 hover:opacity-95 ${sponsor.className} ${sponsor.offset ?? ''}`}
           style={{
-            filter: sponsor.filter ?? baseFilter,
+            filter: baseFilter,
             animation: `float ${sponsor.duration} ease-in-out ${sponsor.delay} infinite`,
           }}
         />
