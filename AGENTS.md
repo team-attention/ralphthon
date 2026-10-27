@@ -59,7 +59,7 @@ This is Next.js 16: read the relevant guide in `node_modules/next/dist/docs/` be
   - `dashboard` (public, service role; used by `public/dashboard.html`)
   - `checkout` (Polar)
   - `locale`
-- `src/app/auth/callback`: OAuth code exchange, then redirects to `?next=` (default `/register`).
+- `src/app/auth/callback`: OAuth code exchange, then redirects to `?next=` if it is a same-origin path (one leading `/`, not `//` or `/\`), else `/register`.
 - `src/lib/`:
   - `supabase.ts`, `supabase-server.ts`
   - `admin-emails.ts`, `admin-auth.ts`, `networking.ts`
@@ -116,10 +116,8 @@ The Busan admin countdown and the past-event tabs are still live UI.
 
 ## Known issues (owner decisions, not refactor targets)
 
-- **Open redirect:** `/auth/callback` appends `?next` to the origin unchecked.
-- **`activate_lobster` is callable by anyone:** it is `SECURITY DEFINER` with default execute grants.
-- **`team_update_guard` is likely a no-op:** it reads the legacy `request.jwt.claim.role` setting.
-- **Open writes:** `judging_scores` has open RLS, and `/api/dashboard` is public.
+- **Security migrations not yet applied to production:** `20261027000001` (revokes `activate_lobster` execute from anon/authenticated) and `20261027000002` (rewrites `team_update_guard` with `auth.role()`; the old one read the legacy `request.jwt.claim.role` setting and was a no-op). Until they are applied, both holes stay open.
+- **Open writes:** `judging_scores` has open RLS (closing it is drafted in `supabase/drafts/`, pending the owner), and `/api/dashboard` is public.
 - **Migrations cannot replay cleanly:** a fresh replay aborts at `20260325000009` (duplicate policy).
 - **`/final` hydration mismatch:** it renders server time.
 - **Admin CSV `member_count`:** RLS hides other teams' members.
