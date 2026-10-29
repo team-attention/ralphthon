@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/lib/database.types'
@@ -21,7 +21,6 @@ export function ActivityFeed({
   const t = useTranslations('admin')
   const [events, setEvents] = useState<LobsterEvent[]>([])
   const [newEventId, setNewEventId] = useState<string | null>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
 
   // CR-006: Fetch filtered by region, re-fetch on region change
   useEffect(() => {
@@ -72,10 +71,7 @@ export function ActivityFeed({
         </span>
       </div>
 
-      <div
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto pr-1"
-      >
+      <div className="flex-1 overflow-y-auto pr-1">
         {events.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
             <span className="text-2xl opacity-40">{'\u{1F99E}'}</span>

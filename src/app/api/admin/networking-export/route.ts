@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { createAdminClient } from '@/lib/supabase-server'
+import { NETWORKING_COLUMNS, isMissingNetworkingColumn, isNetworkingRequestAuthorized } from '@/lib/networking'
 
 type TeamRow = {
   id: string
@@ -33,65 +32,8 @@ type ParticipantExport = {
   delivery_opt_in: boolean
 }
 
-const NETWORKING_COLUMNS = 'discord_user_id,discord_username,networking_delivery_opt_in'
-
-function isMissingNetworkingColumn(message: string) {
-  return ['discord_user_id', 'discord_username', 'networking_delivery_opt_in'].some((column) =>
-    message.includes(column)
-  )
-}
-
-function isAdminEmail(email: string) {
-  const adminPatterns = (process.env.ADMIN_EMAILS ?? '')
-    .split(',')
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean)
-
-  return adminPatterns.some((pattern) =>
-    pattern.startsWith('@')
-      ? email.endsWith(pattern)
-      : email === pattern
-  )
-}
-
-function hasBackofficeToken(request: NextRequest) {
-  const expected = process.env.NETWORKING_BACKOFFICE_TOKEN || process.env.RALPHTHON_BACKOFFICE_TOKEN
-  if (!expected) return false
-  const bearer = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  const header = request.headers.get('x-networking-backoffice-token')
-  return bearer === expected || header === expected
-}
-
-async function hasAdminSession() {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll() {},
-      },
-    }
-  )
-
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-
-  if (authError || !user) {
-    return false
-  }
-
-  const email = user.email?.toLowerCase() ?? ''
-  return Boolean(email && isAdminEmail(email))
-}
-
 export async function GET(request: NextRequest) {
-  if (!hasBackofficeToken(request) && !(await hasAdminSession())) {
+  if (!(await isNetworkingRequestAuthorized(request))) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 

@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync, writeFileSync, mkdirSync } from 'fs'
-import { resolve, dirname } from 'path'
+import { resolve } from 'path'
 
 // Parse .env.local manually to avoid dotenv dependency
 function loadEnvLocal(): Record<string, string> {

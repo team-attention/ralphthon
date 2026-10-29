@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react'
 
-const LOBSTER_DURATION_MS = 10 * 60 * 1000 // 10 minutes
+export const LOBSTER_DURATION_MS = 10 * 60 * 1000 // 10 minutes
+
+/**
+ * Milliseconds left in a lobster activation window, 0 when inactive or expired.
+ */
+export function getLobsterRemainingMs(lobsterActivatedAt: string | null): number {
+  if (!lobsterActivatedAt) return 0
+  const elapsed = Date.now() - new Date(lobsterActivatedAt).getTime()
+  const remaining = LOBSTER_DURATION_MS - elapsed
+  return remaining > 0 ? remaining : 0
+}
 
 /**
  * Returns remaining seconds for a lobster activation.
@@ -28,9 +38,7 @@ export function useLobsterCountdown(lobsterActivatedAt: string | null): number {
 }
 
 function calcRemaining(activatedAt: string | null): number {
-  if (!activatedAt) return 0
-  const elapsed = Date.now() - new Date(activatedAt).getTime()
-  const remaining = LOBSTER_DURATION_MS - elapsed
+  const remaining = getLobsterRemainingMs(activatedAt)
   return remaining > 0 ? Math.ceil(remaining / 1000) : 0
 }
 

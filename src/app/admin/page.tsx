@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase'
+import { isAdminEmail } from '@/lib/admin-emails'
 import type { Database } from '@/lib/database.types'
-import { useLobsterCountdown, formatCountdown } from '@/lib/use-lobster-countdown'
+import { useLobsterCountdown, formatCountdown, getLobsterRemainingMs } from '@/lib/use-lobster-countdown'
 import { ActivityFeed } from '@/components/activity-feed'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,13 +29,27 @@ type TeamMember = Database['public']['Tables']['team_members']['Row']
 type RegionFilter = 'KR' | 'US' | 'SG' | 'BUSAN'
 type TeamFilter = 'all' | 'lobster' | 'unsubmitted'
 
-const LOBSTER_DURATION_MS = 10 * 60 * 1000 // 10 minutes
-
-function getLobsterRemaining(lobsterActivatedAt: string | null): number {
-  if (!lobsterActivatedAt) return 0
-  const elapsed = Date.now() - new Date(lobsterActivatedAt).getTime()
-  const remaining = LOBSTER_DURATION_MS - elapsed
-  return remaining > 0 ? remaining : 0
+function DetailLinkField({ label, url, emptyText }: { label: string; url: string | null; emptyText: string }) {
+  return (
+    <div>
+      <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
+        {label}
+      </p>
+      {url ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block break-all text-sm underline underline-offset-2 hover:text-foreground"
+          style={{ color: '#64ffda' }}
+        >
+          {url}
+        </a>
+      ) : (
+        <p className="text-sm" style={{ color: '#8892b0' }}>{emptyText}</p>
+      )}
+    </div>
+  )
 }
 
 function ProjectDetailDialog({
@@ -96,65 +111,9 @@ function ProjectDetailDialog({
             </p>
           </div>
 
-          {/* GitHub URL */}
-          <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
-              {t('githubUrl')}
-            </p>
-            {team.github_url ? (
-              <a
-                href={team.github_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block break-all text-sm underline underline-offset-2 hover:text-foreground"
-                style={{ color: '#64ffda' }}
-              >
-                {team.github_url}
-              </a>
-            ) : (
-              <p className="text-sm" style={{ color: '#8892b0' }}>{t('noGithub')}</p>
-            )}
-          </div>
-
-          {/* Goal Prompt URL */}
-          <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
-              {t('goalPromptUrl')}
-            </p>
-            {team.goal_prompt_url ? (
-              <a
-                href={team.goal_prompt_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block break-all text-sm underline underline-offset-2 hover:text-foreground"
-                style={{ color: '#64ffda' }}
-              >
-                {team.goal_prompt_url}
-              </a>
-            ) : (
-              <p className="text-sm" style={{ color: '#8892b0' }}>{t('noGoalPrompt')}</p>
-            )}
-          </div>
-
-          {/* Demo Video */}
-          <div>
-            <p className="mb-1 text-xs font-medium uppercase tracking-wide" style={{ color: '#8892b0' }}>
-              {t('demoVideo')}
-            </p>
-            {team.demo_video_url ? (
-              <a
-                href={team.demo_video_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block break-all text-sm underline underline-offset-2 hover:text-foreground"
-                style={{ color: '#64ffda' }}
-              >
-                {team.demo_video_url}
-              </a>
-            ) : (
-              <p className="text-sm" style={{ color: '#8892b0' }}>{t('noVideo')}</p>
-            )}
-          </div>
+          <DetailLinkField label={t('githubUrl')} url={team.github_url} emptyText={t('noGithub')} />
+          <DetailLinkField label={t('goalPromptUrl')} url={team.goal_prompt_url} emptyText={t('noGoalPrompt')} />
+          <DetailLinkField label={t('demoVideo')} url={team.demo_video_url} emptyText={t('noVideo')} />
 
           {/* Team Members */}
           <div>
@@ -242,7 +201,7 @@ function AdminTeamCard({
               <span className="font-mono text-sm">{formatCountdown(countdown)}</span>
             </div>
           )}
-          {isPendingLobster && !isLobsterActive ? (
+          {isPendingLobster ? (
             <div className="flex gap-1">
               <button
                 disabled={isActivating}
@@ -346,6 +305,37 @@ function useRegionCountdown(filter: RegionFilter) {
   return { label: 'Singapore', value: null }
 }
 
+function RegionCountdownPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div
+      className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+      style={{
+        background: value === '00:00:00'
+          ? 'rgba(230, 57, 70, 0.15)'
+          : 'rgba(255, 217, 15, 0.1)',
+        border: `1px solid ${value === '00:00:00' ? 'rgba(230, 57, 70, 0.3)' : 'rgba(255, 217, 15, 0.2)'}`,
+      }}
+    >
+      <span className="text-xs" style={{ color: '#8892b0' }}>
+        {label}
+      </span>
+      <span
+        className="font-mono text-sm font-bold"
+        style={{ color: value === '00:00:00' ? '#E63946' : '#FFD90F' }}
+      >
+        {value}
+      </span>
+    </div>
+  )
+}
+
+const REGION_LABELS: Record<RegionFilter, string> = {
+  BUSAN: 'Busan',
+  SG: 'Singapore',
+  US: 'SF',
+  KR: 'Seoul',
+}
+
 export default function DashboardPage() {
   const t = useTranslations('admin')
   const supabase = useMemo(() => createClient(), [])
@@ -371,18 +361,9 @@ export default function DashboardPage() {
         return
       }
 
-      // Check admin email pattern (same logic as API route)
-      const adminPatterns = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '')
-        .split(',')
-        .map((e) => e.trim().toLowerCase())
-        .filter(Boolean)
-
+      // Same allow-list as the API routes, from the build-time public copy
       const email = user.email.toLowerCase()
-      const isAdmin = adminPatterns.some((pattern) =>
-        pattern.startsWith('@')
-          ? email.endsWith(pattern)
-          : email === pattern
-      )
+      const isAdmin = isAdminEmail(email, process.env.NEXT_PUBLIC_ADMIN_EMAILS)
 
       if (!isAdmin) {
         window.location.href = '/admin/login'
@@ -424,7 +405,6 @@ export default function DashboardPage() {
         },
         (payload) => {
           const newRow = payload.new as Team
-          const oldRow = payload.old as Partial<Team>
 
           // Update teams state with the new row data
           setTeams((prev) =>
@@ -536,7 +516,7 @@ export default function DashboardPage() {
     // Step 2: Filter by team filter
     if (teamFilter === 'lobster') {
       result = result.filter((tt) => {
-        const remaining = getLobsterRemaining(tt.lobster_activated_at)
+        const remaining = getLobsterRemainingMs(tt.lobster_activated_at)
         return tt.lobster_requested || remaining > 0
       })
     } else if (teamFilter === 'unsubmitted') {
@@ -545,8 +525,8 @@ export default function DashboardPage() {
 
     // Step 3: Sort — lobster_requested first, then lobster_active (countdown ASC), then rest (created_at DESC)
     result.sort((a, b) => {
-      const aRemaining = getLobsterRemaining(a.lobster_activated_at)
-      const bRemaining = getLobsterRemaining(b.lobster_activated_at)
+      const aRemaining = getLobsterRemainingMs(a.lobster_activated_at)
+      const bRemaining = getLobsterRemainingMs(b.lobster_activated_at)
       const aRequested = a.lobster_requested && aRemaining === 0
       const bRequested = b.lobster_requested && bRemaining === 0
       const aActive = aRemaining > 0
@@ -607,13 +587,6 @@ export default function DashboardPage() {
     URL.revokeObjectURL(url)
   }, [supabase, filteredTeams, filter])
 
-  const regionLabels: Record<RegionFilter, string> = {
-    BUSAN: 'Busan',
-    SG: 'Singapore',
-    US: 'SF',
-    KR: 'Seoul',
-  }
-
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen()
@@ -656,25 +629,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               {/* Region countdown */}
               {countdownEntry.value !== null && (
-                <div
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
-                  style={{
-                    background: countdownEntry.value === '00:00:00'
-                      ? 'rgba(230, 57, 70, 0.15)'
-                      : 'rgba(255, 217, 15, 0.1)',
-                    border: `1px solid ${countdownEntry.value === '00:00:00' ? 'rgba(230, 57, 70, 0.3)' : 'rgba(255, 217, 15, 0.2)'}`,
-                  }}
-                >
-                  <span className="text-xs" style={{ color: '#8892b0' }}>
-                    {countdownEntry.label}
-                  </span>
-                  <span
-                    className="font-mono text-sm font-bold"
-                    style={{ color: countdownEntry.value === '00:00:00' ? '#E63946' : '#FFD90F' }}
-                  >
-                    {countdownEntry.value}
-                  </span>
-                </div>
+                <RegionCountdownPill label={countdownEntry.label} value={countdownEntry.value} />
               )}
               {/* Fullscreen toggle */}
               <Button
@@ -697,7 +652,7 @@ export default function DashboardPage() {
               variant={filter === r ? 'default' : 'outline'}
               onClick={() => setFilter(r)}
             >
-              {regionLabels[r]}
+              {REGION_LABELS[r]}
             </Button>
           ))}
           <div className="mx-1 h-6 w-px bg-border" />
@@ -715,25 +670,7 @@ export default function DashboardPage() {
           {isFullscreen && (
             <div className="ml-auto flex items-center gap-3">
               {countdownEntry.value !== null && (
-                <div
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5"
-                  style={{
-                    background: countdownEntry.value === '00:00:00'
-                      ? 'rgba(230, 57, 70, 0.15)'
-                      : 'rgba(255, 217, 15, 0.1)',
-                    border: `1px solid ${countdownEntry.value === '00:00:00' ? 'rgba(230, 57, 70, 0.3)' : 'rgba(255, 217, 15, 0.2)'}`,
-                  }}
-                >
-                  <span className="text-xs" style={{ color: '#8892b0' }}>
-                    {countdownEntry.label}
-                  </span>
-                  <span
-                    className="font-mono text-sm font-bold"
-                    style={{ color: countdownEntry.value === '00:00:00' ? '#E63946' : '#FFD90F' }}
-                  >
-                    {countdownEntry.value}
-                  </span>
-                </div>
+                <RegionCountdownPill label={countdownEntry.label} value={countdownEntry.value} />
               )}
               <Button
                 variant="outline"

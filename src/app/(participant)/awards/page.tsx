@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from 'react'
 
-// ─── Fill in team names when ready ───
 const AWARDS = [
   { rank: '🥉', label: '3rd Place', team: 'AER' },
   { rank: '🥈', label: '2nd Place', team: 'Ha-fam' },
@@ -21,7 +20,6 @@ function Confetti({ active }: { active: boolean }) {
       return
     }
     const colors = ['#FFD90F', '#E63946', '#45B649', '#ffffff', '#FFD90F', '#E63946']
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParticles(
       Array.from({ length: 60 }, (_, i) => ({
         id: i,
@@ -218,7 +216,7 @@ export default function AwardsPage() {
                         textShadow: isFirst ? '0 0 20px rgba(255, 217, 15, 0.5)' : 'none',
                       }}
                     >
-                      {award.team ?? 'TBA'}
+                      {award.team}
                     </div>
                   ) : (
                     <div className="font-display text-4xl md:text-5xl" style={{ color: '#8892b0' }}>

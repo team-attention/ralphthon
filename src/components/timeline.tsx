@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,8 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-
-type City = 'Busan'
 
 // ── Busan Timeline ───────────────────────────────
 
@@ -33,7 +30,7 @@ const BUSAN_ENTRIES: BusanEntry[] = [
 
 // ── Components ───────────────────────────────────
 
-export function EventInfo() {
+function EventInfo() {
   const t = useTranslations('timeline')
 
   const infoRows = [
@@ -132,18 +129,10 @@ function BusanSchedule() {
   )
 }
 
-export function TimelineSchedule() {
-  return <BusanSchedule />
-}
-
-function CityTabs({ city, onChange }: { city: City; onChange: (c: City) => void }) {
+function CityTabs() {
   return (
     <div className="flex gap-2">
-      <Button
-        variant={city === 'Busan' ? 'default' : 'outline'}
-        onClick={() => onChange('Busan')}
-        size="sm"
-      >
+      <Button variant="default" size="sm">
         Busan
       </Button>
     </div>
@@ -151,13 +140,11 @@ function CityTabs({ city, onChange }: { city: City; onChange: (c: City) => void 
 }
 
 export function Timeline() {
-  const [city, setCity] = useState<City>('Busan')
-
   return (
     <div className="flex flex-col gap-6">
-      <CityTabs city={city} onChange={setCity} />
+      <CityTabs />
       <EventInfo />
-      <TimelineSchedule />
+      <BusanSchedule />
     </div>
   )
 }

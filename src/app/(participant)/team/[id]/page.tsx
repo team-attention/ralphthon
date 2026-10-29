@@ -257,7 +257,7 @@ export default function TeamPage() {
   if (loading) {
     return (
       <div className="relative flex min-h-screen items-center justify-center">
-        <HackathonBg showQuotes={false} showLobsters={false} />
+        <HackathonBg showLobsters={false} />
         <div className="relative z-20 flex items-center gap-3">
           <span className="text-2xl" style={{ animation: 'lobsterPulse 1.5s ease-in-out infinite' }}>
             {'\u{1F99E}'}
@@ -271,7 +271,7 @@ export default function TeamPage() {
   if (!team) {
     return (
       <div className="relative flex min-h-screen items-center justify-center">
-        <HackathonBg showQuotes={false} showLobsters={false} />
+        <HackathonBg showLobsters={false} />
         <p className="relative z-20" style={{ color: '#8892b0' }}>Team not found</p>
       </div>
     )

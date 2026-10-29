@@ -13,7 +13,7 @@ test('login page loads', async ({ page }) => {
 })
 
 test('admin dashboard page loads', async ({ page }) => {
-  await page.goto('/dashboard')
+  await page.goto('/admin')
   // Dashboard should load (may show empty state without auth)
   await expect(page.locator('body')).not.toBeEmpty()
 })
